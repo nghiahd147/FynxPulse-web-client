@@ -1,9 +1,9 @@
-import { Divider } from "antd";
+import { Divider, Input } from "antd";
 import { Link } from "react-router-dom";
 
 const Login = () => {
   return (
-    <div className="w-full h-screen overflow-x-hidden bg-[#f5f2e9] flex items-center justify-center">
+    <div className="w-full h-screen overflow-x-hidden bg-gray-100 flex items-center justify-center">
       <div className="flex flex-col">
         <h1 className="text-red-600 text-5xl font-bold">
           Fyn<span className="text-black">x</span>
@@ -13,16 +13,16 @@ const Login = () => {
           <br /> và câu chuyện trong cuộc sống mỗi ngày
         </span>
       </div>
-      <div className="ml-10 w-100 bg-white shadow-sm rounded-md p-4 flex flex-col gap-y-3">
-        <input
+      <div className="ml-10 w-100 bg-white shadow-md border-gray-200 border rounded-md p-4 flex flex-col gap-y-3">
+        <Input
+          style={{ padding: "12px" }}
           placeholder="Email hoặc số điện thoại"
           type="email"
-          className="py-3 px-3 border border-gray-200 rounded-md outline-none"
         />
-        <input
+        <Input
+          style={{ padding: "12px" }}
           placeholder="Mật khẩu"
           type="password"
-          className="py-3 px-3 border border-gray-200 rounded-md outline-none"
         />
         <button className="bg-red-600 py-3 text-white text-xl font-bold rounded-sm cursor-pointer hover:bg-red-500 transition-all duration-300 ease-in">
           Đăng nhập
@@ -37,9 +37,12 @@ const Login = () => {
           className="bg-gray-200"
           style={{ marginTop: "2px", marginBottom: "3px" }}
         />
-        <button className="w-50 mx-auto bg-orange-400 py-3 rounded-md text-white font-bold cursor-pointer hover:bg-orange-300 transition-all duration-200 ease-in">
+        <Link
+          to={"/register"}
+          className="w-50 mx-auto text-center bg-black py-3 rounded-md text-white font-bold cursor-pointer hover:bg-gray-800 transition-all duration-200 ease-in"
+        >
           Tạo tài khoản mới
-        </button>
+        </Link>
       </div>
     </div>
   );

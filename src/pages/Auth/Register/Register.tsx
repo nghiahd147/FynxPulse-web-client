@@ -1,16 +1,37 @@
-import { DatePicker, Input, Form, type DatePickerProps } from "antd";
-import { Link } from "react-router-dom";
-import { onFinishFailed } from "../../../utils/validate";
+import { DatePicker, Input, Form } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { onFinishFailed } from "../../../utils/message";
+import type { Users } from "../../../types";
+import { convertYearMonthDay } from "../../../utils/date";
+import useAuthStore from "../../../store/useAuthStore";
+import { toast, ToastContainer } from "react-toastify";
+import { notificationError } from "../../../config/notify";
 
 const Register = () => {
   const [form] = Form.useForm();
+  const { registerUser } = useAuthStore();
+  const navigate = useNavigate();
 
-  const onFinish = (values: string) => {
-    console.log(values);
-  };
+  const onFinish = async (values: Users) => {
+    const payload = {
+      ...values,
+      date_of_birth: convertYearMonthDay(values.date_of_birth),
+    };
 
-  const onChange: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
+    try {
+      await registerUser(payload);
+      toast.success("Đăng ký thành công", {
+        position: "top-right",
+        onClose: () => {
+          navigate("/");
+        },
+        autoClose: 1000,
+        theme: "light",
+      });
+    } catch (error) {
+      notificationError("Có lỗi xảy ra, vui lòng thử lại sau");
+      console.log("error", error);
+    }
   };
 
   return (
@@ -29,13 +50,13 @@ const Register = () => {
         >
           <div className="flex items-center gap-x-2">
             <Form.Item
-              name="vertical"
+              name="first_name"
               rules={[{ required: true, message: "Vui lòng họ" }]}
             >
               <Input style={{ padding: "12px" }} placeholder="Họ" type="text" />
             </Form.Item>
             <Form.Item
-              name="vertical"
+              name="last_name"
               rules={[{ required: true, message: "Vui lòng tên" }]}
             >
               <Input
@@ -60,7 +81,7 @@ const Register = () => {
             />
           </Form.Item>
           <Form.Item
-            name="vertical"
+            name="password"
             rules={[{ required: true, message: "Vui lòng mật khẩu" }]}
           >
             <Input
@@ -95,10 +116,12 @@ const Register = () => {
               style={{ padding: "12px" }}
               className="py-3 px-3 w-full"
               placeholder="Ngày sinh"
-              onChange={onChange}
             />
           </Form.Item>
-          <button className="w-full bg-red-600 py-3 text-white text-xl font-bold rounded-sm cursor-pointer hover:bg-red-500 transition-all duration-300 ease-in">
+          <button
+            type="submit"
+            className="w-full bg-red-600 py-3 text-white text-xl font-bold rounded-sm cursor-pointer hover:bg-red-500 transition-all duration-300 ease-in"
+          >
             Đăng ký
           </button>
         </Form>
@@ -109,6 +132,7 @@ const Register = () => {
           Bạn đã có tài khoản ư?
         </Link>
       </div>
+      <ToastContainer />
     </div>
   );
 };

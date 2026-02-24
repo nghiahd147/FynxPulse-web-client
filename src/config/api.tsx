@@ -1,6 +1,8 @@
+import type { Users } from "../types";
+
 export const HEADERS = {
   DEFAULT_HEADER: {
-    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+    "Content-Type": "application/json",
   },
   header: () => ({
     "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
@@ -18,7 +20,7 @@ export const HEADERS = {
 
 export const API_URLS = {
   USERS: {
-    register: (payload: string) => ({
+    register: (payload: Users) => ({
       endPoint: "/api/user/register",
       method: "POST",
       headers: HEADERS.DEFAULT_HEADER,

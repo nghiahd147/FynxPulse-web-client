@@ -1,21 +1,30 @@
 import { create } from "zustand";
 import { apiCall } from "../utils/axios";
 import { API_URLS } from "../config/api";
-import { data } from "react-router-dom";
+import type { Users } from "../types";
 
-const useAuthStore = create((set) => ({
+interface AuthStore {
+  isLoading: boolean;
+  accessToken: string;
+  message: string;
+  data: Users[];
+
+  registerUser: (payload: Users) => Promise<void>;
+}
+
+const useAuthStore = create<AuthStore>((set) => ({
   isLoading: false,
+  accessToken: "",
   message: "",
-  data,
+  data: [],
 
-  register: async (payload: any) => {
+  registerUser: async (payload: Users) => {
     set({ isLoading: true });
     try {
-      const response = apiCall(API_URLS.USERS.register(payload));
-      set({ isLoading: false, data: response });
-    } catch (error) {
-      console.log("error", error);
-      set({ message: error });
+      const response = await apiCall(API_URLS.USERS.register(payload));
+      set({ isLoading: false, accessToken: response?.result.acessToken });
+    } finally {
+      set({ isLoading: false });
     }
   },
 }));

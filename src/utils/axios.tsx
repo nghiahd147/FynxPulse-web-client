@@ -9,7 +9,7 @@ export const apiCall = async ({
 }: {
   endPoint: string;
   method: string;
-  payload?: Record<string, unknown> | string;
+  payload?: Record<string, any>;
   headers?: Record<string, string>;
   params?: Record<string, unknown>;
 }) => {
@@ -22,15 +22,12 @@ export const apiCall = async ({
       data: payload,
       params,
     });
-    return {
-      response: result,
-      error: null,
-    };
-  } catch (e) {
-    const error = e instanceof axios.AxiosError ? e : null;
-    return {
-      response: null,
-      error: error?.request,
-    };
+
+    return result.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error.response?.data || error;
+    }
+    throw error;
   }
 };

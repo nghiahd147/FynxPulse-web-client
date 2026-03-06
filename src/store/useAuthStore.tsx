@@ -10,6 +10,7 @@ interface AuthStore {
   data: Users[];
 
   registerUser: (payload: Users) => Promise<void>;
+  loginUser: (payload: { email: string; password: string }) => Promise<void>;
 }
 
 const useAuthStore = create<AuthStore>((set) => ({
@@ -22,7 +23,20 @@ const useAuthStore = create<AuthStore>((set) => ({
     set({ isLoading: true });
     try {
       const response = await apiCall(API_URLS.USERS.register(payload));
-      set({ isLoading: false, accessToken: response?.result.acessToken });
+      localStorage.setItem("token", response?.result.acessToken);
+      set({ isLoading: false });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  loginUser: async (payload) => {
+    set({ isLoading: true });
+    try {
+      const response = await apiCall(API_URLS.USERS.login(payload));
+      console.log(response);
+      localStorage.setItem("token", response?.result.accessToken);
+      set({ isLoading: false });
     } finally {
       set({ isLoading: false });
     }

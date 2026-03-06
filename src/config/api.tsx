@@ -6,15 +6,15 @@ export const HEADERS = {
   },
   header: () => ({
     "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-    Authorization: localStorage.getItem("jwt"),
+    Authorization: localStorage.getItem("token"),
   }),
   jsonHeader: () => ({
     "Content-Type": "application/json; charset=UTF-8",
-    Authorization: localStorage.getItem("jwt"),
+    Authorization: localStorage.getItem("token"),
   }),
   file_header: () => ({
     "Content-Type": "multipart/form-data",
-    Authorization: localStorage.getItem("jwt"),
+    Authorization: localStorage.getItem("token"),
   }),
 };
 
@@ -22,6 +22,12 @@ export const API_URLS = {
   USERS: {
     register: (payload: Users) => ({
       endPoint: "/api/user/register",
+      method: "POST",
+      headers: HEADERS.DEFAULT_HEADER,
+      payload,
+    }),
+    login: (payload: { email: string; password: string }) => ({
+      endPoint: "/api/user/login",
       method: "POST",
       headers: HEADERS.DEFAULT_HEADER,
       payload,

@@ -1,11 +1,11 @@
-import { DatePicker, Input, Form } from "antd";
+import type { Users } from "../../../types";
+import useAuthStore from "../../../store/useAuthStore";
+import { DatePicker, Input, Form, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { onFinishFailed } from "../../../utils/message";
-import type { Users } from "../../../types";
 import { convertYearMonthDay } from "../../../utils/date";
-import useAuthStore from "../../../store/useAuthStore";
-import { toast, ToastContainer } from "react-toastify";
 import { notificationError } from "../../../config/notify";
+import Button from "../../../components/Button/Button";
 
 const Register = () => {
   const [form] = Form.useForm();
@@ -20,14 +20,8 @@ const Register = () => {
 
     try {
       await registerUser(payload);
-      toast.success("Đăng ký thành công", {
-        position: "top-right",
-        onClose: () => {
-          navigate("/");
-        },
-        autoClose: 1000,
-        theme: "light",
-      });
+      message.success("Đăng ký thành công");
+      navigate("/");
     } catch (error) {
       notificationError("Có lỗi xảy ra, vui lòng thử lại sau");
       console.log("error", error);
@@ -69,8 +63,8 @@ const Register = () => {
           <Form.Item
             name="email"
             rules={[
-              { required: true, message: "Vui lòng nhập email" },
-              { type: "email", message: "Email không hợp lệ" },
+              { required: true, message: "Vui lòng nhập email!" },
+              { type: "email", message: "Email không hợp lệ!" },
             ]}
           >
             <Input
@@ -82,9 +76,17 @@ const Register = () => {
           </Form.Item>
           <Form.Item
             name="password"
-            rules={[{ required: true, message: "Vui lòng mật khẩu" }]}
+            rules={[
+              { required: true, message: "Vui lòng mật khẩu" },
+              {
+                pattern:
+                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/,
+                message:
+                  "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ thường, chữ hoa, số và ký tự đặc biệt",
+              },
+            ]}
           >
-            <Input
+            <Input.Password
               style={{ padding: "12px" }}
               placeholder="Mật khẩu"
               type="password"
@@ -93,9 +95,21 @@ const Register = () => {
           </Form.Item>
           <Form.Item
             name="confirm_password"
-            rules={[{ required: true, message: "Vui lòng nhập lại mật khẩu" }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập lại mật khẩu" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("password") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Mật khẩu nhập lại không khớp"),
+                  );
+                },
+              }),
+            ]}
           >
-            <Input
+            <Input.Password
               style={{ padding: "12px" }}
               placeholder="Nhập lại mật khẩu"
               type="password"
@@ -118,12 +132,7 @@ const Register = () => {
               placeholder="Ngày sinh"
             />
           </Form.Item>
-          <button
-            type="submit"
-            className="w-full bg-red-600 py-3 text-white text-xl font-bold rounded-sm cursor-pointer hover:bg-red-500 transition-all duration-300 ease-in"
-          >
-            Đăng ký
-          </button>
+          <Button message="Đăng ký" />
         </Form>
         <Link
           className="text-sm text-black text-center hover:underline"
@@ -132,7 +141,6 @@ const Register = () => {
           Bạn đã có tài khoản ư?
         </Link>
       </div>
-      <ToastContainer />
     </div>
   );
 };

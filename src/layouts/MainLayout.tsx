@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import Header from "../components/Header/Header";
 
 const MainLayout = () => {
   const naivgate = useNavigate();
@@ -13,7 +14,9 @@ const MainLayout = () => {
 
   return (
     <>
-      <header>Header</header>
+      <header>
+        <Header />
+      </header>
       <main>
         <Outlet />
       </main>

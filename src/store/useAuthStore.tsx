@@ -5,17 +5,18 @@ import type { Users } from "../types";
 
 interface AuthStore {
   isLoading: boolean;
-  accessToken: string;
+  refresh_token: string;
   message: string;
   data: Users[];
 
   registerUser: (payload: Users) => Promise<void>;
   loginUser: (payload: { email: string; password: string }) => Promise<void>;
+  logoutUser: (payload: { refresh_token: string }) => Promise<void>;
 }
 
 const useAuthStore = create<AuthStore>((set) => ({
   isLoading: false,
-  accessToken: "",
+  refresh_token: "",
   message: "",
   data: [],
 
@@ -24,7 +25,7 @@ const useAuthStore = create<AuthStore>((set) => ({
     try {
       const response = await apiCall(API_URLS.USERS.register(payload));
       localStorage.setItem("token", response?.result.acessToken);
-      set({ isLoading: false });
+      set({ refresh_token: response?.result.refreshToken });
     } finally {
       set({ isLoading: false });
     }
@@ -34,9 +35,19 @@ const useAuthStore = create<AuthStore>((set) => ({
     set({ isLoading: true });
     try {
       const response = await apiCall(API_URLS.USERS.login(payload));
-      console.log(response);
       localStorage.setItem("token", response?.result.accessToken);
+      set({ refresh_token: response?.result.refreshToken });
+    } finally {
       set({ isLoading: false });
+    }
+  },
+
+  logoutUser: async (payload) => {
+    set({ isLoading: true });
+    try {
+      console.log("refresh_token", payload);
+      await apiCall(API_URLS.USERS.logout(payload));
+      localStorage.removeItem("token");
     } finally {
       set({ isLoading: false });
     }

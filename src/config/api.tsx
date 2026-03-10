@@ -10,7 +10,7 @@ export const HEADERS = {
   }),
   jsonHeader: () => ({
     "Content-Type": "application/json; charset=UTF-8",
-    Authorization: localStorage.getItem("token"),
+    Authorization: "Bearer " + localStorage.getItem("token"),
   }),
   file_header: () => ({
     "Content-Type": "multipart/form-data",
@@ -30,6 +30,12 @@ export const API_URLS = {
       endPoint: "/api/user/login",
       method: "POST",
       headers: HEADERS.DEFAULT_HEADER,
+      payload,
+    }),
+    logout: (payload: { refresh_token: string }) => ({
+      endPoint: "/api/user/logout",
+      method: "POST",
+      headers: HEADERS.jsonHeader(),
       payload,
     }),
   },

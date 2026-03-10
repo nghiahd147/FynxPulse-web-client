@@ -10,7 +10,7 @@ export const apiCall = async ({
   endPoint: string;
   method: string;
   payload?: Record<string, any>;
-  headers?: Record<string, string>;
+  headers?: Record<string, any>;
   params?: Record<string, unknown>;
 }) => {
   try {

@@ -6,15 +6,15 @@ export const HEADERS = {
   },
   header: () => ({
     "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-    Authorization: localStorage.getItem("token"),
+    Authorization: localStorage.getItem("access_token"),
   }),
   jsonHeader: () => ({
     "Content-Type": "application/json; charset=UTF-8",
-    Authorization: "Bearer " + localStorage.getItem("token"),
+    Authorization: "Bearer " + localStorage.getItem("access_token"),
   }),
   file_header: () => ({
     "Content-Type": "multipart/form-data",
-    Authorization: localStorage.getItem("token"),
+    Authorization: localStorage.getItem("access_token"),
   }),
 };
 

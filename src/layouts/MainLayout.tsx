@@ -4,7 +4,7 @@ import Header from "../components/Header/Header";
 
 const MainLayout = () => {
   const naivgate = useNavigate();
-  const isAuth = localStorage.getItem("token");
+  const isAuth = localStorage.getItem("access_token");
 
   useEffect(() => {
     if (!isAuth) {

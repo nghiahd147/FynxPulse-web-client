@@ -21,8 +21,8 @@ const Login = () => {
 
   return (
     <div className="w-full h-screen overflow-x-hidden bg-gray-100 flex items-center justify-center">
-      <div className="flex flex-col">
-        <h1 className="text-red-600 text-5xl font-bold">
+      <div className="sm:flex flex-col hidden">
+        <h1 className="text-[#dd2c00] text-5xl font-bold">
           Fyn<span className="text-black">x</span>
         </h1>
         <span className="text-black text-2xl mt-5">
@@ -30,7 +30,7 @@ const Login = () => {
           <br /> và câu chuyện trong cuộc sống mỗi ngày
         </span>
       </div>
-      <div className="ml-10 w-100 bg-white shadow-md border-gray-200 border rounded-md p-4 flex flex-col gap-y-3">
+      <div className="sm:ml-10 w-100 bg-white shadow-md border-gray-200 border rounded-md p-4 flex flex-col gap-y-3">
         <Form
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}

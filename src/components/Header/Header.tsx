@@ -6,15 +6,17 @@ import {
   type MenuProps,
 } from "antd";
 import useAuthStore from "../../store/useAuthStore";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   DownOutlined,
   LogoutOutlined,
   SettingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+import { ListIndentIncrease } from "lucide-react";
 
-const Header = () => {
+const Header = (props: any) => {
+  const { setTabOpen } = props;
   const { logoutUser } = useAuthStore();
   const navigate = useNavigate();
   const nameUser = localStorage.getItem("name");
@@ -64,20 +66,38 @@ const Header = () => {
   };
 
   return (
-    <div className="h-20 border-b border-gray-200 mx-8 flex items-center justify-between">
+    <div className="relative h-20 border-b border-gray-200 sm:mx-8 flex items-center justify-between">
+      {/* mobile */}
       <div className="flex items-center">
-        <img src="./icons8-yelp.svg" alt="logo_home" />
-        <span className="text-[#dd2c00] text-2xl font-bold">
-          Fyn<span className="text-black">x</span>
-        </span>
+        <div
+          className="block mx-2 mt-1 sm:hidden"
+          onClick={() => {
+            setTabOpen(true);
+            console.log("click");
+          }}
+        >
+          <ListIndentIncrease color="red" size={20} />
+        </div>
+        <Link to={"/"} className="flex items-center">
+          <img
+            src="./icons8-yelp.svg"
+            alt="logo_home"
+            className="hidden sm:block"
+          />
+          <span className="text-[#dd2c00] text-3xl sm:text-2xl font-bold">
+            Fyn<span className="text-black">x</span>
+          </span>
+        </Link>
       </div>
-      {/*  */}
-      <Dropdown {...sharedProps}>
-        <Space className="cursor-default flex items-center px-2 py-1 rounded-md bg-red-100">
-          <span className="ml-1">{nameUser}</span>
-          <DownOutlined className="text-[12px]" />
-        </Space>
-      </Dropdown>
+      {/* desktop, tablet */}
+      <div className="hidden sm:block">
+        <Dropdown {...sharedProps}>
+          <Space className="cursor-default flex items-center px-2 py-1 rounded-md bg-red-100">
+            <span className="ml-1">{nameUser}</span>
+            <DownOutlined className="text-[12px]" />
+          </Space>
+        </Dropdown>
+      </div>
     </div>
   );
 };

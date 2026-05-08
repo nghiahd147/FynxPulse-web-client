@@ -38,7 +38,7 @@ const Header = (props: any) => {
     {
       key: "1",
       icon: <UserOutlined />,
-      label: "Profile",
+      label: <Link to={"/profile"}>Profile</Link>,
     },
     {
       key: "2",

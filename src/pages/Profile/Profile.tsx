@@ -6,6 +6,7 @@ import {
   ChevronDown,
   ChevronUp,
   Earth,
+  Ellipsis,
   GraduationCap,
   Pencil,
   School,
@@ -119,6 +120,27 @@ const Profile = () => {
               <SuggestionCarousel />
             </div>
           )}
+
+          {/* Nav profile */}
+          <div className="flex items-center justify-between border-t-2 border-[#e2e5e9]">
+            <div className="flex gap-x-2 text-[#b1b2b4] font-bold">
+              <span className="hover:bg-[#e2e5e9] transition-all ease-in cursor-pointer px-2 py-4 my-2">
+                Tất cả
+              </span>
+              <span className="hover:bg-[#e2e5e9] transition-all ease-in cursor-pointer px-2 py-4 my-2">
+                Giới thiệu
+              </span>
+              <span className="hover:bg-[#e2e5e9] transition-all ease-in cursor-pointer px-2 py-4 my-2">
+                Ảnh
+              </span>
+              <span className="hover:bg-[#e2e5e9] transition-all ease-in cursor-pointer px-2 py-4 my-2">
+                Bạn bè
+              </span>
+            </div>
+            <div className="bg-[#e2e5e9] rounded-md cursor-pointer w-[50px] h-[38px] hover:bg-[#f5f6f7] flex transition-all ease-in">
+              <Ellipsis className="m-auto" />
+            </div>
+          </div>
         </div>
       </div>
     </div>

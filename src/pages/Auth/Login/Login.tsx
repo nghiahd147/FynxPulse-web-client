@@ -9,13 +9,12 @@ const Login = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values: { email: string; password: string }) => {
-    try {
-      await loginUser(values);
+    const result = await loginUser(values);
+    if (result.success) {
       message.success("Đăng nhập thành công");
       navigate("/");
-    } catch (error) {
-      console.log("error", error);
-      message.error("Sai tên đăng nhập hoặc mật khẩu");
+    } else {
+      message.error(result.message);
     }
   };
 

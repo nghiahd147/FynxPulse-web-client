@@ -137,7 +137,7 @@ const Profile = () => {
                 Bạn bè
               </span>
             </div>
-            <div className="bg-[#e2e5e9] rounded-md cursor-pointer w-[50px] h-[38px] hover:bg-[#f5f6f7] flex transition-all ease-in">
+            <div className="bg-[#e2e5e9] rounded-md cursor-pointer w-12.5 h-9.5 hover:bg-[#f5f6f7] flex transition-all ease-in">
               <Ellipsis className="m-auto" />
             </div>
           </div>

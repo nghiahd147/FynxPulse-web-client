@@ -22,15 +22,14 @@ const Header = (props: any) => {
   const nameUser = localStorage.getItem("name");
 
   const handleLogoutUser = async () => {
-    try {
-      await logoutUser({
-        refresh_token: localStorage.getItem("refresh_token") || "",
-      });
+    const result = await logoutUser({
+      refresh_token: localStorage.getItem("refresh_token") || "",
+    });
+    if (result.success) {
       navigate("/login");
       message.success("Đăng xuất thành công");
-    } catch (error) {
-      console.log("error", error);
-      message.error("Có lỗi xảy ra");
+    } else {
+      message.error(result.message);
     }
   };
 

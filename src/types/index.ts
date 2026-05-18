@@ -1,3 +1,7 @@
+export type ActionResult = {
+  success: boolean;
+  message?: string;
+};
 export interface Users {
   first_name: string;
   last_name: string;

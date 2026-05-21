@@ -1,4 +1,4 @@
-import type { Users } from "../types";
+import type { ParamsUser, Users } from "../types";
 
 export const HEADERS = {
   DEFAULT_HEADER: {
@@ -37,6 +37,22 @@ export const API_URLS = {
       method: "POST",
       headers: HEADERS.jsonHeader(),
       payload,
+    }),
+    getListUser: (params: ParamsUser) => ({
+      endPoint: "/api/user/",
+      method: "GET",
+      headers: HEADERS.jsonHeader(),
+      params,
+    }),
+    getMe: () => ({
+      endPoint: "/api/user/me",
+      method: "GET",
+      headers: HEADERS.jsonHeader(),
+    }),
+    getProfile: (username: string) => ({
+      endPoint: `/api/user/${username}`,
+      method: "GET",
+      headers: HEADERS.jsonHeader(),
     }),
   },
 };

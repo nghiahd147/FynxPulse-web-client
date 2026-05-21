@@ -1,15 +1,16 @@
 import type { Users } from "../../../types";
-import useAuthStore from "../../../store/useAuthStore";
+import useUserStore from "../../../store/useUserStore";
 import { DatePicker, Input, Form, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { onFinishFailed } from "../../../utils/message";
 import { convertYearMonthDay } from "../../../utils/date";
 import { notificationError } from "../../../config/notify";
 import Button from "../../../components/Button/Button";
+import { regexPassword } from "../../../utils/regex";
 
 const Register = () => {
   const [form] = Form.useForm();
-  const { registerUser } = useAuthStore();
+  const { registerUser, isLoading } = useUserStore();
   const navigate = useNavigate();
 
   const onFinish = async (values: Users) => {
@@ -79,8 +80,7 @@ const Register = () => {
             rules={[
               { required: true, message: "Vui lòng mật khẩu" },
               {
-                pattern:
-                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/,
+                pattern: regexPassword,
                 message:
                   "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ thường, chữ hoa, số và ký tự đặc biệt",
               },
@@ -132,7 +132,7 @@ const Register = () => {
               placeholder="Ngày sinh"
             />
           </Form.Item>
-          <Button message="Đăng ký" />
+          <Button loading={isLoading} message="Đăng ký" />
         </Form>
         <Link
           className="text-sm text-black text-center hover:underline"

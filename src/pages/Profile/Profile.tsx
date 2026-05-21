@@ -1,21 +1,42 @@
 import { Button } from "antd";
 import {
-  BriefcaseBusiness,
-  Building2,
   Camera,
   ChevronDown,
   ChevronUp,
-  Earth,
   Ellipsis,
-  GraduationCap,
   Pencil,
-  School,
+  User,
 } from "lucide-react";
 import SuggestionCarousel from "../../components/SuggestionCarousel/SuggestionCarousel";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useUserStore from "../../store/useUserStore";
+import { useParams } from "react-router-dom";
+import { usernameMe } from "../../utils/storages";
 
 const Profile = () => {
   const [suggestionCarousel, setSuggestionCarousel] = useState(true);
+  const { getMe, getProfile, profileUser, getListUser, data } = useUserStore();
+  const params = useParams();
+  const usernameCurrent = params.user_name;
+
+  useEffect(() => {
+    getListUser({ page: -1, page_size: -1 });
+  }, []);
+
+  console.log("usernameCurrent", usernameCurrent);
+  console.log("usernameMe", usernameMe);
+
+  console.log(localStorage.getItem("user_name"));
+
+  useEffect(() => {
+    if (usernameCurrent) {
+      getProfile(usernameCurrent as string);
+    } else {
+      getMe();
+    }
+  }, [usernameCurrent]);
+
+  // console.log(profileUser);
 
   return (
     <div className="w-full bg-bgPrimary">
@@ -26,7 +47,9 @@ const Profile = () => {
           <div className="w-full h-116.25 flex">
             <div className="flex-1 mx-auto relative overflow-y-hidden rounded-b-2xl">
               <img
-                src="https://scontent.fhan1-1.fna.fbcdn.net/v/t39.30808-6/467947973_1770615467034326_6280527338305888822_n.jpg?stp=dst-jpg_s960x960_tt6&_nc_cat=109&ccb=1-7&_nc_sid=2a1932&_nc_ohc=eqnr_dM05ywQ7kNvwHMxvoS&_nc_oc=AdrPMtlbsH4FJb-Iz06PN7PPHYxHicJ_fTgxjA8urRo6S9S86ogkCS_GXJxFFkue8uE&_nc_zt=23&_nc_ht=scontent.fhan1-1.fna&_nc_gid=OlHQuOCmvaHqaSi49oKO9w&_nc_ss=7b2a8&oh=00_Af5zo2ReHkNQJynbDxaEZ4-k3BQ9UcQT2twrh03CrUkoUw&oe=6A072D4C"
+                src={
+                  profileUser.profile_picture_url || "/nen-trang-mac-dinh.jpg"
+                }
                 alt="bg-user"
                 className="w-full h-full object-cover object-center cursor-pointer"
               />
@@ -38,10 +61,10 @@ const Profile = () => {
           </div>
 
           {/* Avatar */}
-          <div className="w-full h-57.5 flex mt-5">
+          <div className="w-full h-57.5 flex items-center mt-5">
             <div className="mx-7.5 relative">
               <img
-                src="https://scontent.fhan1-1.fna.fbcdn.net/v/t39.30808-1/509440663_1926819644747240_6894251273595969346_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=100&ccb=1-7&_nc_sid=1d2534&_nc_ohc=Tyd6WS-S4fkQ7kNvwEyRJ55&_nc_oc=AdrQui0cPaNRSKCa6WkdN-J2Y8r0y-6kllhtDWaThfkoT5vwVTXrm6uLgW34fKDjBWM&_nc_zt=24&_nc_ht=scontent.fhan1-1.fna&_nc_gid=OlHQuOCmvaHqaSi49oKO9w&_nc_ss=7b2a8&oh=00_Af7jB__KZRPk1NM7tXaOwG62DbY9qNNpiULv-gCWnicO5Q&oe=6A07296C"
+                src={profileUser.avatar || "/avatar-mac-dinh.jpg"}
                 alt="avatar-user"
                 className="w-50 h-50 rounded-[100%] cursor-pointer"
               />
@@ -49,11 +72,11 @@ const Profile = () => {
                 <Camera />
               </span>
             </div>
-            <div className="pt-3 pr-1 pb-1 pl-3 flex flex-col">
+            <div className="pt-3 pr-1 pb-1 pl-3 flex-1">
               {/* Avatar-top */}
-              <div className="flex justify-between">
+              <div className="flex items-center justify-between">
                 <div className="flex flex-col my-2">
-                  <span className="font-bold text-4xl">Quang Nghĩa</span>
+                  <span className="font-bold text-4xl">{`${profileUser.first_name} ${profileUser.last_name}`}</span>
                   <div className="flex items-center gap-x-2 font-bold">
                     <span>120 người theo dõi</span>
                     <span>•</span>
@@ -61,13 +84,23 @@ const Profile = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-x-2">
-                  <Button
-                    className="font-bold! bg-[#e2e5e9]! text-black! hover:bg-[#d6d6d6]! w-28.25"
-                    type="primary"
-                    icon={<Pencil className="w-4 h-4" />}
-                  >
-                    Chỉnh sửa
-                  </Button>
+                  {usernameMe == profileUser.user_name ? (
+                    <Button
+                      className="font-bold! bg-[#e2e5e9]! text-black! hover:bg-[#d6d6d6]! w-28.25"
+                      type="primary"
+                      icon={<Pencil className="w-4 h-4" />}
+                    >
+                      Chỉnh sửa
+                    </Button>
+                  ) : (
+                    <Button
+                      className="font-bold! bg-[#e2e5e9]! text-black! hover:bg-[#d6d6d6]! w-28.25"
+                      type="primary"
+                      icon={<User className="w-4 h-4" />}
+                    >
+                      Theo dõi
+                    </Button>
+                  )}
                   <div
                     className="w-12 h-9 cursor-pointer rounded-md bg-[#e2e5e9] flex items-center justify-center hover:bg-[#d6d6d6] transition-all"
                     onClick={() => setSuggestionCarousel(!suggestionCarousel)}
@@ -80,36 +113,12 @@ const Profile = () => {
                   </div>
                 </div>
               </div>
-              <div className="mb-2 font-bold">...</div>
-              {/* Avatar Info */}
-              <div className="flex gap-x-3 font-bold text-sm">
-                <div className="flex items-center justify-center">
-                  <BriefcaseBusiness className="mr-1" />
-                  <span>Nhà thiết kế web</span>
-                </div>
-                <div className="flex items-center justify-center">
-                  <Earth className="mr-1" />
-                  <span>Hải Dương</span>
-                </div>
-                <div className="flex items-center justify-center">
-                  <Building2 className="mr-1" />
-                  <span>Công ty CP Công nghệ thông tin An Việt</span>
-                </div>
-                <div className="flex items-center justify-center">
-                  <School className="mr-1" />
-                  <span>THCS Ngọc Châu</span>
-                </div>
-                <div className="flex items-center justify-center">
-                  <GraduationCap className="mr-1" />
-                  <span>Trường Đại học Sao Đỏ</span>
-                </div>
-              </div>
             </div>
           </div>
 
           {/* Other friends */}
           {suggestionCarousel === true && (
-            <div className="w-[95%] mx-auto flex flex-col gap-x-4 border border-[#e5e5e5] rounded-2xl px-4 py-3">
+            <div className="w-[95%] mx-auto flex flex-col gap-x-4 border border-[#e5e5e5] rounded-2xl px-4 py-3 mb-4">
               <div className="flex items-center justify-between font-medium mb-2">
                 <span className="text-md">Những người bạn có thể biết</span>
                 <span className="text-blue-700 hover:text-blue-500 transition-all ease-in cursor-pointer">
@@ -117,27 +126,31 @@ const Profile = () => {
                 </span>
               </div>
               {/* Slide Friends */}
-              <SuggestionCarousel />
+              <SuggestionCarousel
+                data={data}
+                usernameMe={usernameMe as string}
+                currentProfile={profileUser}
+              />
             </div>
           )}
 
           {/* Nav profile */}
-          <div className="flex items-center justify-between border-t-2 border-[#e2e5e9]">
-            <div className="flex gap-x-2 text-[#b1b2b4] font-bold">
-              <span className="hover:bg-[#e2e5e9] transition-all ease-in cursor-pointer px-2 py-4 my-2">
+          <div className="flex justify-between border-t-2 border-[#e2e5e9]">
+            <div className="flex items-center gap-x-2 text-[#b1b2b4] font-bold h-full py-2 mt-2">
+              <span className="hover:bg-[#e2e5e9] transition-all ease-in cursor-pointer px-2">
                 Tất cả
               </span>
-              <span className="hover:bg-[#e2e5e9] transition-all ease-in cursor-pointer px-2 py-4 my-2">
+              <span className="hover:bg-[#e2e5e9] transition-all ease-in cursor-pointer px-2">
                 Giới thiệu
               </span>
-              <span className="hover:bg-[#e2e5e9] transition-all ease-in cursor-pointer px-2 py-4 my-2">
+              <span className="hover:bg-[#e2e5e9] transition-all ease-in cursor-pointer px-2">
                 Ảnh
               </span>
-              <span className="hover:bg-[#e2e5e9] transition-all ease-in cursor-pointer px-2 py-4 my-2">
+              <span className="hover:bg-[#e2e5e9] transition-all ease-in cursor-pointer px-2">
                 Bạn bè
               </span>
             </div>
-            <div className="bg-[#e2e5e9] rounded-md cursor-pointer w-12.5 h-9.5 hover:bg-[#f5f6f7] flex transition-all ease-in">
+            <div className="bg-[#e2e5e9] rounded-md cursor-pointer w-12.5 h-9.5 hover:bg-[#f5f6f7] flex transition-all ease-in mt-2">
               <Ellipsis className="m-auto" />
             </div>
           </div>

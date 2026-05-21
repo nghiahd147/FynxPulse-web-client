@@ -1,12 +1,13 @@
 import { create } from "zustand";
 import { apiCall } from "../utils/axios";
 import { API_URLS } from "../config/api";
-import type { ActionResult, Users } from "../types";
+import type { ActionResult, profileUser, ParamsUser, Users } from "../types";
 
 interface AuthStore {
   isLoading: boolean;
   message: string;
   data: Users[];
+  profileUser: profileUser;
 
   registerUser: (payload: Users) => Promise<ActionResult>;
   loginUser: (payload: {
@@ -14,12 +15,16 @@ interface AuthStore {
     password: string;
   }) => Promise<ActionResult>;
   logoutUser: (payload: { refresh_token: string }) => Promise<ActionResult>;
+  getMe: () => void;
+  getListUser: (params: ParamsUser) => void;
+  getProfile: (user_name: string) => void;
 }
 
-const useAuthStore = create<AuthStore>((set) => ({
+const useUserStore = create<AuthStore>((set) => ({
   isLoading: false,
   message: "",
   data: [],
+  profileUser: {},
 
   registerUser: async (payload: Users) => {
     set({ isLoading: true });
@@ -43,6 +48,7 @@ const useAuthStore = create<AuthStore>((set) => ({
       localStorage.setItem("access_token", response?.result.accessToken);
       localStorage.setItem("refresh_token", response?.result.refreshToken);
       localStorage.setItem("name", response?.user.name);
+      localStorage.setItem("user_name", response?.user.user_name);
       set({ isLoading: false });
       return { success: true };
     } catch (error) {
@@ -63,6 +69,41 @@ const useAuthStore = create<AuthStore>((set) => ({
       return { success: false, message: String(error) };
     }
   },
+
+  getListUser: async (params) => {
+    set({ isLoading: true });
+    try {
+      const result = await apiCall(API_URLS.USERS.getListUser(params));
+      set({ isLoading: false, data: result?.data });
+    } catch (error) {
+      set({ isLoading: false });
+    }
+  },
+
+  getMe: async () => {
+    set({ isLoading: true });
+    try {
+      const result = await apiCall(API_URLS.USERS.getMe());
+      set({
+        isLoading: false,
+        profileUser: result?.result,
+      });
+    } catch (error) {
+      // console.log("Error Get Me", error)
+      set({ isLoading: false });
+    }
+  },
+
+  getProfile: async (username: string) => {
+    set({ isLoading: true });
+    try {
+      const result = await apiCall(API_URLS.USERS.getProfile(username));
+      set({ isLoading: false, profileUser: result?.result });
+    } catch (error) {
+      console.log("getProfile error: ", error);
+      set({ isLoading: false });
+    }
+  },
 }));
 
-export default useAuthStore;
+export default useUserStore;

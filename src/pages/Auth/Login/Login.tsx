@@ -1,11 +1,12 @@
 import { Divider, Input, Form, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import useAuthStore from "../../../store/useAuthStore";
+import useUserStore from "../../../store/useUserStore";
 import { onFinishFailed } from "../../../utils/message";
 import Button from "../../../components/Button/Button";
+import { regexPassword } from "../../../utils/regex";
 
 const Login = () => {
-  const { loginUser } = useAuthStore();
+  const { loginUser, isLoading } = useUserStore();
   const navigate = useNavigate();
 
   const onFinish = async (values: { email: string; password: string }) => {
@@ -51,8 +52,7 @@ const Login = () => {
             rules={[
               { required: true, message: "Vui lòng nhập mật khẩu!" },
               {
-                pattern:
-                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/,
+                pattern: regexPassword,
                 message:
                   "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ thường, chữ hoa, số và ký tự đặc biệt",
               },
@@ -64,7 +64,7 @@ const Login = () => {
               type="password"
             />
           </Form.Item>
-          <Button message="Đăng nhập" />
+          <Button loading={isLoading} message="Đăng nhập" />
         </Form>
         <Link
           className="text-sm text-red-600 text-center hover:underline"
@@ -80,7 +80,7 @@ const Login = () => {
           to={"/register"}
           className="w-50 mx-auto text-center bg-black py-3 rounded-md text-white font-bold cursor-pointer hover:bg-gray-800 transition-all duration-200 ease-in"
         >
-          Tạo tài khoản mới
+          "Tạo tài khoản mới"
         </Link>
       </div>
     </div>

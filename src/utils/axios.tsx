@@ -11,7 +11,7 @@ export const apiCall = async ({
   method: string;
   payload?: Record<string, any>;
   headers?: Record<string, any>;
-  params?: Record<string, unknown>;
+  params?: Record<string, any>;
 }) => {
   try {
     const result = await axios({

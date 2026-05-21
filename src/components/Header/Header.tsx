@@ -5,7 +5,7 @@ import {
   type DropdownProps,
   type MenuProps,
 } from "antd";
-import useAuthStore from "../../store/useAuthStore";
+import useUserStore from "../../store/useUserStore";
 import { Link, useNavigate } from "react-router-dom";
 import {
   DownOutlined,
@@ -14,12 +14,12 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { ListIndentIncrease } from "lucide-react";
+import { nameUser } from "../../utils/storages";
 
 const Header = (props: any) => {
   const { setTabOpen } = props;
-  const { logoutUser } = useAuthStore();
+  const { logoutUser } = useUserStore();
   const navigate = useNavigate();
-  const nameUser = localStorage.getItem("name");
 
   const handleLogoutUser = async () => {
     const result = await logoutUser({

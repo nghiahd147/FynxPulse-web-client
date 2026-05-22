@@ -2,11 +2,13 @@ import { create } from "zustand";
 import { apiCall } from "../utils/axios";
 import { API_URLS } from "../config/api";
 import type { ActionResult, profileUser, ParamsUser, Users } from "../types";
+import type { FollowUserPayload } from "../types/payloads";
 
 interface AuthStore {
   isLoading: boolean;
   message: string;
   data: Users[];
+  userFollowed: boolean | null;
   profileUser: profileUser;
 
   registerUser: (payload: Users) => Promise<ActionResult>;
@@ -18,12 +20,16 @@ interface AuthStore {
   getMe: () => void;
   getListUser: (params: ParamsUser) => void;
   getProfile: (user_name: string) => void;
+  followUser: (payload: FollowUserPayload) => Promise<ActionResult>;
+  getUserFollow: (follower_user_id: string) => void;
+  unfollowUser: (follower_user_id: string) => Promise<ActionResult>;
 }
 
 const useUserStore = create<AuthStore>((set) => ({
   isLoading: false,
   message: "",
   data: [],
+  userFollowed: null,
   profileUser: {},
 
   registerUser: async (payload: Users) => {
@@ -37,7 +43,7 @@ const useUserStore = create<AuthStore>((set) => ({
       return { success: true };
     } catch (error) {
       set({ isLoading: false });
-      return { success: false, message: String(error) };
+      return { success: false, message: error };
     }
   },
 
@@ -66,7 +72,7 @@ const useUserStore = create<AuthStore>((set) => ({
       return { success: true };
     } catch (error) {
       set({ isLoading: false });
-      return { success: false, message: String(error) };
+      return { success: false, message: error };
     }
   },
 
@@ -102,6 +108,45 @@ const useUserStore = create<AuthStore>((set) => ({
     } catch (error) {
       console.log("getProfile error: ", error);
       set({ isLoading: false });
+    }
+  },
+
+  getUserFollow: async (follower_user_id) => {
+    set({ isLoading: true });
+    try {
+      const result = await apiCall(
+        API_URLS.USERS.getUserFollow(follower_user_id),
+      );
+      set({ isLoading: false, userFollowed: result?.followed });
+    } catch (error) {
+      set({ isLoading: false });
+    }
+  },
+
+  followUser: async (payload) => {
+    set({ isLoading: true });
+    try {
+      const result = await apiCall(API_URLS.USERS.followUser(payload));
+      set({ isLoading: false });
+      return { success: true, message: result?.result?.message };
+    } catch (error) {
+      set({ isLoading: false });
+      return { success: false, message: error };
+    }
+  },
+
+  unfollowUser: async (follower_user_id) => {
+    set({ isLoading: true });
+    try {
+      const result = await apiCall(
+        API_URLS.USERS.unfollowUser(follower_user_id),
+      );
+      console.log("result", result);
+      set({ isLoading: false });
+      return { success: true, message: result?.message };
+    } catch (error) {
+      set({ isLoading: false });
+      return { success: false, message: error };
     }
   },
 }));

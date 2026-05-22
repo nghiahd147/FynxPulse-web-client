@@ -1,6 +1,6 @@
 export interface ActionResult {
   success: boolean;
-  message?: string;
+  message?: string | unknown;
 }
 
 export interface ParamsUser {

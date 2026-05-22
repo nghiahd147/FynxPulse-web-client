@@ -1,4 +1,5 @@
 import type { ParamsUser, Users } from "../types";
+import type { FollowUserPayload } from "../types/payloads";
 
 export const HEADERS = {
   DEFAULT_HEADER: {
@@ -52,6 +53,22 @@ export const API_URLS = {
     getProfile: (username: string) => ({
       endPoint: `/api/user/${username}`,
       method: "GET",
+      headers: HEADERS.jsonHeader(),
+    }),
+    getUserFollow: (follower_user_id: string) => ({
+      endPoint: `/api/user/get-user-follow/${follower_user_id}`,
+      method: "GET",
+      headers: HEADERS.jsonHeader(),
+    }),
+    followUser: (payload: FollowUserPayload) => ({
+      endPoint: "/api/user/follow",
+      method: "POST",
+      headers: HEADERS.jsonHeader(),
+      payload,
+    }),
+    unfollowUser: (follower_user_id: string) => ({
+      endPoint: `/api/user/unfollow/${follower_user_id}`,
+      method: "DELETE",
       headers: HEADERS.jsonHeader(),
     }),
   },

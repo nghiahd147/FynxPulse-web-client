@@ -1,4 +1,5 @@
 import axios from "axios";
+export const apiUrl = import.meta.env.VITE_API_URL;
 
 export const apiCall = async ({
   endPoint,
@@ -9,28 +10,25 @@ export const apiCall = async ({
 }: {
   endPoint: string;
   method: string;
-  payload?: Record<string, unknown> | string;
-  headers?: Record<string, string>;
-  params?: Record<string, unknown>;
+  payload?: Record<string, any>;
+  headers?: Record<string, any>;
+  params?: Record<string, any>;
 }) => {
   try {
     const result = await axios({
-      baseURL: "http://localhost:5000",
+      baseURL: apiUrl,
       method,
       url: endPoint,
       headers,
       data: payload,
       params,
     });
-    return {
-      response: result,
-      error: null,
-    };
-  } catch (e) {
-    const error = e instanceof axios.AxiosError ? e : null;
-    return {
-      response: null,
-      error: error?.request,
-    };
+
+    return result.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error.response?.data || error;
+    }
+    throw error;
   }
 };

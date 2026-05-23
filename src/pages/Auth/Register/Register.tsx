@@ -1,16 +1,32 @@
-import { DatePicker, Input, Form, type DatePickerProps } from "antd";
-import { Link } from "react-router-dom";
-import { onFinishFailed } from "../../../utils/validate";
+import type { Users } from "../../../types";
+import useUserStore from "../../../store/useUserStore";
+import { DatePicker, Input, Form, message } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { onFinishFailed } from "../../../utils/message";
+import { convertYearMonthDay } from "../../../utils/date";
+import { notificationError } from "../../../config/notify";
+import Button from "../../../components/Button/Button";
+import { regexPassword } from "../../../utils/regex";
 
 const Register = () => {
   const [form] = Form.useForm();
+  const { registerUser, isLoading } = useUserStore();
+  const navigate = useNavigate();
 
-  const onFinish = (values: string) => {
-    console.log(values);
-  };
+  const onFinish = async (values: Users) => {
+    const payload = {
+      ...values,
+      date_of_birth: convertYearMonthDay(values.date_of_birth),
+    };
 
-  const onChange: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
+    try {
+      await registerUser(payload);
+      message.success("Đăng ký thành công");
+      navigate("/");
+    } catch (error) {
+      notificationError("Có lỗi xảy ra, vui lòng thử lại sau");
+      console.log("error", error);
+    }
   };
 
   return (
@@ -29,13 +45,13 @@ const Register = () => {
         >
           <div className="flex items-center gap-x-2">
             <Form.Item
-              name="vertical"
+              name="first_name"
               rules={[{ required: true, message: "Vui lòng họ" }]}
             >
               <Input style={{ padding: "12px" }} placeholder="Họ" type="text" />
             </Form.Item>
             <Form.Item
-              name="vertical"
+              name="last_name"
               rules={[{ required: true, message: "Vui lòng tên" }]}
             >
               <Input
@@ -48,8 +64,8 @@ const Register = () => {
           <Form.Item
             name="email"
             rules={[
-              { required: true, message: "Vui lòng nhập email" },
-              { type: "email", message: "Email không hợp lệ" },
+              { required: true, message: "Vui lòng nhập email!" },
+              { type: "email", message: "Email không hợp lệ!" },
             ]}
           >
             <Input
@@ -60,10 +76,17 @@ const Register = () => {
             />
           </Form.Item>
           <Form.Item
-            name="vertical"
-            rules={[{ required: true, message: "Vui lòng mật khẩu" }]}
+            name="password"
+            rules={[
+              { required: true, message: "Vui lòng mật khẩu" },
+              {
+                pattern: regexPassword,
+                message:
+                  "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ thường, chữ hoa, số và ký tự đặc biệt",
+              },
+            ]}
           >
-            <Input
+            <Input.Password
               style={{ padding: "12px" }}
               placeholder="Mật khẩu"
               type="password"
@@ -72,9 +95,21 @@ const Register = () => {
           </Form.Item>
           <Form.Item
             name="confirm_password"
-            rules={[{ required: true, message: "Vui lòng nhập lại mật khẩu" }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập lại mật khẩu" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("password") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Mật khẩu nhập lại không khớp"),
+                  );
+                },
+              }),
+            ]}
           >
-            <Input
+            <Input.Password
               style={{ padding: "12px" }}
               placeholder="Nhập lại mật khẩu"
               type="password"
@@ -95,12 +130,9 @@ const Register = () => {
               style={{ padding: "12px" }}
               className="py-3 px-3 w-full"
               placeholder="Ngày sinh"
-              onChange={onChange}
             />
           </Form.Item>
-          <button className="w-full bg-red-600 py-3 text-white text-xl font-bold rounded-sm cursor-pointer hover:bg-red-500 transition-all duration-300 ease-in">
-            Đăng ký
-          </button>
+          <Button loading={isLoading} message="Đăng ký" />
         </Form>
         <Link
           className="text-sm text-black text-center hover:underline"

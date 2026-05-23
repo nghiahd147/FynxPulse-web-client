@@ -6,11 +6,15 @@ import NotFound from "../pages/NotFound/NotFound";
 import ForgotPass from "../pages/Auth/ForgotPass/ForgotPass";
 import Login from "../pages/Auth/Login/Login";
 import Register from "../pages/Auth/Register/Register";
+import Profile from "../pages/Profile/Profile";
 
 export const router = createBrowserRouter([
   {
     element: <MainLayout />,
-    children: [{ path: "/", element: <Home /> }],
+    children: [
+      { path: "/", element: <Home /> },
+      { path: "/profile/:user_name?", element: <Profile /> },
+    ],
   },
   {
     element: <AuthLayout />,

@@ -3,7 +3,7 @@ export default {
     extend: {
       colors: {
         primary: rgb(253, 200, 130),
-        bgPrimary: rgb(245, 242, 233),
+        bgPrimary: rgb(170, 171, 174),
       },
     },
   },

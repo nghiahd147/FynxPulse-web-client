@@ -4,6 +4,7 @@ import useUserStore from "../../../store/useUserStore";
 import { onFinishFailed } from "../../../utils/message";
 import Button from "../../../components/Button/Button";
 import { regexPassword } from "../../../utils/regex";
+import { notificationError } from "../../../config/notify";
 
 const Login = () => {
   const { loginUser, isLoading } = useUserStore();
@@ -15,7 +16,7 @@ const Login = () => {
       message.success("Đăng nhập thành công");
       navigate("/");
     } else {
-      message.error(result.message);
+      notificationError(result.message as string);
     }
   };
 

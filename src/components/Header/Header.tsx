@@ -15,6 +15,7 @@ import {
 } from "@ant-design/icons";
 import { ListIndentIncrease } from "lucide-react";
 import { nameUser } from "../../utils/storages";
+import { notificationError } from "../../config/notify";
 
 const Header = (props: any) => {
   const { setTabOpen } = props;
@@ -29,7 +30,7 @@ const Header = (props: any) => {
       navigate("/login");
       message.success("Đăng xuất thành công");
     } else {
-      message.error(result.message);
+      notificationError(result.message as string);
     }
   };
 

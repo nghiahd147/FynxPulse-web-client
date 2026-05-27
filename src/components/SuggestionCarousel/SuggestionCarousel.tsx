@@ -4,22 +4,21 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import type { profileUser, Users } from "../../types";
 import { Link } from "react-router-dom";
+import { usernameMe } from "../../utils/storages";
+import useUserStore from "../../store/useUserStore";
+import { useEffect } from "react";
 
-const SuggestionCarousel = ({
-  data,
-  usernameMe,
-  currentProfile,
-}: {
-  data: Users[];
-  currentProfile: profileUser;
-  usernameMe: string;
-}) => {
+const SuggestionCarousel = () => {
+  const { getListUser, profileUser, data } = useUserStore();
+
+  useEffect(() => {
+    getListUser({ page: -1, page_size: -1 });
+  }, []);
+
   const userData = data.filter((item) => {
     return (
-      item.user_name !== usernameMe &&
-      item.user_name !== currentProfile.user_name
+      item.user_name !== usernameMe && item.user_name !== profileUser.user_name
     );
   });
   return (

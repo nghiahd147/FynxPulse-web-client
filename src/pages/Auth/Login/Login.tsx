@@ -5,6 +5,7 @@ import { onFinishFailed } from "../../../utils/message";
 import Button from "../../../components/Button/Button";
 import { regexPassword } from "../../../utils/regex";
 import { notificationError } from "../../../config/notify";
+import urlOauthGoogle from "../../../utils/oauth";
 
 const Login = () => {
   const { loginUser, isLoading } = useUserStore();
@@ -79,9 +80,20 @@ const Login = () => {
         />
         <Link
           to={"/register"}
-          className="w-50 mx-auto text-center bg-black py-3 rounded-md text-white font-bold cursor-pointer hover:bg-gray-800 transition-all duration-200 ease-in"
+          className="w-full mx-auto text-center bg-black py-3 rounded-md text-white font-bold cursor-pointer hover:bg-gray-800 transition-all duration-200 ease-in"
         >
-          "Tạo tài khoản mới"
+          Tạo tài khoản mới
+        </Link>
+        <Link
+          to={urlOauthGoogle}
+          className="w-full flex justify-center items-center gap-x-2 mx-auto text-center bg-white border-2 border-[#E9E9E9] shadow-md py-3 rounded-md text-black font-bold cursor-pointer hover:bg-[#dedede] transition-all duration-200 ease-in"
+        >
+          <img
+            src="/google.png"
+            alt="icon-google"
+            className="w-5 h-5 ml-2 mt-0.5"
+          />
+          <span>Đăng nhập với Google</span>
         </Link>
       </div>
     </div>

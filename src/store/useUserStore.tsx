@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { apiCall } from "../utils/axios";
 import { API_URLS } from "../config/api";
-import type { ActionResult, profileUser, ParamsUser, Users } from "../types";
+import type { ActionResult, ProfileUser, ParamsUser, Users } from "../types";
 import type { FollowUserPayload } from "../types/payloads";
 
 interface AuthStore {
@@ -9,7 +9,7 @@ interface AuthStore {
   message: string;
   data: Users[];
   userFollowed: boolean | null;
-  profileUser: profileUser;
+  profileUser: ProfileUser;
 
   registerUser: (payload: Users) => Promise<ActionResult>;
   loginUser: (payload: {
@@ -106,7 +106,6 @@ const useUserStore = create<AuthStore>((set) => ({
       const result = await apiCall(API_URLS.USERS.getProfile(username));
       set({ isLoading: false, profileUser: result?.result });
     } catch (error) {
-      console.log("getProfile error: ", error);
       set({ isLoading: false });
     }
   },

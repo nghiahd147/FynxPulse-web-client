@@ -1,5 +1,9 @@
 import type { ParamsUser, Users } from "../types";
-import type { FollowUserPayload } from "../types/payloads";
+import type {
+  ChangePasswordPayload,
+  FollowUserPayload,
+  LoginPayload,
+} from "../types/payloads";
 
 export const HEADERS = {
   DEFAULT_HEADER: {
@@ -27,7 +31,7 @@ export const API_URLS = {
       headers: HEADERS.DEFAULT_HEADER,
       payload,
     }),
-    login: (payload: { email: string; password: string }) => ({
+    login: (payload: LoginPayload) => ({
       endPoint: "/api/user/login",
       method: "POST",
       headers: HEADERS.DEFAULT_HEADER,
@@ -36,6 +40,12 @@ export const API_URLS = {
     logout: (payload: { refresh_token: string }) => ({
       endPoint: "/api/user/logout",
       method: "POST",
+      headers: HEADERS.jsonHeader(),
+      payload,
+    }),
+    changePassword: (payload: ChangePasswordPayload) => ({
+      endPoint: "/api/user/change-password",
+      method: "PUT",
       headers: HEADERS.jsonHeader(),
       payload,
     }),
@@ -69,6 +79,11 @@ export const API_URLS = {
     unfollowUser: (follower_user_id: string) => ({
       endPoint: `/api/user/unfollow/${follower_user_id}`,
       method: "DELETE",
+      headers: HEADERS.jsonHeader(),
+    }),
+    getListFriends: () => ({
+      endPoint: "/api/user/list-friends",
+      method: "GET",
       headers: HEADERS.jsonHeader(),
     }),
   },

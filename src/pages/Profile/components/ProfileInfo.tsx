@@ -12,6 +12,8 @@ import type { ProfileUser } from "../../../types";
 import { EditOutlined } from "@ant-design/icons";
 import { useEffect } from "react";
 import dayjs from "dayjs";
+import { usernameMe } from "../../../utils/storages";
+import { REGEX_URL_WEBSITE, REGEX_USERNAME } from "../../../utils/regex";
 
 const ProfileInfo = ({
   profile,
@@ -23,7 +25,6 @@ const ProfileInfo = ({
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [form] = Form.useForm();
-
   const avatar = Form.useWatch("avatar", form);
   const profile_picture_url = Form.useWatch("profile_picture_url", form);
   useEffect(() => {
@@ -53,12 +54,14 @@ const ProfileInfo = ({
       <div className="w-[40%] flex flex-col py-2 px-3 rounded-md bg-white shadow-md">
         <div className="flex justify-between items-center">
           <h3 className="text-2xl font-bold">Thông tin cá nhân</h3>
-          <div
-            onClick={() => setOpen(true)}
-            className="hover:bg-bgPrimary transition-all ease-in cursor-pointer p-3 rounded-[100%]"
-          >
-            <Pencil className="w-5 h-5" />
-          </div>
+          {usernameMe === profile.user_name && (
+            <div
+              onClick={() => setOpen(true)}
+              className="hover:bg-bgPrimary transition-all ease-in cursor-pointer p-3 rounded-[100%]"
+            >
+              <Pencil className="w-5 h-5" />
+            </div>
+          )}
         </div>
         <div className="flex flex-col gap-y-4 mt-3 ml-3">
           {profile.location && (
@@ -190,7 +193,14 @@ const ProfileInfo = ({
             layout="vertical"
             label="Username"
             name="user_name"
-            rules={[{ required: true, message: "Vui lòng điền username!" }]}
+            rules={[
+              { required: true, message: "Vui lòng điền username!" },
+              {
+                pattern: REGEX_USERNAME,
+                message:
+                  "Username phải có ít nhất 5 ký tự, chỉ gồm chữ cái, số và dấu chấm",
+              },
+            ]}
           >
             <Input placeholder="Nhập username" />
           </Form.Item>
@@ -200,7 +210,17 @@ const ProfileInfo = ({
           <Form.Item layout="vertical" label="Ngày sinh" name="date_of_birth">
             <DatePicker format="DD-MM-YYYY" />
           </Form.Item>
-          <Form.Item layout="vertical" label="Website" name="website">
+          <Form.Item
+            layout="vertical"
+            label="Website"
+            name="website"
+            rules={[
+              {
+                pattern: REGEX_URL_WEBSITE,
+                message: "URL không hợp lệ! Vui lòng nhập URL hợp lệ.",
+              },
+            ]}
+          >
             <Input placeholder="Nhập địa chỉ website" />
           </Form.Item>
           <Form.Item layout="vertical" label="Bio" name="bio">

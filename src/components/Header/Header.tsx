@@ -1,7 +1,9 @@
 import {
   Dropdown,
-  message,
+  Input,
+  Modal,
   Space,
+  Form,
   type DropdownProps,
   type MenuProps,
 } from "antd";
@@ -9,26 +11,32 @@ import useUserStore from "../../store/useUserStore";
 import { Link, useNavigate } from "react-router-dom";
 import {
   DownOutlined,
+  LockOutlined,
   LogoutOutlined,
   SettingOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { ListIndentIncrease } from "lucide-react";
 import { nameUser } from "../../utils/storages";
-import { notificationError } from "../../config/notify";
+import { notificationError, notificationSuccess } from "../../config/notify";
+import { useState } from "react";
+import type { ChangePasswordPayload } from "../../types/payloads";
+import { REGEX_PASSWORD } from "../../utils/regex";
 
 const Header = (props: any) => {
   const { setTabOpen } = props;
-  const { logoutUser } = useUserStore();
+  const { logoutUser, changePassword } = useUserStore();
   const navigate = useNavigate();
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+  const [form] = Form.useForm();
 
   const handleLogoutUser = async () => {
     const result = await logoutUser({
       refresh_token: localStorage.getItem("refresh_token") || "",
     });
     if (result.success) {
-      navigate("/login");
-      message.success("Đăng xuất thành công");
+      notificationSuccess(result.message as string);
+      navigate("/login", { replace: true });
     } else {
       notificationError(result.message as string);
     }
@@ -42,6 +50,13 @@ const Header = (props: any) => {
     },
     {
       key: "2",
+      icon: <LockOutlined />,
+      label: (
+        <span onClick={() => setChangePasswordOpen(true)}>Change Password</span>
+      ),
+    },
+    {
+      key: "3",
       label: "Settings",
       icon: <SettingOutlined />,
     },
@@ -63,6 +78,24 @@ const Header = (props: any) => {
   const sharedProps: DropdownProps = {
     menu: { items },
     placement: "bottomLeft",
+  };
+
+  const handleCancel = () => {
+    setChangePasswordOpen(false);
+  };
+
+  const onFinish = async (values: ChangePasswordPayload) => {
+    const result = await changePassword(values);
+    if (result.success) {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("name");
+      localStorage.removeItem("user_name");
+      notificationSuccess(result.message as string);
+      navigate("/login", { replace: true });
+    } else {
+      notificationError(result.message as string);
+    }
   };
 
   return (
@@ -98,6 +131,66 @@ const Header = (props: any) => {
           </Space>
         </Dropdown>
       </div>
+      <Modal
+        title="Đổi mật khẩu"
+        open={changePasswordOpen}
+        onOk={() => form.submit()}
+        // confirmLoading={confirmLoading}
+        onCancel={handleCancel}
+      >
+        <Form form={form} layout="vertical" onFinish={onFinish}>
+          <Form.Item
+            label="Mật khẩu cũ"
+            name="old_password"
+            rules={[{ required: true, message: "Vui lòng nhập mật khẩu cũ!" }]}
+          >
+            <Input.Password placeholder="Nhập mật khẩu cũ" />
+          </Form.Item>
+          <Form.Item
+            label="Mật khẩu mới"
+            name="password"
+            rules={[
+              { required: true, message: "Vui lòng nhập mật khẩu mới!" },
+              {
+                pattern: REGEX_PASSWORD,
+                message:
+                  "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ thường, chữ hoa, số và ký tự đặc biệt",
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("old_password") !== value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Mật khẩu mới giống mật khẩu cũ!"),
+                  );
+                },
+              }),
+            ]}
+          >
+            <Input.Password placeholder="Nhập mật khẩu mới" />
+          </Form.Item>
+          <Form.Item
+            label="Xác nhận mật khẩu mới"
+            name="confirm_password"
+            rules={[
+              { required: true, message: "Vui lòng xác nhận mật khẩu mới!" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("password") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Mật khẩu xác nhận không khớp!"),
+                  );
+                },
+              }),
+            ]}
+          >
+            <Input.Password placeholder="Xác nhận mật khẩu mới" />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };

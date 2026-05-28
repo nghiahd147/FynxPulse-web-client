@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Header from "../components/Header/Header";
-import { ToastContainer } from "react-toastify";
 import Footer from "../components/Footer/Footer";
 
 const MainLayout = () => {
@@ -18,7 +17,6 @@ const MainLayout = () => {
 
   return (
     <div className="flex sm:block">
-      <ToastContainer />
       {isTabOpen && (
         <div
           className={`relative z-10 h-screen w-[90%] bg-red-100 border-r-2 sm:hidden border-gray-100`}

@@ -7,13 +7,23 @@ import ForgotPass from "../pages/Auth/ForgotPass/ForgotPass";
 import Login from "../pages/Auth/Login/Login";
 import Register from "../pages/Auth/Register/Register";
 import Profile from "../pages/Profile/Profile";
+import Friends from "../pages/Friends/Friends";
 
 export const router = createBrowserRouter([
   {
     element: <MainLayout />,
     children: [
       { path: "/", element: <Home /> },
-      { path: "/profile/:user_name?", element: <Profile /> },
+      {
+        path: "/profile/:user_name?",
+        element: <Profile />,
+        children: [
+          {
+            path: "friends",
+            element: <Friends />,
+          },
+        ],
+      },
     ],
   },
   {

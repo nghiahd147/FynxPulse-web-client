@@ -1,12 +1,12 @@
 import type { Users } from "../../../types";
 import useUserStore from "../../../store/useUserStore";
-import { DatePicker, Input, Form, message } from "antd";
+import { DatePicker, Input, Form } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { onFinishFailed } from "../../../utils/message";
 import { convertYearMonthDay } from "../../../utils/date";
-import { notificationError } from "../../../config/notify";
+import { notificationError, notificationSuccess } from "../../../config/notify";
 import Button from "../../../components/Button/Button";
-import { regexPassword } from "../../../utils/regex";
+import { REGEX_PASSWORD } from "../../../utils/regex";
 
 const Register = () => {
   const [form] = Form.useForm();
@@ -19,13 +19,12 @@ const Register = () => {
       date_of_birth: convertYearMonthDay(values.date_of_birth),
     };
 
-    try {
-      await registerUser(payload);
-      message.success("Đăng ký thành công");
-      navigate("/");
-    } catch (error) {
-      notificationError("Có lỗi xảy ra, vui lòng thử lại sau");
-      console.log("error", error);
+    const result = await registerUser(payload);
+    if (result.success) {
+      notificationSuccess(result.message as string);
+      navigate("/", { replace: true });
+    } else {
+      notificationError(result.message as string);
     }
   };
 
@@ -80,7 +79,7 @@ const Register = () => {
             rules={[
               { required: true, message: "Vui lòng mật khẩu" },
               {
-                pattern: regexPassword,
+                pattern: REGEX_PASSWORD,
                 message:
                   "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ thường, chữ hoa, số và ký tự đặc biệt",
               },

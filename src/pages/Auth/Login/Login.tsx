@@ -1,21 +1,22 @@
-import { Divider, Input, Form, message } from "antd";
+import { Divider, Input, Form } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import useUserStore from "../../../store/useUserStore";
 import { onFinishFailed } from "../../../utils/message";
 import Button from "../../../components/Button/Button";
-import { regexPassword } from "../../../utils/regex";
-import { notificationError } from "../../../config/notify";
+import { REGEX_PASSWORD } from "../../../utils/regex";
+import { notificationError, notificationSuccess } from "../../../config/notify";
 import urlOauthGoogle from "../../../utils/oauth";
+import type { LoginPayload } from "../../../types/payloads";
 
 const Login = () => {
   const { loginUser, isLoading } = useUserStore();
   const navigate = useNavigate();
 
-  const onFinish = async (values: { email: string; password: string }) => {
+  const onFinish = async (values: LoginPayload) => {
     const result = await loginUser(values);
     if (result.success) {
-      message.success("Đăng nhập thành công");
-      navigate("/");
+      notificationSuccess(result.message as string);
+      navigate("/", { replace: true });
     } else {
       notificationError(result.message as string);
     }
@@ -54,7 +55,7 @@ const Login = () => {
             rules={[
               { required: true, message: "Vui lòng nhập mật khẩu!" },
               {
-                pattern: regexPassword,
+                pattern: REGEX_PASSWORD,
                 message:
                   "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ thường, chữ hoa, số và ký tự đặc biệt",
               },

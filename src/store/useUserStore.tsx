@@ -1,34 +1,41 @@
 import { create } from "zustand";
 import { apiCall } from "../utils/axios";
 import { API_URLS } from "../config/api";
-import type { ActionResult, profileUser, ParamsUser, Users } from "../types";
-import type { FollowUserPayload } from "../types/payloads";
+import type { ActionResult, ProfileUser, ParamsUser, Users } from "../types";
+import type {
+  ChangePasswordPayload,
+  FollowUserPayload,
+  LoginPayload,
+  LogoutPayload,
+} from "../types/payloads";
+import type { ApiError } from "../types/errors";
 
 interface AuthStore {
   isLoading: boolean;
   message: string;
   data: Users[];
   userFollowed: boolean | null;
-  profileUser: profileUser;
+  profileUser: ProfileUser;
+  listFriends: Users[];
 
-  registerUser: (payload: Users) => Promise<ActionResult>;
-  loginUser: (payload: {
-    email: string;
-    password: string;
-  }) => Promise<ActionResult>;
-  logoutUser: (payload: { refresh_token: string }) => Promise<ActionResult>;
   getMe: () => void;
   getListUser: (params: ParamsUser) => void;
-  getProfile: (user_name: string) => void;
-  followUser: (payload: FollowUserPayload) => Promise<ActionResult>;
+  getProfile: (username: string) => void;
   getUserFollow: (follower_user_id: string) => void;
   unfollowUser: (follower_user_id: string) => Promise<ActionResult>;
+  registerUser: (payload: Users) => Promise<ActionResult>;
+  loginUser: (payload: LoginPayload) => Promise<ActionResult>;
+  logoutUser: (payload: LogoutPayload) => Promise<ActionResult>;
+  followUser: (payload: FollowUserPayload) => Promise<ActionResult>;
+  changePassword: (payload: ChangePasswordPayload) => Promise<ActionResult>;
+  getListFriends: () => void;
 }
 
 const useUserStore = create<AuthStore>((set) => ({
   isLoading: false,
   message: "",
   data: [],
+  listFriends: [],
   userFollowed: null,
   profileUser: {},
 
@@ -40,7 +47,7 @@ const useUserStore = create<AuthStore>((set) => ({
       localStorage.setItem("refresh_token", response?.result.refreshToken);
       localStorage.setItem("name", response?.user.name);
       set({ isLoading: false });
-      return { success: true };
+      return { success: true, message: response?.message };
     } catch (error) {
       set({ isLoading: false });
       return { success: false, message: error };
@@ -56,21 +63,38 @@ const useUserStore = create<AuthStore>((set) => ({
       localStorage.setItem("name", response?.user.name);
       localStorage.setItem("user_name", response?.user.user_name);
       set({ isLoading: false });
-      return { success: true };
+      return { success: true, message: response?.message };
     } catch (error) {
+      const apiError = error as ApiError;
       set({ isLoading: false });
-      return { success: false, message: String(error) };
+      return {
+        success: false,
+        message: apiError.message,
+      };
     }
   },
 
   logoutUser: async (payload) => {
     set({ isLoading: true });
     try {
-      await apiCall(API_URLS.USERS.logout(payload));
+      const response = await apiCall(API_URLS.USERS.logout(payload));
       localStorage.removeItem("access_token");
       set({ isLoading: false });
-      return { success: true };
+      return { success: true, message: response?.message };
     } catch (error) {
+      set({ isLoading: false });
+      return { success: false, message: error };
+    }
+  },
+
+  changePassword: async (payload) => {
+    set({ isLoading: true });
+    try {
+      const result = await apiCall(API_URLS.USERS.changePassword(payload));
+      set({ isLoading: false });
+      return { success: true, message: result?.message };
+    } catch (error) {
+      console.log("Error Change Password", error);
       set({ isLoading: false });
       return { success: false, message: error };
     }
@@ -106,7 +130,6 @@ const useUserStore = create<AuthStore>((set) => ({
       const result = await apiCall(API_URLS.USERS.getProfile(username));
       set({ isLoading: false, profileUser: result?.result });
     } catch (error) {
-      console.log("getProfile error: ", error);
       set({ isLoading: false });
     }
   },
@@ -147,6 +170,16 @@ const useUserStore = create<AuthStore>((set) => ({
     } catch (error) {
       set({ isLoading: false });
       return { success: false, message: error };
+    }
+  },
+
+  getListFriends: async () => {
+    set({ isLoading: true });
+    try {
+      const result = await apiCall(API_URLS.USERS.getListFriends());
+      set({ isLoading: false, listFriends: result?.friends || [] });
+    } catch (error) {
+      set({ isLoading: false });
     }
   },
 }));

@@ -1,24 +1,22 @@
 import { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Header from "../components/Header/Header";
-import { ToastContainer } from "react-toastify";
+import Footer from "../components/Footer/Footer";
 
 const MainLayout = () => {
-  const naivgate = useNavigate();
+  const navigate = useNavigate();
   const isAuth = localStorage.getItem("access_token");
   const [isTabOpen, setTabOpen] = useState(false);
-
-  console.log("isTabOpen", isTabOpen);
+  const location = useLocation();
 
   useEffect(() => {
     if (!isAuth) {
-      naivgate("/login");
+      navigate("/login");
     }
   }, [isAuth]);
 
   return (
     <div className="flex sm:block">
-      <ToastContainer />
       {isTabOpen && (
         <div
           className={`relative z-10 h-screen w-[90%] bg-red-100 border-r-2 sm:hidden border-gray-100`}
@@ -38,7 +36,7 @@ const MainLayout = () => {
         <main>
           <Outlet />
         </main>
-        <footer>Footer</footer>
+        {location.pathname !== "/profile" && <Footer />}
       </div>
     </div>
   );

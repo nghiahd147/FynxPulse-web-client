@@ -4,27 +4,20 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import type { profileUser, Users } from "../../types";
 import { Link } from "react-router-dom";
+import useUserStore from "../../store/useUserStore";
+import { useEffect } from "react";
 
-const SuggestionCarousel = ({
-  data,
-  usernameMe,
-  currentProfile,
-}: {
-  data: Users[];
-  currentProfile: profileUser;
-  usernameMe: string;
-}) => {
-  const userData = data.filter((item) => {
-    return (
-      item.user_name !== usernameMe &&
-      item.user_name !== currentProfile.user_name
-    );
-  });
+const SuggestionCarousel = () => {
+  const { getListFriends, listFriends, profileUser } = useUserStore();
+
+  useEffect(() => {
+    getListFriends();
+  }, [profileUser._id]);
+
   return (
     <div className="flex items-center gap-x-2 overflow-x-hidden relative">
-      {userData.length > 7 && (
+      {listFriends.length > 7 && (
         <>
           <button className="custom-prev custom-nav-btn">
             <ChevronLeft size={20} />
@@ -44,7 +37,7 @@ const SuggestionCarousel = ({
         className="ml-0!"
         spaceBetween={14}
       >
-        {userData.map((item, index) => (
+        {listFriends.map((item, index) => (
           <SwiperSlide key={index} style={{ width: "172px" }}>
             <div
               key={index}

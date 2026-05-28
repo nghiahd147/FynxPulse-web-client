@@ -1,12 +1,8 @@
 import { Button } from "antd";
 import {
-  Cake,
-  Camera,
   ChevronDown,
   ChevronUp,
   Ellipsis,
-  House,
-  MapPinHouse,
   Pencil,
   User,
   UserCheck,
@@ -14,9 +10,10 @@ import {
 import SuggestionCarousel from "../../components/SuggestionCarousel/SuggestionCarousel";
 import { useEffect, useState } from "react";
 import useUserStore from "../../store/useUserStore";
-import { useParams } from "react-router-dom";
+import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { usernameMe } from "../../utils/storages";
 import { notificationError, notificationSuccess } from "../../config/notify";
+import ProfileInfo from "./components/ProfileInfo";
 
 const Profile = () => {
   const [suggestionCarousel, setSuggestionCarousel] = useState(true);
@@ -24,9 +21,7 @@ const Profile = () => {
     getMe,
     getProfile,
     profileUser,
-    getListUser,
     followUser,
-    data,
     getUserFollow,
     userFollowed,
     unfollowUser,
@@ -34,6 +29,8 @@ const Profile = () => {
   const params = useParams();
   const usernameCurrent = params.user_name;
   const userIdCurrent = profileUser._id;
+  const [open, setOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     if (usernameCurrent) {
@@ -42,10 +39,6 @@ const Profile = () => {
       getMe();
     }
   }, [usernameCurrent]);
-
-  useEffect(() => {
-    getListUser({ page: -1, page_size: -1 });
-  }, []);
 
   useEffect(() => {
     if (userIdCurrent) {
@@ -75,7 +68,7 @@ const Profile = () => {
     }
   };
 
-  // console.log("userFollowed", userFollowed);
+  console.log("currentUserId", userIdCurrent);
 
   return (
     <div className="w-full bg-bgPrimary">
@@ -90,12 +83,8 @@ const Profile = () => {
                   profileUser.profile_picture_url || "/nen-trang-mac-dinh.jpg"
                 }
                 alt="bg-user"
-                className="w-full h-full object-cover object-center cursor-pointer"
+                className="w-full h-full object-cover object-center"
               />
-              <span className="bg-[#ffffff] hover:bg-bgPrimary transition-all absolute bottom-0 right-0 mr-10 mb-4 rounded-2xl flex items-center justify-center cursor-pointer gap-x-2 py-3 w-52">
-                <Camera />
-                Chỉnh sửa ảnh bìa
-              </span>
             </div>
           </div>
 
@@ -105,17 +94,15 @@ const Profile = () => {
               <img
                 src={profileUser.avatar || "/avatar-mac-dinh.jpg"}
                 alt="avatar-user"
-                className="w-50 h-50 rounded-[100%] cursor-pointer"
+                className="w-50 h-50 rounded-[100%]"
               />
-              <span className="bg-[#e2e5e9] hover:bg-bgPrimary transition-all ease-in absolute bottom-9 right-3 rounded-[100%] flex items-center justify-center cursor-pointer gap-x-2 p-3">
-                <Camera />
-              </span>
             </div>
             <div className="pt-3 pr-1 pb-1 pl-3 flex-1">
               {/* Avatar-top */}
               <div className="flex items-center justify-between">
                 <div className="flex flex-col my-2">
                   <span className="font-bold text-4xl">{`${profileUser.first_name} ${profileUser.last_name}`}</span>
+                  <span>{profileUser.bio}</span>
                   <div className="flex items-center gap-x-2 font-bold">
                     <span>120 người theo dõi</span>
                     <span>•</span>
@@ -128,6 +115,7 @@ const Profile = () => {
                       className="font-bold! bg-[#e2e5e9]! text-black! hover:bg-[#d6d6d6]! w-28.25"
                       type="primary"
                       icon={<Pencil className="w-4 h-4" />}
+                      onClick={() => setOpen(true)}
                     >
                       Chỉnh sửa
                     </Button>
@@ -175,65 +163,56 @@ const Profile = () => {
                 </span>
               </div>
               {/* Slide Friends */}
-              <SuggestionCarousel
-                data={data}
-                usernameMe={usernameMe as string}
-                currentProfile={profileUser}
-              />
+              <SuggestionCarousel />
             </div>
           )}
 
           {/* Nav profile */}
           <div className="h-full flex items-center justify-between border-t-2 border-[#e2e5e9]">
             <div className="h-full flex items-center gap-x-2 text-[#b1b2b4] font-bold mt-1">
-              <span
-                className={`hover:bg-[#e2e5e9] transition-all ease-in cursor-pointer px-2 block border-b-2 border-blue-400 text-blue-400`}
+              <Link
+                to={"/profile"}
+                className={`cursor-pointer px-2 block ${location.pathname === "/profile" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
               >
                 Tất cả
-              </span>
-              <span className="hover:bg-[#e2e5e9] transition-all ease-in cursor-pointer px-2 block h-full">
-                Giới thiệu
-              </span>
-              <span className="hover:bg-[#e2e5e9] transition-all ease-in cursor-pointer px-2 block h-full">
+              </Link>
+              <Link
+                to={"/profile/image"}
+                className={`cursor-pointer px-2 block ${location.pathname === "/profile/image" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+              >
                 Ảnh
-              </span>
-              <span className="hover:bg-[#e2e5e9] transition-all ease-in cursor-pointer px-2 block h-full">
+              </Link>
+              <Link
+                to={"/profile/friends"}
+                className={`cursor-pointer px-2 block ${location.pathname === "/profile/friends" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+              >
                 Bạn bè
-              </span>
+              </Link>
+              <Link
+                to={"/profile/post"}
+                className={`cursor-pointer px-2 block ${location.pathname === "/profile/post" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+              >
+                Bài viết quan tâm
+              </Link>
             </div>
-            <div className="bg-[#e2e5e9] rounded-md cursor-pointer w-12.5 h-9.5 hover:bg-[#f5f6f7] flex transition-all ease-in mt-1">
+            <div className="bg-[#e2e5e9] rounded-md cursor-pointer w-12.5 h-9.5 hover:bg-[#f5f6f7] flex transition-all ease-in my-3">
               <Ellipsis className="m-auto" />
             </div>
           </div>
         </div>
       </div>
       {/* Body Profile */}
-      <div className="w-313 flex justify-between gap-x-5 mx-auto my-2">
-        {/* Info */}
-        <div className="w-[40%] flex flex-col py-2 px-3 rounded-md bg-white shadow-md">
-          <div className="flex justify-between items-center">
-            <h3 className="text-2xl font-bold">Thông tin cá nhân</h3>
-            <div className="hover:bg-bgPrimary transition-all ease-in cursor-pointer p-3 rounded-[100%]">
-              <Pencil className="w-5 h-5" />
-            </div>
-          </div>
-          <div className="flex flex-col gap-y-4 mt-3 ml-3">
-            <div className="flex items-center gap-x-2">
-              <MapPinHouse />
-              <span>Quang Nghĩa</span>
-            </div>
-            <div className="flex items-center gap-x-2">
-              <House />
-              <span>Quang Nghĩa</span>
-            </div>
-            <div className="flex items-center gap-x-2">
-              <Cake />
-              <span>Quang Nghĩa</span>
-            </div>
-          </div>
-        </div>
-        {/* Posts */}
-        <div className="w-[60%] bg-white p-3 rounded-md shadow-md">2</div>
+      <div className="w-313 flex justify-between gap-x-5 mx-auto my-4">
+        {location.pathname === "/profile" ? (
+          <>
+            {/* Info */}
+            <ProfileInfo profile={profileUser} open={open} setOpen={setOpen} />
+            {/* Posts */}
+            <div className="w-[60%] bg-white p-3 rounded-md shadow-md">2</div>
+          </>
+        ) : (
+          <Outlet />
+        )}
       </div>
     </div>
   );

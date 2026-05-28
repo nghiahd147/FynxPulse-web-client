@@ -20,7 +20,7 @@ export interface Users {
   date_of_birth: string;
 }
 
-export interface profileUser {
+export interface ProfileUser {
   _id?: string;
   first_name?: string;
   last_name?: string;

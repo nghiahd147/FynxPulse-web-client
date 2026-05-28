@@ -3,7 +3,7 @@ import { Bounce, toast } from "react-toastify";
 export const notificationSuccess = (message: string) => {
   toast.success(message, {
     position: "top-right",
-    autoClose: 5000,
+    autoClose: 2000,
     theme: "light",
     transition: Bounce,
   });
@@ -12,7 +12,7 @@ export const notificationSuccess = (message: string) => {
 export const notificationWarn = (message: string) => {
   toast.warn(message, {
     position: "top-right",
-    autoClose: 5000,
+    autoClose: 2000,
     theme: "light",
     transition: Bounce,
   });

@@ -55,6 +55,11 @@ export const API_URLS = {
       headers: HEADERS.jsonHeader(),
       params,
     }),
+    getMyFriends: () => ({
+      endPoint: "/api/user/my-friends",
+      method: "GET",
+      headers: HEADERS.jsonHeader(),
+    }),
     getMe: () => ({
       endPoint: "/api/user/me",
       method: "GET",

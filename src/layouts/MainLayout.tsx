@@ -36,7 +36,7 @@ const MainLayout = () => {
         <main>
           <Outlet />
         </main>
-        {location.pathname !== "/profile" && <Footer />}
+        {location.pathname.split("/")[1] !== "profile" && <Footer />}
       </div>
     </div>
   );

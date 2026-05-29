@@ -7,7 +7,7 @@ import ForgotPass from "../pages/Auth/ForgotPass/ForgotPass";
 import Login from "../pages/Auth/Login/Login";
 import Register from "../pages/Auth/Register/Register";
 import Profile from "../pages/Profile/Profile";
-import Friends from "../pages/Friends/Friends";
+import Friends from "../pages/Profile/components/Friends";
 
 export const router = createBrowserRouter([
   {

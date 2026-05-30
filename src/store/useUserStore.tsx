@@ -30,7 +30,7 @@ interface AuthStore {
   followUser: (payload: FollowUserPayload) => Promise<ActionResult>;
   changePassword: (payload: ChangePasswordPayload) => Promise<ActionResult>;
   getListFriends: () => void;
-  getMyFriends: () => void;
+  getMyFriends: (user_id: string) => void;
 }
 
 const useUserStore = create<AuthStore>((set) => ({
@@ -176,6 +176,7 @@ const useUserStore = create<AuthStore>((set) => ({
     }
   },
 
+  // Get users not in friend list
   getListFriends: async () => {
     set({ isLoading: true });
     try {
@@ -186,10 +187,11 @@ const useUserStore = create<AuthStore>((set) => ({
     }
   },
 
-  getMyFriends: async () => {
+  // Get user friend list
+  getMyFriends: async (user_id: string) => {
     set({ isLoading: true });
     try {
-      const result = await apiCall(API_URLS.USERS.getMyFriends());
+      const result = await apiCall(API_URLS.USERS.getMyFriends(user_id));
       set({ isLoading: false, myFriends: result?.friends || [] });
     } catch (erorr) {
       set({ isLoading: false });

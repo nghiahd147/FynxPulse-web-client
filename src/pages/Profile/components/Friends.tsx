@@ -6,9 +6,11 @@ import { useEffect } from "react";
 
 const Friends = () => {
   const { getMyFriends, myFriends, profileUser } = useUserStore();
+
   useEffect(() => {
-    getMyFriends();
+    getMyFriends(profileUser._id as string);
   }, [profileUser.user_name]);
+
   return (
     <div className="w-full h-full flex flex-col shadow-md bg-white">
       <div className="w-full flex justify-between items-center p-3">

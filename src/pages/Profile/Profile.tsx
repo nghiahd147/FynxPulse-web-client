@@ -32,6 +32,7 @@ const Profile = () => {
   const userIdCurrent = profileUser._id;
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const locationCurrentAr = location.pathname.split("/");
 
   useEffect(() => {
     if (usernameCurrent) {
@@ -70,8 +71,6 @@ const Profile = () => {
       notificationError(result.message as string);
     }
   };
-
-  console.log("router", location.pathname.split("/"));
 
   return (
     <div className="w-full bg-bgPrimary">
@@ -174,8 +173,8 @@ const Profile = () => {
           <div className="h-full flex items-center justify-between border-t-2 border-[#e2e5e9]">
             <div className="h-full flex items-center gap-x-2 text-[#b1b2b4] font-bold mt-1">
               <Link
-                to={"/profile"}
-                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === "/profile" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                to={`/profile/${profileUser?.user_name}`}
+                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${locationCurrentAr[1] === "profile" && locationCurrentAr.length == 3 && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
               >
                 Tất cả
               </Link>
@@ -206,7 +205,7 @@ const Profile = () => {
       </div>
       {/* Body Profile */}
       <div className="w-313 flex justify-between gap-x-5 mx-auto my-4">
-        {location.pathname === "/profile" ? (
+        {locationCurrentAr[1] === "profile" && locationCurrentAr.length == 3 ? (
           <>
             {/* Info */}
             <ProfileInfo profile={profileUser} open={open} setOpen={setOpen} />

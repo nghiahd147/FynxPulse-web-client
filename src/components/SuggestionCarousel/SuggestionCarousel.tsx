@@ -60,7 +60,7 @@ const SuggestionCarousel = () => {
                   type="primary"
                   icon={<UserRoundPlus className="w-4 h-4" />}
                 >
-                  Thêm bạn bè
+                  Theo dõi
                 </Button>
               </div>
             </div>

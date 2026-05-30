@@ -17,6 +17,7 @@ interface AuthStore {
   userFollowed: boolean | null;
   profileUser: ProfileUser;
   listFriends: Users[];
+  myFriends: Users[];
 
   getMe: () => void;
   getListUser: (params: ParamsUser) => void;
@@ -29,6 +30,7 @@ interface AuthStore {
   followUser: (payload: FollowUserPayload) => Promise<ActionResult>;
   changePassword: (payload: ChangePasswordPayload) => Promise<ActionResult>;
   getListFriends: () => void;
+  getMyFriends: (user_id: string) => void;
 }
 
 const useUserStore = create<AuthStore>((set) => ({
@@ -36,6 +38,7 @@ const useUserStore = create<AuthStore>((set) => ({
   message: "",
   data: [],
   listFriends: [],
+  myFriends: [],
   userFollowed: null,
   profileUser: {},
 
@@ -58,8 +61,8 @@ const useUserStore = create<AuthStore>((set) => ({
     set({ isLoading: true });
     try {
       const response = await apiCall(API_URLS.USERS.login(payload));
-      localStorage.setItem("access_token", response?.result.accessToken);
-      localStorage.setItem("refresh_token", response?.result.refreshToken);
+      localStorage.setItem("access_token", response?.result.access_token);
+      localStorage.setItem("refresh_token", response?.result.refresh_token);
       localStorage.setItem("name", response?.user.name);
       localStorage.setItem("user_name", response?.user.user_name);
       set({ isLoading: false });
@@ -173,12 +176,24 @@ const useUserStore = create<AuthStore>((set) => ({
     }
   },
 
+  // Get users not in friend list
   getListFriends: async () => {
     set({ isLoading: true });
     try {
       const result = await apiCall(API_URLS.USERS.getListFriends());
       set({ isLoading: false, listFriends: result?.friends || [] });
     } catch (error) {
+      set({ isLoading: false });
+    }
+  },
+
+  // Get user friend list
+  getMyFriends: async (user_id: string) => {
+    set({ isLoading: true });
+    try {
+      const result = await apiCall(API_URLS.USERS.getMyFriends(user_id));
+      set({ isLoading: false, myFriends: result?.friends || [] });
+    } catch (erorr) {
       set({ isLoading: false });
     }
   },

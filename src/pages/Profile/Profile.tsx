@@ -4,8 +4,8 @@ import {
   ChevronUp,
   Ellipsis,
   Pencil,
-  User,
   UserCheck,
+  UserRoundPlus,
 } from "lucide-react";
 import SuggestionCarousel from "../../components/SuggestionCarousel/SuggestionCarousel";
 import { useEffect, useState } from "react";
@@ -23,6 +23,7 @@ const Profile = () => {
     profileUser,
     followUser,
     getUserFollow,
+    getListFriends,
     userFollowed,
     unfollowUser,
   } = useUserStore();
@@ -31,6 +32,7 @@ const Profile = () => {
   const userIdCurrent = profileUser._id;
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const locationCurrentAr = location.pathname.split("/");
 
   useEffect(() => {
     if (usernameCurrent) {
@@ -52,6 +54,7 @@ const Profile = () => {
     });
     if (result.success) {
       getUserFollow(userIdCurrent as string);
+      getListFriends();
       notificationSuccess(result.message as string);
     } else {
       notificationError(result.message as string);
@@ -62,13 +65,12 @@ const Profile = () => {
     const result = await unfollowUser(userIdCurrent as string);
     if (result.success) {
       getUserFollow(userIdCurrent as string);
+      getListFriends();
       notificationSuccess(result.message as string);
     } else {
       notificationError(result.message as string);
     }
   };
-
-  console.log("currentUserId", userIdCurrent);
 
   return (
     <div className="w-full bg-bgPrimary">
@@ -132,7 +134,7 @@ const Profile = () => {
                     <Button
                       className="font-bold! w-28.25"
                       type="primary"
-                      icon={<User className="w-4 h-4" />}
+                      icon={<UserRoundPlus className="w-4 h-4" />}
                       onClick={handleFollowUser}
                     >
                       Theo dõi
@@ -171,26 +173,26 @@ const Profile = () => {
           <div className="h-full flex items-center justify-between border-t-2 border-[#e2e5e9]">
             <div className="h-full flex items-center gap-x-2 text-[#b1b2b4] font-bold mt-1">
               <Link
-                to={"/profile"}
-                className={`cursor-pointer px-2 block ${location.pathname === "/profile" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                to={`/profile/${profileUser?.user_name}`}
+                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${locationCurrentAr[1] === "profile" && locationCurrentAr.length == 3 && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
               >
                 Tất cả
               </Link>
               <Link
                 to={"/profile/image"}
-                className={`cursor-pointer px-2 block ${location.pathname === "/profile/image" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === "/profile/image" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
               >
                 Ảnh
               </Link>
               <Link
-                to={"/profile/friends"}
-                className={`cursor-pointer px-2 block ${location.pathname === "/profile/friends" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                to={`/profile/${profileUser.user_name}/friends`}
+                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname.split("/")[3] === "friends" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
               >
                 Bạn bè
               </Link>
               <Link
                 to={"/profile/post"}
-                className={`cursor-pointer px-2 block ${location.pathname === "/profile/post" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === "/profile/post" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
               >
                 Bài viết quan tâm
               </Link>
@@ -203,7 +205,7 @@ const Profile = () => {
       </div>
       {/* Body Profile */}
       <div className="w-313 flex justify-between gap-x-5 mx-auto my-4">
-        {location.pathname === "/profile" ? (
+        {locationCurrentAr[1] === "profile" && locationCurrentAr.length == 3 ? (
           <>
             {/* Info */}
             <ProfileInfo profile={profileUser} open={open} setOpen={setOpen} />

@@ -2,14 +2,15 @@ import { EllipsisOutlined, SearchOutlined } from "@ant-design/icons";
 import { Input } from "antd";
 import { Link } from "react-router-dom";
 import useUserStore from "../../../store/useUserStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Friends = () => {
-  const { getMyFriends, myFriends, profileUser } = useUserStore();
+  const { getUserFollowing, myFriends, profileUser } = useUserStore();
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
-    getMyFriends(profileUser._id as string);
-  }, [profileUser.user_name]);
+    getUserFollowing(profileUser._id as string, username);
+  }, [profileUser.user_name, username]);
 
   return (
     <div className="w-full h-full flex flex-col shadow-md bg-white">
@@ -20,7 +21,10 @@ const Friends = () => {
             prefix={<SearchOutlined />}
             placeholder="Tìm kiếm"
             size="large"
-            className="rounded-2xl! bg-gray-100! "
+            className="rounded-2xl! bg-gray-100!"
+            onChange={(e) => {
+              setUsername(e.target.value);
+            }}
           />
           <Link
             to="/friends"
@@ -49,7 +53,7 @@ const Friends = () => {
                     className="font-medium text-lg hover:underline transition-all ease-in"
                   >{`${item.first_name + " " + item.last_name}`}</Link>
                   <span className="text-sm text-gray-500 font-medium">
-                    10 bạn chung
+                    {item.user_name}
                   </span>
                 </div>
               </div>

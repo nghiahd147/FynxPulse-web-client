@@ -12,21 +12,23 @@ import type { ProfileUser } from "../../../types";
 import { EditOutlined } from "@ant-design/icons";
 import { useEffect } from "react";
 import dayjs from "dayjs";
-import { usernameMe } from "../../../utils/storages";
 import { REGEX_URL_WEBSITE, REGEX_USERNAME } from "../../../utils/regex";
+import useUserStore from "../../../store/useUserStore";
 
 const ProfileInfo = ({
   profile,
-  open,
-  setOpen,
+  locationCurrentAr,
 }: {
   profile: ProfileUser;
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  locationCurrentAr: string[];
 }) => {
+  const { openModalProfile, setOpenModalProfile } = useUserStore();
+
   const [form] = Form.useForm();
   const avatar = Form.useWatch("avatar", form);
   const profile_picture_url = Form.useWatch("profile_picture_url", form);
+  const { me } = useUserStore();
+
   useEffect(() => {
     form.setFieldsValue({
       first_name: profile.first_name,
@@ -42,7 +44,7 @@ const ProfileInfo = ({
   }, [profile]);
 
   const handleCancel = () => {
-    setOpen(false);
+    setOpenModalProfile(false);
   };
 
   const onFinish = (values: ProfileUser) => {
@@ -51,12 +53,14 @@ const ProfileInfo = ({
 
   return (
     <>
-      <div className="w-[40%] flex flex-col py-2 px-3 rounded-md bg-white shadow-md">
+      <div
+        className={`w-[40%] flex flex-col py-2 px-3 rounded-md bg-white shadow-md ${!(locationCurrentAr[1] === "profile" && locationCurrentAr.length == 3) && "hidden"}`}
+      >
         <div className="flex justify-between items-center">
           <h3 className="text-2xl font-bold">Thông tin cá nhân</h3>
-          {usernameMe === profile.user_name && (
+          {me.user_name === profile.user_name && (
             <div
-              onClick={() => setOpen(true)}
+              onClick={() => setOpenModalProfile(true)}
               className="hover:bg-bgPrimary transition-all ease-in cursor-pointer p-3 rounded-[100%]"
             >
               <Pencil className="w-5 h-5" />
@@ -92,7 +96,7 @@ const ProfileInfo = ({
       </div>
       <Modal
         title="Thông tin cá nhân"
-        open={open}
+        open={openModalProfile}
         onOk={() => form.submit()}
         // confirmLoading={confirmLoading}
         onCancel={handleCancel}
@@ -122,7 +126,7 @@ const ProfileInfo = ({
                   return false;
                 }}
               >
-                <span className="bg-[#ffffff] hover:bg-bgPrimary transition-all absolute bottom-8 right-0 mr-5 mb-2 shadow-md rounded-2xl flex items-center justify-center cursor-pointer gap-x-2 py-2 w-45">
+                <span className="bg-[#ffffff] hover:bg-bgPrimary transition-all absolute bottom-8 right-0 mr-5 mb-0 shadow-md rounded-2xl flex items-center justify-center cursor-pointer gap-x-2 py-2 w-45">
                   <Camera />
                   Chỉnh sửa ảnh bìa
                 </span>
@@ -152,7 +156,7 @@ const ProfileInfo = ({
           </div>
           <Form.Item>
             <div className="flex justify-end items-center mr-0">
-              <div className="flex flex-col items-center mr-4">
+              <div className="flex flex-col items-center mr-4 mt-2">
                 <span className="font-bold">
                   Chỉnh sửa ảnh của bạn với Imagine
                 </span>

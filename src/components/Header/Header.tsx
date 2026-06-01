@@ -17,7 +17,6 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { ListIndentIncrease } from "lucide-react";
-import { nameUser } from "../../utils/storages";
 import { notificationError, notificationSuccess } from "../../config/notify";
 import { useState } from "react";
 import type { ChangePasswordPayload } from "../../types/payloads";
@@ -25,7 +24,7 @@ import { REGEX_PASSWORD } from "../../utils/regex";
 
 const Header = (props: any) => {
   const { setTabOpen } = props;
-  const { logoutUser, changePassword } = useUserStore();
+  const { logoutUser, changePassword, me } = useUserStore();
   const navigate = useNavigate();
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [form] = Form.useForm();
@@ -89,8 +88,6 @@ const Header = (props: any) => {
     if (result.success) {
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
-      localStorage.removeItem("name");
-      localStorage.removeItem("user_name");
       notificationSuccess(result.message as string);
       navigate("/login", { replace: true });
     } else {
@@ -106,7 +103,6 @@ const Header = (props: any) => {
           className="block mx-2 mt-1 sm:hidden"
           onClick={() => {
             setTabOpen(true);
-            console.log("click");
           }}
         >
           <ListIndentIncrease color="red" size={20} />
@@ -126,7 +122,7 @@ const Header = (props: any) => {
       <div className="hidden sm:block">
         <Dropdown {...sharedProps}>
           <Space className="cursor-default flex items-center px-2 py-1 rounded-md bg-red-100">
-            <span className="ml-1">{nameUser}</span>
+            <span className="ml-1">{me.user_name}</span>
             <DownOutlined className="text-[12px]" />
           </Space>
         </Dropdown>

@@ -55,11 +55,6 @@ export const API_URLS = {
       headers: HEADERS.jsonHeader(),
       params,
     }),
-    getMyFriends: (user_id: string) => ({
-      endPoint: `/api/user/${user_id}/my-friends`,
-      method: "GET",
-      headers: HEADERS.jsonHeader(),
-    }),
     getMe: () => ({
       endPoint: "/api/user/me",
       method: "GET",
@@ -67,11 +62,6 @@ export const API_URLS = {
     }),
     getProfile: (username: string) => ({
       endPoint: `/api/user/${username}`,
-      method: "GET",
-      headers: HEADERS.jsonHeader(),
-    }),
-    getUserFollow: (follower_user_id: string) => ({
-      endPoint: `/api/user/get-user-follow/${follower_user_id}`,
       method: "GET",
       headers: HEADERS.jsonHeader(),
     }),
@@ -86,10 +76,21 @@ export const API_URLS = {
       method: "DELETE",
       headers: HEADERS.jsonHeader(),
     }),
-    getListFriends: () => ({
-      endPoint: "/api/user/list-friends",
+    getFollowSuggestions: (user_id: string) => ({
+      endPoint: `/api/user/${user_id}/follow-suggestions`,
       method: "GET",
       headers: HEADERS.jsonHeader(),
+    }),
+    checkUserFollowStatus: (follower_user_id: string) => ({
+      endPoint: `/api/user/follow-status/${follower_user_id}`,
+      method: "GET",
+      headers: HEADERS.jsonHeader(),
+    }),
+    getUserFollowing: (user_id: string, user_name: string) => ({
+      endPoint: `/api/user/${user_id}/following`,
+      method: "GET",
+      headers: HEADERS.jsonHeader(),
+      params: user_name && { user_name },
     }),
   },
 };

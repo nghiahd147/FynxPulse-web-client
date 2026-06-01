@@ -9,15 +9,15 @@ export interface ParamsUser {
 }
 
 export interface Users {
-  _id: string;
-  first_name: string;
-  last_name: string;
-  user_name: string;
-  email: string;
-  avatar: string;
-  password: string;
-  confirm_password: string;
-  date_of_birth: string;
+  _id?: string;
+  first_name?: string;
+  last_name?: string;
+  user_name?: string;
+  email?: string;
+  avatar?: string;
+  password?: string;
+  confirm_password?: string;
+  date_of_birth?: string;
 }
 
 export interface ProfileUser {

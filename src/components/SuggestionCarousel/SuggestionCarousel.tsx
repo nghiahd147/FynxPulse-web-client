@@ -9,10 +9,10 @@ import useUserStore from "../../store/useUserStore";
 import { useEffect } from "react";
 
 const SuggestionCarousel = () => {
-  const { getListFriends, listFriends, profileUser } = useUserStore();
+  const { getFollowSuggestions, listFriends, profileUser, me } = useUserStore();
 
   useEffect(() => {
-    getListFriends();
+    getFollowSuggestions(me._id as string);
   }, [profileUser._id]);
 
   return (

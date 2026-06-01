@@ -1,5 +1,5 @@
 import { Divider, Input, Form } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import useUserStore from "../../../store/useUserStore";
 import { onFinishFailed } from "../../../utils/message";
 import Button from "../../../components/Button/Button";
@@ -7,10 +7,30 @@ import { REGEX_PASSWORD } from "../../../utils/regex";
 import { notificationError, notificationSuccess } from "../../../config/notify";
 import urlOauthGoogle from "../../../utils/oauth";
 import type { LoginPayload } from "../../../types/payloads";
+import { useEffect } from "react";
 
 const Login = () => {
   const { loginUser, isLoading } = useUserStore();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const accessToken = params.get("access_token");
+  const refreshToken = params.get("refresh_token");
+  const newUser = params.get("new_user");
+  // const verify = params.get("verify")
+
+  useEffect(() => {
+    if (!accessToken || !refreshToken) return;
+
+    localStorage.setItem("access_token", accessToken);
+    localStorage.setItem("refresh_token", refreshToken);
+
+    if (newUser === "0") {
+      // Cải tiến 1 trang riêng để tinh chỉnh profile trước khi vào routes "/"
+      navigate("/profile");
+    } else {
+      navigate("/");
+    }
+  }, [accessToken, refreshToken, newUser, navigate]);
 
   const onFinish = async (values: LoginPayload) => {
     const result = await loginUser(values);

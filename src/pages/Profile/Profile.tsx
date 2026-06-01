@@ -7,12 +7,11 @@ import {
   UserCheck,
   UserRoundPlus,
 } from "lucide-react";
-import SuggestionCarousel from "../../components/SuggestionCarousel/SuggestionCarousel";
 import { useEffect, useState } from "react";
-import useUserStore from "../../store/useUserStore";
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
-import { usernameMe } from "../../utils/storages";
 import { notificationError, notificationSuccess } from "../../config/notify";
+import SuggestionCarousel from "../../components/SuggestionCarousel/SuggestionCarousel";
+import useUserStore from "../../store/useUserStore";
 import ProfileInfo from "./components/ProfileInfo";
 
 const Profile = () => {
@@ -22,15 +21,16 @@ const Profile = () => {
     getProfile,
     profileUser,
     followUser,
-    getUserFollow,
-    getListFriends,
+    checkUserFollowStatus,
+    getFollowSuggestions,
     userFollowed,
     unfollowUser,
+    me,
+    setOpenModalProfile,
   } = useUserStore();
   const params = useParams();
   const usernameCurrent = params.user_name;
   const userIdCurrent = profileUser._id;
-  const [open, setOpen] = useState(false);
   const location = useLocation();
   const locationCurrentAr = location.pathname.split("/");
 
@@ -43,8 +43,8 @@ const Profile = () => {
   }, [usernameCurrent]);
 
   useEffect(() => {
-    if (userIdCurrent) {
-      getUserFollow(userIdCurrent as string);
+    if (userIdCurrent && userIdCurrent !== me._id) {
+      checkUserFollowStatus(userIdCurrent as string);
     }
   }, [userIdCurrent]);
 
@@ -53,8 +53,8 @@ const Profile = () => {
       follower_user_id: userIdCurrent as string,
     });
     if (result.success) {
-      getUserFollow(userIdCurrent as string);
-      getListFriends();
+      checkUserFollowStatus(userIdCurrent as string);
+      getFollowSuggestions(me._id as string);
       notificationSuccess(result.message as string);
     } else {
       notificationError(result.message as string);
@@ -64,8 +64,8 @@ const Profile = () => {
   const handleUnFollowUser = async () => {
     const result = await unfollowUser(userIdCurrent as string);
     if (result.success) {
-      getUserFollow(userIdCurrent as string);
-      getListFriends();
+      checkUserFollowStatus(userIdCurrent as string);
+      getFollowSuggestions(me._id as string);
       notificationSuccess(result.message as string);
     } else {
       notificationError(result.message as string);
@@ -85,7 +85,7 @@ const Profile = () => {
                   profileUser.profile_picture_url || "/nen-trang-mac-dinh.jpg"
                 }
                 alt="bg-user"
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-cover"
               />
             </div>
           </div>
@@ -112,12 +112,15 @@ const Profile = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-x-2">
-                  {usernameMe == profileUser.user_name ? (
+                  {me.user_name == profileUser.user_name ? (
                     <Button
                       className="font-bold! bg-[#e2e5e9]! text-black! hover:bg-[#d6d6d6]! w-28.25"
                       type="primary"
                       icon={<Pencil className="w-4 h-4" />}
-                      onClick={() => setOpen(true)}
+                      onClick={() => {
+                        console.log("Open Modal Edit Profile");
+                        setOpenModalProfile(true);
+                      }}
                     >
                       Chỉnh sửa
                     </Button>
@@ -205,10 +208,13 @@ const Profile = () => {
       </div>
       {/* Body Profile */}
       <div className="w-313 flex justify-between gap-x-5 mx-auto my-4">
+        {/* Info */}
+        <ProfileInfo
+          profile={profileUser}
+          locationCurrentAr={locationCurrentAr}
+        />
         {locationCurrentAr[1] === "profile" && locationCurrentAr.length == 3 ? (
           <>
-            {/* Info */}
-            <ProfileInfo profile={profileUser} open={open} setOpen={setOpen} />
             {/* Posts */}
             <div className="w-[60%] bg-white p-3 rounded-md shadow-md">2</div>
           </>

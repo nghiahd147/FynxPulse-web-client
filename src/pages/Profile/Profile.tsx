@@ -17,7 +17,6 @@ import ProfileInfo from "./components/ProfileInfo";
 const Profile = () => {
   const [suggestionCarousel, setSuggestionCarousel] = useState(true);
   const {
-    getMe,
     getProfile,
     profileUser,
     followUser,
@@ -35,11 +34,7 @@ const Profile = () => {
   const locationCurrentAr = location.pathname.split("/");
 
   useEffect(() => {
-    if (usernameCurrent) {
-      getProfile(usernameCurrent as string);
-    } else {
-      getMe();
-    }
+    getProfile(usernameCurrent as string);
   }, [usernameCurrent]);
 
   useEffect(() => {
@@ -106,9 +101,9 @@ const Profile = () => {
                   <span className="font-bold text-4xl">{`${profileUser.first_name} ${profileUser.last_name}`}</span>
                   <span>{profileUser.bio}</span>
                   <div className="flex items-center gap-x-2 font-bold">
-                    <span>120 người theo dõi</span>
+                    <span>{profileUser.following_count} đang theo dõi</span>
                     <span>•</span>
-                    <span>85 người đang theo dõi</span>
+                    <span>{profileUser.followers_count} người theo dõi</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-x-2">

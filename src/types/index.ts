@@ -31,4 +31,6 @@ export interface ProfileUser {
   website?: string;
   avatar?: string;
   profile_picture_url?: string;
+  following_count?: number;
+  followers_count?: number;
 }

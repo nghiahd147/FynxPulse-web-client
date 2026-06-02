@@ -1,33 +1,22 @@
-import {
-  Dropdown,
-  Input,
-  Modal,
-  Space,
-  Form,
-  type DropdownProps,
-  type MenuProps,
-} from "antd";
+import { Input, Modal, Form, Button, Divider } from "antd";
 import useUserStore from "../../store/useUserStore";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  DownOutlined,
-  LockOutlined,
-  LogoutOutlined,
-  SettingOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import { ListIndentIncrease } from "lucide-react";
+import { LockOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
+import { House, ListIndentIncrease, TvMinimalPlay, Users } from "lucide-react";
 import { notificationError, notificationSuccess } from "../../config/notify";
 import { useState } from "react";
 import type { ChangePasswordPayload } from "../../types/payloads";
 import { REGEX_PASSWORD } from "../../utils/regex";
 
-const Header = (props: any) => {
+const Header = (props: {
+  setTabOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const { setTabOpen } = props;
   const { logoutUser, changePassword, me } = useUserStore();
   const navigate = useNavigate();
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [form] = Form.useForm();
+  const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
 
   const handleLogoutUser = async () => {
     const result = await logoutUser({
@@ -39,44 +28,6 @@ const Header = (props: any) => {
     } else {
       notificationError(result.message as string);
     }
-  };
-
-  const items: MenuProps["items"] = [
-    {
-      key: "1",
-      icon: <UserOutlined />,
-      label: <Link to={"/profile"}>Profile</Link>,
-    },
-    {
-      key: "2",
-      icon: <LockOutlined />,
-      label: (
-        <span onClick={() => setChangePasswordOpen(true)}>Change Password</span>
-      ),
-    },
-    {
-      key: "3",
-      label: "Settings",
-      icon: <SettingOutlined />,
-    },
-    {
-      type: "divider",
-    },
-    {
-      key: "Logout",
-      label: (
-        <div className="flex items-center" onClick={handleLogoutUser}>
-          <LogoutOutlined className="mt-px" />
-          <span className="ml-2">Đăng xuất</span>
-        </div>
-      ),
-      danger: true,
-    },
-  ];
-
-  const sharedProps: DropdownProps = {
-    menu: { items },
-    placement: "bottomLeft",
   };
 
   const handleCancel = () => {
@@ -118,14 +69,72 @@ const Header = (props: any) => {
           </span>
         </Link>
       </div>
+      <div className="h-full flex items-center justify-center gap-x-2">
+        <Link
+          to={"/"}
+          className="cursor-pointer w-30 h-full flex items-center justify-center hover:bg-gray-200 transition-all ease-in"
+        >
+          <House className="w-[35%] h-full p-2" />
+        </Link>
+        <div className="cursor-pointer w-30 h-full flex items-center justify-center hover:bg-gray-200 transition-all ease-in">
+          <TvMinimalPlay className="w-[35%] h-full p-2" />
+        </div>
+        <div className="cursor-pointer w-30 h-full flex items-center justify-center hover:bg-gray-200 transition-all ease-in">
+          <Users className="w-[35%] h-full p-2" />
+        </div>
+      </div>
       {/* desktop, tablet */}
       <div className="hidden sm:block">
-        <Dropdown {...sharedProps}>
-          <Space className="cursor-default flex items-center px-2 py-1 rounded-md bg-red-100">
-            <span className="ml-1">{me.user_name}</span>
-            <DownOutlined className="text-[12px]" />
-          </Space>
-        </Dropdown>
+        <div className="relative w-12 h-12 rounded-full border">
+          <img
+            src={me.avatar || "/avatar-mac-dinh.jpg"}
+            className="w-full h-full rounded-full cursor-pointer"
+            alt="avatar-icon"
+            onClick={() => setAvatarMenuOpen(!avatarMenuOpen)}
+          />
+          {avatarMenuOpen && (
+            <div className="absolute p-3 w-90 top-full right-0 bg-white rounded-md shadow-md z-50 border border-gray-200">
+              <div className="flex flex-col w-full shadow-md border-gray-200 p-3 overflow-hidden rounded-md">
+                <div className="flex items-center">
+                  <img
+                    src={me.avatar || "/avatar-mac-dinh.jpg"}
+                    className="w-8 h-8 border rounded-full"
+                    alt="avatar-icon"
+                  />
+                  <span className="ml-3">
+                    {me.first_name + " " + me.last_name}
+                  </span>
+                </div>
+                <Divider className="m-2! border-[#E3E5E7]!" />
+                <Link to={`/profile/${me.user_name}`}>
+                  <Button icon={<UserOutlined />} className="w-full!">
+                    Xem tất cả trang cá nhân
+                  </Button>
+                </Link>
+              </div>
+              {/* Item */}
+              <div
+                className="w-full font-bold mt-1 flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-200 transition-all ease-in"
+                onClick={() => setChangePasswordOpen(true)}
+              >
+                <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200">
+                  <LockOutlined className="mt-px" />
+                </div>
+                <span className="ml-2">Thay đổi mật khẩu</span>
+              </div>
+              {/* Item */}
+              <div
+                className="w-full font-bold mt-1 flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-200 transition-all ease-in"
+                onClick={handleLogoutUser}
+              >
+                <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200">
+                  <LogoutOutlined className="mt-px" />
+                </div>
+                <span className="ml-2">Đăng xuất</span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
       <Modal
         title="Đổi mật khẩu"

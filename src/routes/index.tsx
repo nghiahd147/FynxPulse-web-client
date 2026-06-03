@@ -7,7 +7,11 @@ import ForgotPass from "../pages/Auth/ForgotPass/ForgotPass";
 import Login from "../pages/Auth/Login/Login";
 import Register from "../pages/Auth/Register/Register";
 import Profile from "../pages/Profile/Profile";
-import Friends from "../pages/Profile/components/Friends";
+import ProfileFriends from "../pages/Profile/components/ProfileFriends";
+import Reels from "../pages/Reels/Reels";
+import Friends from "../pages/Friends/Friends";
+import ProfileImage from "../pages/Profile/components/ProfileImage";
+import ProfilePost from "../pages/Profile/components/ProfilePost";
 
 export const router = createBrowserRouter([
   {
@@ -19,10 +23,26 @@ export const router = createBrowserRouter([
         element: <Profile />,
         children: [
           {
+            path: "images",
+            element: <ProfileImage />,
+          },
+          {
             path: "friends",
-            element: <Friends />,
+            element: <ProfileFriends />,
+          },
+          {
+            path: "posts",
+            element: <ProfilePost />,
           },
         ],
+      },
+      {
+        path: "/reels",
+        element: <Reels />,
+      },
+      {
+        path: "/friends",
+        element: <Friends />,
       },
     ],
   },

@@ -10,9 +10,10 @@ import type {
 } from "../types/payloads";
 import type { ApiError } from "../types/errors";
 import { persist } from "zustand/middleware";
+import type { UserLoadingState } from "../types/loading";
 
 interface AuthStore {
-  isLoading: boolean;
+  loading: UserLoadingState;
   message: string;
   data: Users[];
   userFollowed: boolean | null;
@@ -22,6 +23,7 @@ interface AuthStore {
   me: Users;
   openModalProfile: boolean;
 
+  setLoading: (key: string, value: boolean) => void;
   setOpenModalProfile: (open: boolean) => void;
   getMe: () => void;
   getListUser: (params: ParamsUser) => void;
@@ -39,8 +41,21 @@ interface AuthStore {
 
 const useUserStore = create<AuthStore>()(
   persist(
-    (set) => ({
-      isLoading: false,
+    (set, get) => ({
+      loading: {
+        changePassword: false,
+        checkUserFollowStatus: false,
+        followUser: false,
+        getListUser: false,
+        getMe: false,
+        getProfile: false,
+        getFollowSuggestions: false,
+        getUserFollowing: false,
+        loginUser: false,
+        logoutUser: false,
+        registerUser: false,
+        unfollowUser: false,
+      },
       message: "",
       data: [],
       listFriends: [],
@@ -50,35 +65,45 @@ const useUserStore = create<AuthStore>()(
       me: {},
       openModalProfile: false,
 
+      setLoading: (key: string, value: boolean) => {
+        set((state) => ({
+          loading: {
+            ...state.loading,
+            [key]: value,
+          },
+        }));
+      },
+
       setOpenModalProfile: (open: boolean) => {
         set({ openModalProfile: open });
       },
+
       registerUser: async (payload: Users) => {
-        set({ isLoading: true });
+        get().setLoading("isRegisterUserLoading", true);
         try {
           const response = await apiCall(API_URLS.USERS.register(payload));
           localStorage.setItem("access_token", response?.result.acessToken);
           localStorage.setItem("refresh_token", response?.result.refreshToken);
           localStorage.setItem("name", response?.user.name);
-          set({ isLoading: false });
+          get().setLoading("isRegisterUserLoading", false);
           return { success: true, message: response?.message };
         } catch (error) {
-          set({ isLoading: false });
+          get().setLoading("isRegisterUserLoading", false);
           return { success: false, message: error };
         }
       },
 
       loginUser: async (payload) => {
-        set({ isLoading: true });
+        get().setLoading("loginUser", true);
         try {
           const response = await apiCall(API_URLS.USERS.login(payload));
           localStorage.setItem("access_token", response?.result.access_token);
           localStorage.setItem("refresh_token", response?.result.refresh_token);
-          set({ isLoading: false });
+          get().setLoading("loginUser", false);
           return { success: true, message: response?.message };
         } catch (error) {
           const apiError = error as ApiError;
-          set({ isLoading: false });
+          get().setLoading("loginUser", false);
           return {
             success: false,
             message: apiError.message,
@@ -87,128 +112,133 @@ const useUserStore = create<AuthStore>()(
       },
 
       logoutUser: async (payload) => {
-        set({ isLoading: true });
+        get().setLoading("logoutUser", true);
         try {
           const response = await apiCall(API_URLS.USERS.logout(payload));
           localStorage.removeItem("access_token");
           localStorage.removeItem("refresh_token");
           localStorage.removeItem("user-store");
-          set({ isLoading: false });
+          get().setLoading("logoutUser", false);
           return { success: true, message: response?.message };
         } catch (error) {
-          set({ isLoading: false });
+          get().setLoading("logoutUser", false);
           return { success: false, message: error };
         }
       },
 
       changePassword: async (payload) => {
-        set({ isLoading: true });
+        get().setLoading("changePassword", true);
         try {
           const result = await apiCall(API_URLS.USERS.changePassword(payload));
-          set({ isLoading: false });
+          get().setLoading("changePassword", false);
           return { success: true, message: result?.message };
         } catch (error) {
           console.log("Error Change Password", error);
-          set({ isLoading: false });
+          get().setLoading("changePassword", false);
           return { success: false, message: error };
         }
       },
 
       getListUser: async (params) => {
-        set({ isLoading: true });
+        get().setLoading("getListUser", true);
         try {
           const result = await apiCall(API_URLS.USERS.getListUser(params));
-          set({ isLoading: false, data: result?.data });
+          get().setLoading("getListUser", false);
+          set({ data: result?.data });
         } catch (error) {
-          set({ isLoading: false });
+          get().setLoading("getListUser", false);
         }
       },
 
       getMe: async () => {
-        set({ isLoading: true });
+        get().setLoading("getMe", true);
         try {
           const result = await apiCall(API_URLS.USERS.getMe());
+          get().setLoading("getMe", false);
           set({
-            isLoading: false,
             profileUser: result?.result,
             me: result?.result,
           });
         } catch (error) {
           // console.log("Error Get Me", error)
-          set({ isLoading: false });
+          get().setLoading("getMe", false);
         }
       },
 
       getProfile: async (username: string) => {
-        set({ isLoading: true });
+        get().setLoading("getProfile", true);
         try {
           const result = await apiCall(API_URLS.USERS.getProfile(username));
-          set({ isLoading: false, profileUser: result?.result });
+          get().setLoading("getProfile", false);
+          set({ profileUser: result?.result });
         } catch (error) {
-          set({ isLoading: false });
+          get().setLoading("getProfile", false);
         }
       },
 
       checkUserFollowStatus: async (follower_user_id) => {
-        set({ isLoading: true });
+        get().setLoading("checkUserFollowStatus", true);
         try {
           const result = await apiCall(
             API_URLS.USERS.checkUserFollowStatus(follower_user_id),
           );
-          set({ isLoading: false, userFollowed: result?.followed });
+          get().setLoading("checkUserFollowStatus", false);
+          set({ userFollowed: result?.followed });
         } catch (error) {
-          set({ isLoading: false });
+          get().setLoading("checkUserFollowStatus", false);
         }
       },
 
       followUser: async (payload) => {
-        set({ isLoading: true });
+        get().setLoading("followUser", true);
         try {
           const result = await apiCall(API_URLS.USERS.followUser(payload));
-          set({ isLoading: false });
+          get().setLoading("followUser", false);
           return { success: true, message: result?.result?.message };
         } catch (error) {
-          set({ isLoading: false });
+          get().setLoading("followUser", false);
           return { success: false, message: error };
         }
       },
 
       unfollowUser: async (follower_user_id) => {
-        set({ isLoading: true });
+        get().setLoading("unfollowUser", true);
         try {
           const result = await apiCall(
             API_URLS.USERS.unfollowUser(follower_user_id),
           );
           console.log("result", result);
-          set({ isLoading: false });
+          get().setLoading("unfollowUser", false);
           return { success: true, message: result?.message };
         } catch (error) {
-          set({ isLoading: false });
+          get().setLoading("unfollowUser", false);
           return { success: false, message: error };
         }
       },
 
       getFollowSuggestions: async (user_id: string) => {
-        set({ isLoading: true });
+        get().setLoading("getFollowSuggestions", true);
         try {
           const result = await apiCall(
             API_URLS.USERS.getFollowSuggestions(user_id),
           );
-          set({ isLoading: false, listFriends: result?.friends || [] });
+          get().setLoading("getFollowSuggestions", false);
+          set({ listFriends: result?.friends || [] });
         } catch (error) {
-          set({ isLoading: false });
+          get().setLoading("getFollowSuggestions", false);
         }
       },
 
       getUserFollowing: async (user_id: string, user_name: string) => {
-        set({ isLoading: true });
+        get().setLoading("getUserFollowing", true);
         try {
           const result = await apiCall(
             API_URLS.USERS.getUserFollowing(user_id, user_name),
           );
-          set({ isLoading: false, myFriends: result?.friends || [] });
+          get().setLoading("getUserFollowing", false);
+          set({ myFriends: result?.friends || [] });
         } catch (erorr) {
-          set({ isLoading: false });
+          get().setLoading("getUserFollowing", false);
         }
       },
     }),

@@ -51,6 +51,8 @@ const ProfileInfo = ({
     console.log("values", values);
   };
 
+  console.log(locationCurrentAr);
+
   return (
     <>
       <div

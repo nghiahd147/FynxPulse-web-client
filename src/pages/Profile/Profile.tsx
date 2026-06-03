@@ -177,7 +177,7 @@ const Profile = () => {
                 Tất cả
               </Link>
               <Link
-                to={"/profile/image"}
+                to={`/profile/${profileUser.user_name}/images`}
                 className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === "/profile/image" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
               >
                 Ảnh
@@ -186,10 +186,10 @@ const Profile = () => {
                 to={`/profile/${profileUser.user_name}/friends`}
                 className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname.split("/")[3] === "friends" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
               >
-                Bạn bè
+                Người theo dõi
               </Link>
               <Link
-                to={"/profile/post"}
+                to={`/profile/${profileUser.user_name}/posts`}
                 className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === "/profile/post" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
               >
                 Bài viết quan tâm

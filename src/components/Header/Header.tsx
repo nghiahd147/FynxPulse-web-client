@@ -1,6 +1,6 @@
-import { Input, Modal, Form, Button, Divider } from "antd";
+import { Input, Modal, Form, Button, Divider, Tooltip } from "antd";
 import useUserStore from "../../store/useUserStore";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LockOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { House, ListIndentIncrease, TvMinimalPlay, Users } from "lucide-react";
 import { notificationError, notificationSuccess } from "../../config/notify";
@@ -12,10 +12,11 @@ const Header = (props: {
   setTabOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { setTabOpen } = props;
-  const { logoutUser, changePassword, me } = useUserStore();
   const navigate = useNavigate();
-  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [form] = Form.useForm();
+  const location = useLocation();
+  const { logoutUser, changePassword, me } = useUserStore();
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
 
   const handleLogoutUser = async () => {
@@ -47,7 +48,7 @@ const Header = (props: {
   };
 
   return (
-    <div className="relative h-20 border-b border-gray-200 sm:mx-8 flex items-center justify-between">
+    <div className="relative h-18 border-b border-gray-200 sm:mx-8 flex items-center justify-between">
       {/* mobile */}
       <div className="flex items-center">
         <div
@@ -58,11 +59,11 @@ const Header = (props: {
         >
           <ListIndentIncrease color="red" size={20} />
         </div>
-        <Link to={"/"} className="flex items-center">
+        <Link to={"/"} className="flex items-center whitespace-nowrap">
           <img
-            src="./icons8-yelp.svg"
+            src="./icons8-yelp.png"
             alt="logo_home"
-            className="hidden sm:block"
+            className="hidden w-10 h-10 sm:block"
           />
           <span className="text-[#dd2c00] text-3xl sm:text-2xl font-bold">
             Fyn<span className="text-black">x</span>
@@ -70,28 +71,46 @@ const Header = (props: {
         </Link>
       </div>
       <div className="h-full flex items-center justify-center gap-x-2">
-        <Link
-          to={"/"}
-          className="cursor-pointer w-30 h-full flex items-center justify-center hover:bg-gray-200 transition-all ease-in"
-        >
-          <House className="w-[35%] h-full p-2" />
-        </Link>
-        <div className="cursor-pointer w-30 h-full flex items-center justify-center hover:bg-gray-200 transition-all ease-in">
-          <TvMinimalPlay className="w-[35%] h-full p-2" />
-        </div>
-        <div className="cursor-pointer w-30 h-full flex items-center justify-center hover:bg-gray-200 transition-all ease-in">
-          <Users className="w-[35%] h-full p-2" />
-        </div>
+        <Tooltip title="Trang chủ">
+          <Link
+            to={"/"}
+            className={`cursor-pointer w-30 h-full flex items-center justify-center hover:bg-gray-200 hover:text-blue-400 hover:border-b-blue-400 hover:border-b-2 transition-all ease-in ${location.pathname == "/" && "border-b-2 border-blue-400 text-blue-400"}`}
+          >
+            <House className="w-[35%] h-full p-2" />
+          </Link>
+        </Tooltip>
+        <Tooltip title="Thước phim">
+          <Link
+            to={"/reels"}
+            className={`cursor-pointer w-30 h-full flex items-center justify-center hover:bg-gray-200 hover:text-blue-400 hover:border-b-blue-400 hover:border-b-2 transition-all ease-in ${location.pathname == "/reels" && "border-b-2 border-blue-400 text-blue-400"}`}
+          >
+            <TvMinimalPlay className="w-[35%] h-full p-2" />
+          </Link>
+        </Tooltip>
+        <Tooltip title="Bạn bè">
+          <Link
+            to={"/friends"}
+            className={`cursor-pointer w-30 h-full flex items-center justify-center hover:bg-gray-200 hover:text-blue-400 hover:border-b-blue-400 hover:border-b-2 transition-all ease-in ${location.pathname == "/friends" && "border-b-2 border-blue-400 text-blue-400"}`}
+          >
+            <Users className="w-[35%] h-full p-2" />
+          </Link>
+        </Tooltip>
       </div>
       {/* desktop, tablet */}
       <div className="hidden sm:block">
-        <div className="relative w-12 h-12 rounded-full border">
+        <div className="relative w-9 h-9 rounded-full border">
           <img
             src={me.avatar || "/avatar-mac-dinh.jpg"}
             className="w-full h-full rounded-full cursor-pointer"
             alt="avatar-icon"
             onClick={() => setAvatarMenuOpen(!avatarMenuOpen)}
           />
+          {avatarMenuOpen && (
+            <div
+              className="fixed top-0 left-0 right-0 bottom-0 z-10"
+              onClick={() => setAvatarMenuOpen(false)}
+            ></div>
+          )}
           {avatarMenuOpen && (
             <div className="absolute p-3 w-90 top-full right-0 bg-white rounded-md shadow-md z-50 border border-gray-200">
               <div className="flex flex-col w-full shadow-md border-gray-200 p-3 overflow-hidden rounded-md">
@@ -114,7 +133,7 @@ const Header = (props: {
               </div>
               {/* Item */}
               <div
-                className="w-full font-bold mt-1 flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-200 transition-all ease-in"
+                className="w-full font-bold mt-2 flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-200 transition-all ease-in"
                 onClick={() => setChangePasswordOpen(true)}
               >
                 <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200">
@@ -124,7 +143,7 @@ const Header = (props: {
               </div>
               {/* Item */}
               <div
-                className="w-full font-bold mt-1 flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-200 transition-all ease-in"
+                className="w-full font-bold mt-2 flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-200 transition-all ease-in"
                 onClick={handleLogoutUser}
               >
                 <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200">

@@ -10,7 +10,8 @@ import type { LoginPayload } from "../../../types/payloads";
 import { useEffect } from "react";
 
 const Login = () => {
-  const { loginUser, isLoading } = useUserStore();
+  const { loginUser } = useUserStore();
+  const isLoading = useUserStore((state) => state.loading.loginUser);
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const accessToken = params.get("access_token");

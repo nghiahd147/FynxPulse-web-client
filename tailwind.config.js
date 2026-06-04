@@ -1,3 +1,5 @@
+plugins: [require("tailwind-scrollbar-hide")];
+
 export default {
   theme: {
     extend: {

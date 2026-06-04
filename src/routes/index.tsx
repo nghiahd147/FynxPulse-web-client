@@ -12,6 +12,7 @@ import Reels from "../pages/Reels/Reels";
 import Friends from "../pages/Friends/Friends";
 import ProfileImage from "../pages/Profile/components/ProfileImage";
 import ProfilePost from "../pages/Profile/components/ProfilePost";
+import Birthdays from "../pages/Friends/components/Birthdays";
 
 export const router = createBrowserRouter([
   {
@@ -43,6 +44,16 @@ export const router = createBrowserRouter([
       {
         path: "/friends",
         element: <Friends />,
+        children: [
+          {
+            path: "list",
+            element: <Profile />,
+          },
+          {
+            path: "birthdays",
+            element: <Birthdays />,
+          },
+        ],
       },
     ],
   },

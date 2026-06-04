@@ -71,7 +71,9 @@ const Profile = () => {
     <div className="w-full bg-bgPrimary">
       {/* Header Profile */}
       <div className="w-full flex flex-col items-center bg-white border-b border-bgPrimary z-10">
-        <div className="w-313">
+        <div
+          className={locationCurrentAr[1] === "profile" ? "w-313" : "w-full"}
+        >
           {/* Background */}
           <div className="w-full h-116.25 flex">
             <div className="flex-1 mx-auto relative overflow-y-hidden rounded-b-2xl">

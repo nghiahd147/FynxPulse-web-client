@@ -39,3 +39,19 @@
 .custom-next {
   right: 4px;
 }
+
+/* scroll */
+
+.hide-scrollbar {
+  overflow-y: auto;
+
+  /* Firefox */
+  scrollbar-width: none;
+
+  /* IE, Edge cũ */
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}

@@ -6,14 +6,9 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Link } from "react-router-dom";
 import useUserStore from "../../store/useUserStore";
-import { useEffect } from "react";
 
 const SuggestionCarousel = () => {
-  const { getFollowSuggestions, listFriends, profileUser, me } = useUserStore();
-
-  useEffect(() => {
-    getFollowSuggestions(me._id as string);
-  }, [profileUser._id]);
+  const { listFriends } = useUserStore();
 
   return (
     <div className="flex items-center gap-x-2 overflow-x-hidden relative">

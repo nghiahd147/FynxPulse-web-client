@@ -1,20 +1,16 @@
-import { Button, Col, Row, Spin } from "antd";
 import useUserStore from "../../store/useUserStore";
 import { useEffect } from "react";
-import { Cake, UserCheck, Users } from "lucide-react";
+import { Cake, ChevronRight, Settings, UserCheck, UserRoundPlus, Users } from "lucide-react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import FriendSidebar from "../../components/FriendsSidebar/FriendSidebar";
+import SuggestionSidebar from "../../components/SuggestionSidebar/SuggestionSidebar";
 
 const Friends = () => {
   const {
     getFollowSuggestions,
     me,
-    listFriends,
-    loading: { getFollowSuggestions: loadingFollowSuggestions },
   } = useUserStore();
   const location = useLocation();
-
-  console.log(location.pathname);
 
   useEffect(() => {
     getFollowSuggestions(me._id as string);
@@ -26,73 +22,71 @@ const Friends = () => {
       <div className="w-[30%] px-2 py-1 shadow-[4px_0_8px_rgba(0,0,0,0.1)] m">
         {location.pathname == "/friends/list" ? (
           <FriendSidebar />
+        ) : location.pathname == "/friends/suggestions" ? (
+          <SuggestionSidebar />
         ) : (
           <>
-            <h3 className="text-xl font-bold ml-2">Người theo dõi</h3>
+            <div className="flex items-center justify-between mb-2 px-2">
+              <h2 className="text-2xl font-bold">Người theo dõi</h2>
+              <div className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 cursor-pointer hover:bg-gray-300 transition-all">
+                <Settings className="w-5 h-5" />
+              </div>
+            </div>
             <Link
               to={"/friends"}
-              className="w-full font-bold mt-2 flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-200 transition-all ease-in"
+              className={`w-full font-semibold flex items-center justify-between cursor-pointer p-2 rounded-md transition-all ease-in ${location.pathname === "/friends" ? "bg-gray-100" : "hover:bg-gray-100"
+                }`}
             >
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200">
-                <Users className="p-1" />
+              <div className="flex items-center">
+                <div className={`w-9 h-9 flex items-center justify-center rounded-full ${location.pathname === "/friends" ? "bg-[#1877F2] text-white" : "bg-gray-200 text-black"
+                  }`}>
+                  <Users className="w-5 h-5" fill={location.pathname === "/friends" ? "currentColor" : "none"} />
+                </div>
+                <span className="ml-3 text-[15px]">Trang chủ</span>
               </div>
-              <span className="ml-2">Trang chủ</span>
             </Link>
             <Link
               to={"/friends/list"}
-              className="w-full font-bold mt-2 flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-200 transition-all ease-in"
+              className="w-full font-semibold mt-1 flex items-center justify-between cursor-pointer p-2 rounded-md hover:bg-gray-100 transition-all ease-in"
             >
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200">
-                <UserCheck className="p-1" />
+              <div className="flex items-center">
+                <div className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 text-black">
+                  <UserCheck className="w-5 h-5" />
+                </div>
+                <span className="ml-3 text-[15px]">Tất cả người theo dõi</span>
               </div>
-              <span className="ml-2">Tất cả bạn bè</span>
+              <ChevronRight className="w-5 h-5 text-gray-400" />
+            </Link>
+            <Link
+              to={"/friends/suggestions"}
+              className="w-full font-semibold mt-1 flex items-center justify-between cursor-pointer p-2 rounded-md hover:bg-gray-100 transition-all ease-in"
+            >
+              <div className="flex items-center">
+                <div className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 text-black">
+                  <UserRoundPlus className="w-5 h-5" />
+                </div>
+                <span className="ml-3 text-[15px]">Gợi ý</span>
+              </div>
+              <ChevronRight className="w-5 h-5 text-gray-400" />
             </Link>
             <Link
               to={"/friends/birthdays"}
-              className="w-full font-bold mt-2 flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-200 transition-all ease-in"
+              className={`w-full font-semibold mt-1 flex items-center justify-between cursor-pointer p-2 rounded-md transition-all ease-in ${location.pathname === "/friends/birthdays" ? "bg-gray-100" : "hover:bg-gray-100"
+                }`}
             >
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200">
-                <Cake className="p-1" />
+              <div className="flex items-center">
+                <div className={`w-9 h-9 flex items-center justify-center rounded-full ${location.pathname === "/friends/birthdays" ? "bg-[#1877F2] text-white" : "bg-gray-200 text-black"
+                  }`}>
+                  <Cake className="w-5 h-5" fill={location.pathname === "/friends/birthdays" ? "currentColor" : "none"} />
+                </div>
+                <span className="ml-3 text-[15px]">Sinh nhật</span>
               </div>
-              <span className="p-1">Sinh nhật</span>
             </Link>
           </>
         )}
       </div>
       {/* Right */}
-      <div className="w-full overflow-y-auto hide-scrollbar py-4 px-10">
-        {location.pathname == "/friends" && (
-          <>
-            <h3 className="text-xl font-bold">Những người bạn có thể biết</h3>
-            <Row gutter={[12, 12]} className="mt-4">
-              {/* Friend */}
-              {loadingFollowSuggestions ? (
-                <Spin className="m-auto" />
-              ) : (
-                listFriends.map((item) => {
-                  return (
-                    <Col span={4}>
-                      <div className="flex flex-col border border-[#DADCDF] rounded-lg overflow-hidden">
-                        <img
-                          className="w-full h-50 object-cover"
-                          src=""
-                          alt=""
-                        />
-                        <div className="flex flex-col gap-y-2 px-2 pb-2">
-                          <span className="font-bold mt-1">
-                            {item.first_name + " " + item.last_name}
-                          </span>
-                          <Button type="primary">Thêm bạn bè</Button>
-                          <Button>Gỡ</Button>
-                        </div>
-                      </div>
-                    </Col>
-                  );
-                })
-              )}
-            </Row>
-          </>
-        )}
+      <div className="w-full overflow-y-auto hide-scrollbar bg-[#F0F2F5]">
         <Outlet />
       </div>
     </div>

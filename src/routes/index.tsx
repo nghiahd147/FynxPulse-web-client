@@ -13,6 +13,10 @@ import Friends from "../pages/Friends/Friends";
 import ProfileImage from "../pages/Profile/components/ProfileImage";
 import ProfilePost from "../pages/Profile/components/ProfilePost";
 import Birthdays from "../pages/Friends/components/Birthdays";
+import Suggestions from "../pages/Friends/components/Suggestions";
+import PeopleYouMayKnow from "../pages/Friends/components/PeopleYouMayKnow";
+import List from "../pages/Friends/components/List";
+import ProfileInfo from "../pages/Profile/components/ProfileInfo";
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +27,10 @@ export const router = createBrowserRouter([
         path: "/profile/:user_name?",
         element: <Profile />,
         children: [
+          {
+            index: true,
+            element: <ProfileInfo />
+          },
           {
             path: "images",
             element: <ProfileImage />,
@@ -46,13 +54,21 @@ export const router = createBrowserRouter([
         element: <Friends />,
         children: [
           {
+            index: true,
+            element: <PeopleYouMayKnow />
+          },
+          {
             path: "list",
-            element: <Profile />,
+            element: <List />,
           },
           {
             path: "birthdays",
             element: <Birthdays />,
           },
+          {
+            path: "suggestions",
+            element: <Suggestions />
+          }
         ],
       },
     ],

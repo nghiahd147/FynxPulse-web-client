@@ -12,7 +12,6 @@ import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import { notificationError, notificationSuccess } from "../../config/notify";
 import SuggestionCarousel from "../../components/SuggestionCarousel/SuggestionCarousel";
 import useUserStore from "../../store/useUserStore";
-import ProfileInfo from "./components/ProfileInfo";
 
 const Profile = () => {
   const [suggestionCarousel, setSuggestionCarousel] = useState(true);
@@ -205,19 +204,7 @@ const Profile = () => {
       </div>
       {/* Body Profile */}
       <div className="w-313 flex justify-between gap-x-5 mx-auto my-4">
-        {/* Info */}
-        <ProfileInfo
-          profile={profileUser}
-          locationCurrentAr={locationCurrentAr}
-        />
-        {locationCurrentAr[1] === "profile" && locationCurrentAr.length == 3 ? (
-          <>
-            {/* Posts */}
-            <div className="w-[60%] bg-white p-3 rounded-md shadow-md">2</div>
-          </>
-        ) : (
-          <Outlet />
-        )}
+        <Outlet />
       </div>
     </div>
   );

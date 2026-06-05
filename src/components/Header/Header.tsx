@@ -1,10 +1,10 @@
-import { Input, Modal, Form, Button, Divider, Tooltip } from "antd";
+import { Input, Modal, Form, Tooltip } from "antd";
 import useUserStore from "../../store/useUserStore";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LockOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
+import { LockOutlined, LogoutOutlined } from "@ant-design/icons";
 import { House, ListIndentIncrease, TvMinimalPlay, Users } from "lucide-react";
 import { notificationError, notificationSuccess } from "../../config/notify";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { ChangePasswordPayload } from "../../types/payloads";
 import { REGEX_PASSWORD } from "../../utils/regex";
 
@@ -18,6 +18,19 @@ const Header = (props: {
   const { logoutUser, changePassword, me } = useUserStore();
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setAvatarMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleLogoutUser = async () => {
     const result = await logoutUser({
@@ -48,7 +61,7 @@ const Header = (props: {
   };
 
   return (
-    <div className="relative h-18 border-b border-gray-200 sm:mx-8 flex items-center justify-between">
+    <div className="relative h-16 border-b border-gray-200 sm:mx-8 flex items-center justify-between">
       {/* mobile */}
       <div className="flex items-center">
         <div
@@ -61,7 +74,7 @@ const Header = (props: {
         </div>
         <Link to={"/"} className="flex items-center whitespace-nowrap">
           <img
-            src="./icons8-yelp.png"
+            src="/icons8-yelp.png"
             alt="logo_home"
             className="hidden w-10 h-10 sm:block"
           />
@@ -98,61 +111,58 @@ const Header = (props: {
       </div>
       {/* desktop, tablet */}
       <div className="hidden sm:block">
-        <div className="relative w-9 h-9 rounded-full border">
+        <div className="relative w-9 h-9 rounded-full border" ref={menuRef}>
           <img
             src={me.avatar || "/avatar-mac-dinh.jpg"}
             className="w-full h-full rounded-full cursor-pointer"
             alt="avatar-icon"
             onClick={() => setAvatarMenuOpen(!avatarMenuOpen)}
           />
-          {avatarMenuOpen && (
-            <div
-              className="fixed top-0 left-0 right-0 bottom-0 z-10"
-              onClick={() => setAvatarMenuOpen(false)}
-            ></div>
-          )}
-          {avatarMenuOpen && (
-            <div className="absolute p-3 w-90 top-full right-0 bg-white rounded-md shadow-md z-50 border border-gray-200">
-              <div className="flex flex-col w-full shadow-md border-gray-200 p-3 overflow-hidden rounded-md">
-                <div className="flex items-center">
-                  <img
-                    src={me.avatar || "/avatar-mac-dinh.jpg"}
-                    className="w-8 h-8 border rounded-full"
-                    alt="avatar-icon"
-                  />
-                  <span className="ml-3">
-                    {me.first_name + " " + me.last_name}
-                  </span>
+
+          <div
+            className={`absolute w-[360px] top-[calc(100%+8px)] right-0 bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.2)] z-50 p-4 transition-all duration-200 origin-top-right ${avatarMenuOpen ? 'scale-100 opacity-100 visible' : 'scale-95 opacity-0 invisible'}`}
+          >
+            {/* Top Profile Card */}
+            <div className="w-full shadow-[0_1px_4px_rgba(0,0,0,0.15)] rounded-xl p-4 mb-3 flex flex-col border border-gray-100">
+              <Link to={`/profile/${me.user_name}`} className="flex items-center gap-x-3 mb-3 cursor-pointer" onClick={() => setAvatarMenuOpen(false)}>
+                <img
+                  src={me.avatar || "/avatar-mac-dinh.jpg"}
+                  className="w-10 h-10 rounded-full object-cover border border-gray-200 flex-shrink-0"
+                  alt="avatar-icon"
+                />
+                <span className="font-bold text-[17px] text-black">
+                  {me.first_name + " " + me.last_name}
+                </span>
+              </Link>
+              <div className="h-[1px] bg-[#E3E5E7] w-full mb-3"></div>
+              <Link to={`/profile/${me.user_name}`} onClick={() => setAvatarMenuOpen(false)} className="w-full">
+                <div className="w-full font-semibold text-[15px] text-[#050505] flex items-center justify-center py-[6px] bg-[#E4E6E9] rounded-md hover:bg-[#D8DADF] transition-all">
+                  Xem tất cả trang cá nhân
                 </div>
-                <Divider className="m-2! border-[#E3E5E7]!" />
-                <Link to={`/profile/${me.user_name}`}>
-                  <Button icon={<UserOutlined />} className="w-full!">
-                    Xem tất cả trang cá nhân
-                  </Button>
-                </Link>
-              </div>
-              {/* Item */}
-              <div
-                className="w-full font-bold mt-2 flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-200 transition-all ease-in"
-                onClick={() => setChangePasswordOpen(true)}
-              >
-                <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200">
-                  <LockOutlined className="mt-px" />
-                </div>
-                <span className="ml-2">Thay đổi mật khẩu</span>
-              </div>
-              {/* Item */}
-              <div
-                className="w-full font-bold mt-2 flex items-center cursor-pointer p-2 rounded-md hover:bg-gray-200 transition-all ease-in"
-                onClick={handleLogoutUser}
-              >
-                <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200">
-                  <LogoutOutlined className="mt-px" />
-                </div>
-                <span className="ml-2">Đăng xuất</span>
-              </div>
+              </Link>
             </div>
-          )}
+
+            {/* Menu Items */}
+            <div
+              className="w-full flex items-center cursor-pointer p-2 rounded-lg hover:bg-gray-100 transition-all"
+              onClick={() => { setChangePasswordOpen(true); setAvatarMenuOpen(false); }}
+            >
+              <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#E4E6E9] flex-shrink-0">
+                <LockOutlined className="text-black text-[18px]" />
+              </div>
+              <span className="ml-3 font-semibold text-[15px] text-black">Thay đổi mật khẩu</span>
+            </div>
+
+            <div
+              className="w-full flex items-center cursor-pointer p-2 rounded-lg hover:bg-gray-100 transition-all mt-1"
+              onClick={() => { handleLogoutUser(); setAvatarMenuOpen(false); }}
+            >
+              <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#E4E6E9] flex-shrink-0">
+                <LogoutOutlined className="text-black text-[18px]" />
+              </div>
+              <span className="ml-3 font-semibold text-[15px] text-black">Đăng xuất</span>
+            </div>
+          </div>
         </div>
       </div>
       <Modal

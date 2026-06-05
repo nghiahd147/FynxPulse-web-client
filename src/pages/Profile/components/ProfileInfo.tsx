@@ -15,33 +15,26 @@ import dayjs from "dayjs";
 import { REGEX_URL_WEBSITE, REGEX_USERNAME } from "../../../utils/regex";
 import useUserStore from "../../../store/useUserStore";
 
-const ProfileInfo = ({
-  profile,
-  locationCurrentAr,
-}: {
-  profile: ProfileUser;
-  locationCurrentAr: string[];
-}) => {
+const ProfileInfo = () => {
   const { openModalProfile, setOpenModalProfile } = useUserStore();
-
   const [form] = Form.useForm();
   const avatar = Form.useWatch("avatar", form);
   const profile_picture_url = Form.useWatch("profile_picture_url", form);
-  const { me } = useUserStore();
+  const { me, profileUser } = useUserStore();
 
   useEffect(() => {
     form.setFieldsValue({
-      first_name: profile.first_name,
-      last_name: profile.last_name,
-      user_name: profile.user_name,
-      date_of_birth: dayjs(profile.date_of_birth),
-      bio: profile.bio,
-      location: profile.location,
-      website: profile.website,
-      avatar: profile.avatar,
-      profile_picture_url: profile.profile_picture_url,
+      first_name: profileUser.first_name,
+      last_name: profileUser.last_name,
+      user_name: profileUser.user_name,
+      date_of_birth: dayjs(profileUser.date_of_birth),
+      bio: profileUser.bio,
+      location: profileUser.location,
+      website: profileUser.website,
+      avatar: profileUser.avatar,
+      profile_picture_url: profileUser.profile_picture_url,
     });
-  }, [profile]);
+  }, [profileUser]);
 
   const handleCancel = () => {
     setOpenModalProfile(false);
@@ -51,16 +44,12 @@ const ProfileInfo = ({
     console.log("values", values);
   };
 
-  console.log(locationCurrentAr);
-
   return (
     <>
-      <div
-        className={`w-[40%] flex flex-col py-2 px-3 rounded-md bg-white shadow-md ${!(locationCurrentAr[1] === "profile" && locationCurrentAr.length == 3) && "hidden"}`}
-      >
+      <div className="w-[40%] flex flex-col py-2 px-3 rounded-md bg-white shadow-md">
         <div className="flex justify-between items-center">
           <h3 className="text-2xl font-bold">Thông tin cá nhân</h3>
-          {me.user_name === profile.user_name && (
+          {me.user_name === profileUser.user_name && (
             <div
               onClick={() => setOpenModalProfile(true)}
               className="hover:bg-bgPrimary transition-all ease-in cursor-pointer p-3 rounded-[100%]"
@@ -70,32 +59,33 @@ const ProfileInfo = ({
           )}
         </div>
         <div className="flex flex-col gap-y-4 mt-3 ml-3">
-          {profile.location && (
+          {profileUser.location && (
             <div className="flex items-center gap-x-2">
               <MapPinHouse />
-              <span>{profile.location}</span>
+              <span>{profileUser.location}</span>
             </div>
           )}
-          {profile.first_name && profile.last_name && (
+          {profileUser.first_name && profileUser.last_name && (
             <div className="flex items-center gap-x-2">
               <User />
-              <span>{profile.first_name + " " + profile.last_name}</span>
+              <span>{profileUser.first_name + " " + profileUser.last_name}</span>
             </div>
           )}
-          {profile.date_of_birth && (
+          {profileUser.date_of_birth && (
             <div className="flex items-center gap-x-2">
               <Cake />
-              <span>{formatDate(profile.date_of_birth as Date)}</span>
+              <span>{formatDate(profileUser.date_of_birth as Date)}</span>
             </div>
           )}
-          {profile.website && (
+          {profileUser.website && (
             <div className="flex items-center gap-x-2">
               <PanelsTopLeft />
-              <span>{profile.website}</span>
+              <span>{profileUser.website}</span>
             </div>
           )}
         </div>
       </div>
+      <div className="w-[60%] bg-white p-3 rounded-md shadow-md">2</div>
       <Modal
         title="Thông tin cá nhân"
         open={openModalProfile}

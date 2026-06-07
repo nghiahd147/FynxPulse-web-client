@@ -85,7 +85,7 @@ const ProfileInfo = () => {
           )}
         </div>
       </div>
-      <div className="w-[60%] bg-white p-3 rounded-md shadow-md">2</div>
+      <div className="flex-1 bg-white p-3 rounded-md shadow-md">2</div>
       <Modal
         title="Thông tin cá nhân"
         open={openModalProfile}

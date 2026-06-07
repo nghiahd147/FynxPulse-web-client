@@ -63,7 +63,7 @@ const FriendSidebar = () => {
         );
 
         return (
-          <div key={index} className="flex items-center justify-between p-2 hover:bg-gray-100 rounded-lg cursor-pointer transition-all">
+          <Link to={`/friends/list/${friend.user_name}`} key={index} className="flex items-center justify-between p-2 hover:bg-gray-100 rounded-lg cursor-pointer transition-all">
             <div className="flex items-center gap-x-3">
               <img className="w-14 h-14 rounded-full object-cover bg-gray-300" src="" alt="" />
               <div className="flex flex-col">
@@ -72,11 +72,11 @@ const FriendSidebar = () => {
               </div>
             </div>
             <Popover content={popoverContent} trigger="click" placement="bottomRight" arrow={false} overlayInnerStyle={{ padding: '8px', borderRadius: '8px', boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
                 <MoreHorizontal className="w-5 h-5 text-gray-500" />
               </div>
             </Popover>
-          </div>
+          </Link>
         )
       })}
 

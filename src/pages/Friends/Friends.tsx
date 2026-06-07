@@ -19,8 +19,8 @@ const Friends = () => {
   return (
     <div className="h-full flex">
       {/* Left */}
-      <div className="w-[30%] px-2 py-1 shadow-[4px_0_8px_rgba(0,0,0,0.1)] m">
-        {location.pathname == "/friends/list" ? (
+      <div className="w-[30%] px-2 py-1 shadow-[4px_0_8px_rgba(0,0,0,0.1)]">
+        {location.pathname.startsWith("/friends/list") ? (
           <FriendSidebar />
         ) : location.pathname == "/friends/suggestions" ? (
           <SuggestionSidebar />

@@ -22,11 +22,9 @@ interface AuthStore {
   myFriends: Users[];
   me: Users;
   openModalProfile: boolean;
-  userNameSidebar: string;
 
   setLoading: (key: string, value: boolean) => void;
   setOpenModalProfile: (open: boolean) => void;
-  setUserNameSidebar: (username: string) => void;
   getMe: () => void;
   getListUser: (params: ParamsUser) => void;
   getProfile: (username: string) => void;
@@ -67,10 +65,6 @@ const useUserStore = create<AuthStore>()(
       profileUser: {},
       me: {},
       openModalProfile: false,
-
-      setUserNameSidebar: (username) => {
-        set({ userNameSidebar: username })
-      },
 
       setLoading: (key: string, value: boolean) => {
         set((state) => ({

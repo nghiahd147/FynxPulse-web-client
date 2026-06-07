@@ -60,6 +60,30 @@ export const router = createBrowserRouter([
           {
             path: "list",
             element: <List />,
+            children: [
+              {
+                path: ":user_name",
+                element: <Profile />,
+                children: [
+                  {
+                    index: true,
+                    element: <ProfileInfo />
+                  },
+                  {
+                    path: "images",
+                    element: <ProfileImage />,
+                  },
+                  {
+                    path: "friends",
+                    element: <ProfileFriends />,
+                  },
+                  {
+                    path: "posts",
+                    element: <ProfilePost />,
+                  },
+                ],
+              }
+            ]
           },
           {
             path: "birthdays",

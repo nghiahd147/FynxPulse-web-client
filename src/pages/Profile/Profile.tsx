@@ -30,6 +30,8 @@ const Profile = () => {
   const usernameCurrent = params.user_name;
   const userIdCurrent = profileUser._id;
   const location = useLocation();
+  const isFriendsList = location.pathname.startsWith("/friends/list");
+  const basePath = isFriendsList ? "/friends/list" : "/profile";
   const locationCurrentAr = location.pathname.split("/");
 
   useEffect(() => {
@@ -172,26 +174,26 @@ const Profile = () => {
           <div className="h-full flex items-center justify-between border-t-2 border-[#e2e5e9]">
             <div className="h-full flex items-center gap-x-2 text-[#b1b2b4] font-bold mt-1">
               <Link
-                to={`/profile/${profileUser?.user_name}`}
-                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${locationCurrentAr[1] === "profile" && locationCurrentAr.length == 3 && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                to={`${basePath}/${profileUser?.user_name}`}
+                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === `${basePath}/${profileUser?.user_name}` && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
               >
                 Tất cả
               </Link>
               <Link
-                to={`/profile/${profileUser.user_name}/images`}
-                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === "/profile/image" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                to={`${basePath}/${profileUser?.user_name}/images`}
+                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === `${basePath}/${profileUser?.user_name}/images` && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
               >
                 Ảnh
               </Link>
               <Link
-                to={`/profile/${profileUser.user_name}/friends`}
-                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname.split("/")[3] === "friends" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                to={`${basePath}/${profileUser?.user_name}/friends`}
+                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === `${basePath}/${profileUser?.user_name}/friends` && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
               >
                 Người theo dõi
               </Link>
               <Link
-                to={`/profile/${profileUser.user_name}/posts`}
-                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === "/profile/post" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                to={`${basePath}/${profileUser?.user_name}/posts`}
+                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === `${basePath}/${profileUser?.user_name}/posts` && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
               >
                 Bài viết quan tâm
               </Link>
@@ -203,7 +205,7 @@ const Profile = () => {
         </div>
       </div>
       {/* Body Profile */}
-      <div className="w-313 flex justify-between gap-x-5 mx-auto my-4">
+      <div className={`${locationCurrentAr[1] === "profile" ? "w-313" : "w-full"} flex justify-between gap-x-5 mx-auto my-4`}>
         <Outlet />
       </div>
     </div>

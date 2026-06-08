@@ -1,12 +1,34 @@
-import { Col, Row, Spin } from "antd";
+import { Button, Col, message, Row, Spin } from "antd";
 import { Link } from "react-router-dom";
 import useUserStore from "../../../store/useUserStore";
+import { notificationError, notificationSuccess } from "../../../config/notify";
+import { UserRoundPlus } from "lucide-react";
+
+import { useState } from "react";
 
 const PeopleYouMayKnow = () => {
     const {
         listFriends,
-        loading: { getFollowSuggestions: loadingFollowSuggestions },
+        getFollowSuggestions,
+        me,
+        followUser,
+        loading: { getFollowSuggestions: loadingFollowSuggestions, followUser: loadingFollowUser },
     } = useUserStore();
+
+    const [loadingFollowUserId, setLoadingFollowUserId] = useState<string | null>(null);
+
+    const handleFollowUser = async (id: string) => {
+        setLoadingFollowUserId(id);
+        const result = await followUser({ follower_user_id: id })
+        if (result.success) {
+            getFollowSuggestions(me._id as string)
+            notificationSuccess(result.message as string)
+        } else {
+            notificationError(result.message as string)
+        }
+        setLoadingFollowUserId(null);
+    }
+
     return (
         <div className="py-4 px-10">
             <div className="flex items-center justify-between mb-4">
@@ -18,12 +40,12 @@ const PeopleYouMayKnow = () => {
                 {loadingFollowSuggestions ? (
                     <Spin className="m-auto" />
                 ) : (
-                    listFriends.map((item) => {
+                    listFriends.map((item, index) => {
                         return (
-                            <Col span={4}>
-                                <div className="flex flex-col border border-gray-200 rounded-[10px] overflow-hidden bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1)]">
+                            <Col key={index} span={5}>
+                                <div className="flex flex-col rounded-t-sm overflow-hidden bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1)]">
                                     <img
-                                        className="w-full h-[220px] object-cover bg-gray-200"
+                                        className="w-full h-55 object-cover bg-gray-200"
                                         src=""
                                         alt=""
                                     />
@@ -31,12 +53,12 @@ const PeopleYouMayKnow = () => {
                                         <span className="font-bold text-[16px] text-black mb-3">
                                             {item.first_name + " " + item.last_name}
                                         </span>
-                                        <button className="w-full bg-[#E7F3FF] text-[#1877F2] font-semibold py-[6px] rounded-md hover:bg-[#DBEAFE] transition-all cursor-pointer">
+                                        <Button loading={loadingFollowUser && loadingFollowUserId === item._id} icon={<UserRoundPlus className="w-4 h-4" />} type="primary" onClick={() => handleFollowUser(item._id as string)}>
                                             Theo dõi
-                                        </button>
-                                        <button className="w-full bg-[#E4E6E9] text-black font-semibold mt-2 py-[6px] rounded-md hover:bg-[#D8DADF] transition-all cursor-pointer">
+                                        </Button>
+                                        <Button type="default" className="mt-2" onClick={() => message.info("Đang phát triển tính năng này...")}>
                                             Gỡ
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             </Col>

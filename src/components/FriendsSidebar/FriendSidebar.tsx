@@ -1,22 +1,33 @@
 import { SearchOutlined } from "@ant-design/icons";
-import { Divider, Popover } from "antd";
+import { Divider, message, Popover, Spin } from "antd";
 import { ArrowLeft, MessageCircle, MoreHorizontal, XSquare } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useUserStore from "../../store/useUserStore";
+import { notificationError, notificationSuccess } from "../../config/notify";
 
 const FriendSidebar = () => {
-  const { getUserFollowing, myFriends, me } = useUserStore()
+  const { getUserFollowing, unfollowUser, myFriends, me, loading: { unfollowUser: loadingUnfollowUser } } = useUserStore()
   const [name, setName] = useState("")
 
   useEffect(() => {
     getUserFollowing(me._id as string, name)
   }, [name])
 
+  const handleUnFollowUser = async (id: string) => {
+    const result = await unfollowUser(id as string);
+    if (result.success) {
+      getUserFollowing(me._id as string)
+      notificationSuccess(result.message as string);
+    } else {
+      notificationError(result.message as string);
+    }
+  };
+
   return (
     <>
-      <div className="flex items-center gap-x-[10px] mt-2 px-1">
-        <Link to={"/friends"} className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-gray-200 transition-all flex-shrink-0">
+      <div className="flex items-center gap-x-2.5 mt-2 px-1">
+        <Link to={"/friends"} className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-gray-200 transition-all shrink-0">
           <ArrowLeft className="w-5 h-5 text-[#65676B]" strokeWidth={2.5} />
         </Link>
         <div className="flex flex-col">
@@ -26,7 +37,7 @@ const FriendSidebar = () => {
       </div>
 
       <div className="px-1 mt-4">
-        <div className="flex items-center bg-[#F0F2F5] rounded-full px-3 py-[8px]">
+        <div className="flex items-center bg-[#F0F2F5] rounded-full px-3 py-2">
           <SearchOutlined className="text-[#65676B] text-[16px] mr-2" />
           <input
             type="text"
@@ -45,20 +56,22 @@ const FriendSidebar = () => {
 
       {myFriends.map((friend, index) => {
         const popoverContent = (
-          <div className="w-[340px] flex flex-col">
-            <div className="flex items-center gap-x-3 p-2 hover:bg-gray-100 rounded-md cursor-pointer transition-all">
-              <MessageCircle className="w-6 h-6 text-black flex-shrink-0" />
+          <div className="w-85 flex flex-col">
+            <div onClick={() => message.info("Đang phát triên tính năng...")} className="flex items-center gap-x-3 p-2 hover:bg-gray-100 rounded-md cursor-pointer transition-all">
+              <MessageCircle className="w-6 h-6 text-black shrink-0" />
               <span className="font-semibold text-[15px] text-black">Nhắn tin cho {friend.last_name}</span>
             </div>
-            <div className="flex items-start gap-x-3 p-2 hover:bg-gray-100 rounded-md cursor-pointer transition-all mt-1">
-              <XSquare className="w-6 h-6 text-black flex-shrink-0 mt-0.5" />
-              <div className="flex flex-col">
-                <span className="font-semibold text-[15px] text-black">Bỏ theo dõi {friend.last_name}</span>
-                <span className="text-[13px] text-gray-500 leading-tight mt-1">
-                  Không nhìn thấy bài viết của họ nữa. Họ sẽ không nhận được thông báo là bạn đã bỏ theo dõi.
-                </span>
+            {loadingUnfollowUser ? <Spin /> : (
+              <div onClick={() => handleUnFollowUser(friend._id as string)} className="flex items-start gap-x-3 p-2 hover:bg-gray-100 rounded-md cursor-pointer transition-all mt-1">
+                <XSquare className="w-6 h-6 text-black shrink-0 mt-0.5" />
+                <div className="flex flex-col">
+                  <span className="font-semibold text-[15px] text-black">Bỏ theo dõi {friend.last_name}</span>
+                  <span className="text-[13px] text-gray-500 leading-tight mt-1">
+                    Không nhìn thấy bài viết của họ nữa. Họ sẽ không nhận được thông báo là bạn đã bỏ theo dõi.
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         );
 

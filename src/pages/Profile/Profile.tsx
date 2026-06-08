@@ -71,16 +71,26 @@ const Profile = () => {
   return (
     <div className="w-full bg-bgPrimary">
       {/* Header Profile */}
-      <div className="w-full flex flex-col items-center bg-white border-b border-bgPrimary z-10">
+      <div className="w-full flex flex-col items-center bg-white border-b border-bgPrimary z-10 relative">
+
+        {/* Layer custom bgr */}
+        <div className="absolute top-0 left-0 w-full h-116.25 overflow-hidden z-0 pointer-events-none">
+          <div
+            className="absolute -inset-25 bg-cover bg-center blur-[60px] opacity-60 transition-all duration-700 ease-in-out"
+            style={{ backgroundImage: `url(${profileUser.profile_picture_url || "/anh_nen_mac_dinh_2.jpg"})` }}
+          />
+          <div className="absolute inset-0 bg-linear-to-b from-transparent via-white/20 to-white" />
+        </div>
+
         <div
-          className={locationCurrentAr[1] === "profile" ? "w-313" : "w-full"}
+          className={`relative z-10 ${locationCurrentAr[1] === "profile" ? "w-313" : "w-full"}`}
         >
           {/* Background */}
           <div className="w-full h-116.25 flex">
-            <div className="flex-1 mx-auto relative overflow-y-hidden rounded-b-2xl">
+            <div className="flex-1 mx-auto relative overflow-hidden rounded-b-2xl">
               <img
                 src={
-                  profileUser.profile_picture_url || "/nen-trang-mac-dinh.jpg"
+                  profileUser.profile_picture_url || "/anh_nen_mac_dinh_2.jpg"
                 }
                 alt="bg-user"
                 className="w-full h-full object-cover"
@@ -171,35 +181,43 @@ const Profile = () => {
           )}
 
           {/* Nav profile */}
-          <div className="h-full flex items-center justify-between border-t-2 border-[#e2e5e9]">
-            <div className="h-full flex items-center gap-x-2 text-[#b1b2b4] font-bold mt-1">
+          <div className="h-15 flex items-center justify-between border-t border-[#ced0d4]">
+            <div className="h-full flex items-center gap-x-1">
               <Link
                 to={`${basePath}/${profileUser?.user_name}`}
-                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === `${basePath}/${profileUser?.user_name}` && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                className={`relative flex items-center justify-center h-12 px-4 font-semibold rounded-md cursor-pointer transition-colors ${location.pathname === `${basePath}/${profileUser?.user_name}` ? "text-[#1877F2]" : "text-[#65676B] hover:bg-[#F2F2F2]"
+                  } after:absolute after:-bottom-1.5 after:left-0 after:w-full after:h-0.75 after:bg-[#1877F2] after:transition-transform after:duration-300 after:ease-out ${location.pathname === `${basePath}/${profileUser?.user_name}` ? "after:scale-x-100" : "after:scale-x-0"
+                  }`}
               >
                 Tất cả
               </Link>
               <Link
                 to={`${basePath}/${profileUser?.user_name}/images`}
-                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === `${basePath}/${profileUser?.user_name}/images` && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                className={`relative flex items-center justify-center h-12 px-4 font-semibold rounded-md cursor-pointer transition-colors ${location.pathname === `${basePath}/${profileUser?.user_name}/images` ? "text-[#1877F2]" : "text-[#65676B] hover:bg-[#F2F2F2]"
+                  } after:absolute after:-bottom-1.5 after:left-0 after:w-full after:h-0.75 after:bg-[#1877F2] after:transition-transform after:duration-300 after:ease-out ${location.pathname === `${basePath}/${profileUser?.user_name}/images` ? "after:scale-x-100" : "after:scale-x-0"
+                  }`}
               >
                 Ảnh
               </Link>
               <Link
                 to={`${basePath}/${profileUser?.user_name}/friends`}
-                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === `${basePath}/${profileUser?.user_name}/friends` && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                className={`relative flex items-center justify-center h-12 px-4 font-semibold rounded-md cursor-pointer transition-colors ${location.pathname === `${basePath}/${profileUser?.user_name}/friends` ? "text-[#1877F2]" : "text-[#65676B] hover:bg-[#F2F2F2]"
+                  } after:absolute after:-bottom-1.5 after:left-0 after:w-full after:h-0.75 after:bg-[#1877F2] after:transition-transform after:duration-300 after:ease-out ${location.pathname === `${basePath}/${profileUser?.user_name}/friends` ? "after:scale-x-100" : "after:scale-x-0"
+                  }`}
               >
-                Người theo dõi
+                Bạn bè
               </Link>
               <Link
                 to={`${basePath}/${profileUser?.user_name}/posts`}
-                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === `${basePath}/${profileUser?.user_name}/posts` && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                className={`relative flex items-center justify-center h-12 px-4 font-semibold rounded-md cursor-pointer transition-colors ${location.pathname === `${basePath}/${profileUser?.user_name}/posts` ? "text-[#1877F2]" : "text-[#65676B] hover:bg-[#F2F2F2]"
+                  } after:absolute after:-bottom-1.5 after:left-0 after:w-full after:h-0.75 after:bg-[#1877F2] after:transition-transform after:duration-300 after:ease-out ${location.pathname === `${basePath}/${profileUser?.user_name}/posts` ? "after:scale-x-100" : "after:scale-x-0"
+                  }`}
               >
                 Bài viết quan tâm
               </Link>
             </div>
-            <div className="bg-[#e2e5e9] rounded-md cursor-pointer w-12.5 h-9.5 hover:bg-[#f5f6f7] flex transition-all ease-in my-3">
-              <Ellipsis className="m-auto" />
+            <div className="bg-[#e4e6e9] rounded-md cursor-pointer w-12 h-9 hover:bg-[#d8dadf] flex transition-all ease-in my-3">
+              <Ellipsis className="m-auto w-5 h-5 text-black" />
             </div>
           </div>
         </div>

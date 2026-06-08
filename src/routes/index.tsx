@@ -18,6 +18,25 @@ import PeopleYouMayKnow from "../pages/Friends/components/PeopleYouMayKnow";
 import List from "../pages/Friends/components/List";
 import ProfileInfo from "../pages/Profile/components/ProfileInfo";
 
+const profileChildren = [
+  {
+    index: true,
+    element: <ProfileInfo />
+  },
+  {
+    path: "images",
+    element: <ProfileImage />,
+  },
+  {
+    path: "friends",
+    element: <ProfileFriends />,
+  },
+  {
+    path: "posts",
+    element: <ProfilePost />,
+  },
+]
+
 export const router = createBrowserRouter([
   {
     element: <MainLayout />,
@@ -26,24 +45,7 @@ export const router = createBrowserRouter([
       {
         path: "/profile/:user_name?",
         element: <Profile />,
-        children: [
-          {
-            index: true,
-            element: <ProfileInfo />
-          },
-          {
-            path: "images",
-            element: <ProfileImage />,
-          },
-          {
-            path: "friends",
-            element: <ProfileFriends />,
-          },
-          {
-            path: "posts",
-            element: <ProfilePost />,
-          },
-        ],
+        children: profileChildren,
       },
       {
         path: "/reels",
@@ -64,24 +66,7 @@ export const router = createBrowserRouter([
               {
                 path: ":user_name",
                 element: <Profile />,
-                children: [
-                  {
-                    index: true,
-                    element: <ProfileInfo />
-                  },
-                  {
-                    path: "images",
-                    element: <ProfileImage />,
-                  },
-                  {
-                    path: "friends",
-                    element: <ProfileFriends />,
-                  },
-                  {
-                    path: "posts",
-                    element: <ProfilePost />,
-                  },
-                ],
+                children: profileChildren,
               }
             ]
           },

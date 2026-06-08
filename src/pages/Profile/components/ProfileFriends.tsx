@@ -1,16 +1,31 @@
-import { EllipsisOutlined, SearchOutlined } from "@ant-design/icons";
-import { Input } from "antd";
+import {
+  EllipsisOutlined,
+  SearchOutlined,
+  CloseSquareOutlined,
+} from "@ant-design/icons";
+import { Input, Dropdown } from "antd";
 import { Link } from "react-router-dom";
 import useUserStore from "../../../store/useUserStore";
 import { useEffect, useState } from "react";
-
+import { notificationError, notificationSuccess } from "../../../config/notify";
 const Friends = () => {
-  const { getUserFollowing, myFriends, profileUser } = useUserStore();
+  const { getProfile, getUserFollowing, unfollowUser, myFriends, profileUser, me } = useUserStore();
   const [username, setUsername] = useState("");
 
   useEffect(() => {
     getUserFollowing(profileUser._id as string, username);
   }, [profileUser.user_name, username]);
+
+  const handleUnfollowUser = async (id: string) => {
+    const result = await unfollowUser(id)
+    if (result.success) {
+      getProfile(me.user_name || "")
+      getUserFollowing(me._id as string)
+      notificationSuccess(result.message as string)
+    } else {
+      notificationError(result.message as string)
+    }
+  }
 
   return (
     <div className="w-full h-full flex flex-col shadow-md bg-white">
@@ -34,12 +49,12 @@ const Friends = () => {
           </Link>
         </div>
       </div>
-      <div className="w-full my-4 flex items-center justify-between gap-x-3 px-3 py-1">
+      <div className="w-full my-4 grid grid-cols-2 gap-4 px-3 py-1">
         {/* Item Friend */}
         {myFriends.length !== 0 ? (
-          myFriends.map((item) => {
+          myFriends.map((item, index) => {
             return (
-              <div className="w-[50%] bg-white px-2 py-4 rounded-md border border-gray-200 flex items-center justify-between">
+              <div key={index} className="w-full bg-white px-2 py-4 rounded-md border border-gray-200 flex items-center justify-between">
                 <div className="flex items-center gap-x-3">
                   <Link to={`/profile/${item.user_name}`}>
                     <img
@@ -58,14 +73,32 @@ const Friends = () => {
                     </span>
                   </div>
                 </div>
-                <div className="rounded-full p-3 flex items-center justify-center hover:bg-gray-100 transition-all ease-in cursor-pointer">
-                  <EllipsisOutlined />
-                </div>
+                {profileUser._id === me._id && (
+                  <Dropdown
+                    menu={{
+                      items: [
+                        {
+                          key: "unfollower",
+                          label: <span className="text-base font-medium ml-1" onClick={() => handleUnfollowUser(item._id as string)}>Bỏ theo dõi</span>,
+                          icon: <CloseSquareOutlined className="text-xl" />,
+                        }
+                      ]
+                    }}
+                    trigger={['click']}
+                    placement="bottomRight"
+                    arrow
+                  >
+                    <div className="rounded-full p-3 flex items-center justify-center hover:bg-gray-100 transition-all ease-in cursor-pointer">
+                      <EllipsisOutlined />
+                    </div>
+                  </Dropdown>
+                )}
+
               </div>
             );
           })
         ) : (
-          <i className="w-full text-center text-gray-500">
+          <i className="w-full text-center text-gray-500 col-span-2">
             Bạn chưa theo dõi ai...
           </i>
         )}

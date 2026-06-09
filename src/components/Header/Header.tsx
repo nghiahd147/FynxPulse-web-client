@@ -1,8 +1,8 @@
 import { Input, Modal, Form, Tooltip } from "antd";
 import useUserStore from "../../store/useUserStore";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LockOutlined, LogoutOutlined } from "@ant-design/icons";
-import { House, ListIndentIncrease, TvMinimalPlay, Users } from "lucide-react";
+import { LockOutlined, LogoutOutlined, HomeFilled, HomeOutlined, PlaySquareFilled, PlaySquareOutlined, TeamOutlined } from "@ant-design/icons";
+import { ListIndentIncrease } from "lucide-react";
 import { notificationError, notificationSuccess } from "../../config/notify";
 import { useState, useEffect, useRef } from "react";
 import type { ChangePasswordPayload } from "../../types/payloads";
@@ -15,7 +15,7 @@ const Header = (props: {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const location = useLocation();
-  const { logoutUser, changePassword, me } = useUserStore();
+  const { logoutUser, changePassword, me, loading: { changePassword: loadingChangePassword } } = useUserStore();
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -83,29 +83,41 @@ const Header = (props: {
           </span>
         </Link>
       </div>
-      <div className="h-full flex items-center justify-center gap-x-2">
+      <div className="relative h-full flex items-center justify-center">
+        <div
+          className={`absolute bottom-0 h-0.75 bg-blue-600 rounded-t-md transition-all duration-300 ease-in-out w-28 sm:w-32
+            ${location.pathname === "/" ? "left-0" :
+              location.pathname.startsWith("/reels") ? "left-28 sm:left-32" :
+                location.pathname.startsWith("/friends") ? "left-56 sm:left-64" : "opacity-0 scale-0"}`}
+        />
         <Tooltip title="Trang chủ">
           <Link
             to={"/"}
-            className={`cursor-pointer w-30 h-full flex items-center justify-center hover:bg-gray-200 hover:text-blue-400 hover:border-b-blue-400 hover:border-b-2 transition-all ease-in ${location.pathname == "/" && "border-b-2 border-blue-400 text-blue-400"}`}
+            className="group cursor-pointer w-28 sm:w-32 h-full flex items-center justify-center z-10"
           >
-            <House className="w-[35%] h-full p-2" />
+            <div className={`w-11/12 h-4/5 rounded-lg flex items-center justify-center transition-all duration-300 ease-out active:scale-95 ${location.pathname === "/" ? "text-blue-600" : "text-gray-500 hover:bg-gray-100"}`}>
+              {location.pathname === "/" ? <HomeFilled className="text-3xl" /> : <HomeOutlined className="text-3xl" />}
+            </div>
           </Link>
         </Tooltip>
         <Tooltip title="Thước phim">
           <Link
             to={"/reels"}
-            className={`cursor-pointer w-30 h-full flex items-center justify-center hover:bg-gray-200 hover:text-blue-400 hover:border-b-blue-400 hover:border-b-2 transition-all ease-in ${location.pathname == "/reels" && "border-b-2 border-blue-400 text-blue-400"}`}
+            className="group cursor-pointer w-28 sm:w-32 h-full flex items-center justify-center z-10"
           >
-            <TvMinimalPlay className="w-[35%] h-full p-2" />
+            <div className={`w-11/12 h-4/5 rounded-lg flex items-center justify-center transition-all duration-300 ease-out active:scale-95 ${location.pathname.startsWith("/reels") ? "text-blue-600" : "text-gray-500 hover:bg-gray-100"}`}>
+              {location.pathname.startsWith("/reels") ? <PlaySquareFilled className="text-3xl" /> : <PlaySquareOutlined className="text-3xl" />}
+            </div>
           </Link>
         </Tooltip>
         <Tooltip title="Bạn bè">
           <Link
             to={"/friends"}
-            className={`cursor-pointer w-30 h-full flex items-center justify-center hover:bg-gray-200 hover:text-blue-400 hover:border-b-blue-400 hover:border-b-2 transition-all ease-in ${location.pathname == "/friends" && "border-b-2 border-blue-400 text-blue-400"}`}
+            className="group cursor-pointer w-28 sm:w-32 h-full flex items-center justify-center z-10"
           >
-            <Users className="w-[35%] h-full p-2" />
+            <div className={`w-11/12 h-4/5 rounded-lg flex items-center justify-center transition-all duration-300 ease-out active:scale-95 ${location.pathname.startsWith("/friends") ? "text-blue-600" : "text-gray-500 hover:bg-gray-100"}`}>
+              <TeamOutlined className="text-3xl" />
+            </div>
           </Link>
         </Tooltip>
       </div>
@@ -120,23 +132,23 @@ const Header = (props: {
           />
 
           <div
-            className={`absolute w-[360px] top-[calc(100%+8px)] right-0 bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.2)] z-50 p-4 transition-all duration-200 origin-top-right ${avatarMenuOpen ? 'scale-100 opacity-100 visible' : 'scale-95 opacity-0 invisible'}`}
+            className={`absolute w-90 top-[calc(100%+8px)] right-0 bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.2)] z-50 p-4 transition-all duration-200 origin-top-right ${avatarMenuOpen ? 'scale-100 opacity-100 visible' : 'scale-95 opacity-0 invisible'}`}
           >
             {/* Top Profile Card */}
             <div className="w-full shadow-[0_1px_4px_rgba(0,0,0,0.15)] rounded-xl p-4 mb-3 flex flex-col border border-gray-100">
               <Link to={`/profile/${me.user_name}`} className="flex items-center gap-x-3 mb-3 cursor-pointer" onClick={() => setAvatarMenuOpen(false)}>
                 <img
                   src={me.avatar || "/avatar-mac-dinh.jpg"}
-                  className="w-10 h-10 rounded-full object-cover border border-gray-200 flex-shrink-0"
+                  className="w-10 h-10 rounded-full object-cover border border-gray-200 shrink-0"
                   alt="avatar-icon"
                 />
                 <span className="font-bold text-[17px] text-black">
                   {me.first_name + " " + me.last_name}
                 </span>
               </Link>
-              <div className="h-[1px] bg-[#E3E5E7] w-full mb-3"></div>
+              <div className="h-px bg-[#E3E5E7] w-full mb-3"></div>
               <Link to={`/profile/${me.user_name}`} onClick={() => setAvatarMenuOpen(false)} className="w-full">
-                <div className="w-full font-semibold text-[15px] text-[#050505] flex items-center justify-center py-[6px] bg-[#E4E6E9] rounded-md hover:bg-[#D8DADF] transition-all">
+                <div className="w-full font-semibold text-[15px] text-[#050505] flex items-center justify-center py-1.5 bg-[#E4E6E9] rounded-md hover:bg-[#D8DADF] transition-all">
                   Xem tất cả trang cá nhân
                 </div>
               </Link>
@@ -147,7 +159,7 @@ const Header = (props: {
               className="w-full flex items-center cursor-pointer p-2 rounded-lg hover:bg-gray-100 transition-all"
               onClick={() => { setChangePasswordOpen(true); setAvatarMenuOpen(false); }}
             >
-              <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#E4E6E9] flex-shrink-0">
+              <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#E4E6E9] shrink-0">
                 <LockOutlined className="text-black text-[18px]" />
               </div>
               <span className="ml-3 font-semibold text-[15px] text-black">Thay đổi mật khẩu</span>
@@ -157,7 +169,7 @@ const Header = (props: {
               className="w-full flex items-center cursor-pointer p-2 rounded-lg hover:bg-gray-100 transition-all mt-1"
               onClick={() => { handleLogoutUser(); setAvatarMenuOpen(false); }}
             >
-              <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#E4E6E9] flex-shrink-0">
+              <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#E4E6E9] shrink-0">
                 <LogoutOutlined className="text-black text-[18px]" />
               </div>
               <span className="ml-3 font-semibold text-[15px] text-black">Đăng xuất</span>
@@ -169,7 +181,7 @@ const Header = (props: {
         title="Đổi mật khẩu"
         open={changePasswordOpen}
         onOk={() => form.submit()}
-        // confirmLoading={confirmLoading}
+        confirmLoading={loadingChangePassword}
         onCancel={handleCancel}
       >
         <Form form={form} layout="vertical" onFinish={onFinish}>

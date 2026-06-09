@@ -69,7 +69,7 @@ const Friends = () => {
                       className="font-medium text-lg hover:underline transition-all ease-in"
                     >{`${item.first_name + " " + item.last_name}`}</Link>
                     <span className="text-sm text-gray-500 font-medium">
-                      {item.user_name}
+                      1 Bạn chung
                     </span>
                   </div>
                 </div>

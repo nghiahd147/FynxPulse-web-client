@@ -1,9 +1,26 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, UserPlus } from "lucide-react";
 import useUserStore from "../../store/useUserStore";
+import { Button, message } from "antd";
+import { useState } from "react";
+import { notificationError, notificationSuccess } from "../../config/notify";
 
 const SuggestionSidebar = () => {
-  const { listFriends } = useUserStore();
+  const { listFriends, followUser, getFollowSuggestions, me, profileUser, checkUserFollowStatus, loading: { followUser: loadingFollowUser } } = useUserStore();
+  const [loadingFollowUserId, setLoadingFollowUserId] = useState<string | null>(null);
+
+  const handleFollowUser = async (id: string) => {
+    setLoadingFollowUserId(id);
+    const result = await followUser({ follower_user_id: id })
+    if (result.success) {
+      getFollowSuggestions(me._id as string)
+      checkUserFollowStatus(profileUser._id as string)
+      notificationSuccess(result.message as string)
+    } else {
+      notificationError(result.message as string)
+    }
+    setLoadingFollowUserId(null);
+  }
 
   return (
     <>
@@ -25,7 +42,7 @@ const SuggestionSidebar = () => {
             <div key={index} className="flex items-start gap-x-3 p-2 hover:bg-gray-100 rounded-lg cursor-pointer transition-all">
               <img className="w-15 h-15 rounded-full object-cover bg-gray-300 shrink-0" src="" alt="" />
               <div className="flex flex-col flex-1">
-                <span className="font-semibold text-[15px] text-black">{item.first_name + " " + item.last_name}</span>
+                <Link to={`/friends/suggestions/${item.user_name}`} className="font-semibold text-[15px] text-black hover:text-blue-400 hover:underline transition-all ease-in">{item.first_name + " " + item.last_name}</Link>
                 <div className="flex items-center gap-x-1 mt-0.5">
                   <div className="flex items-center -space-x-1">
                     <img className="w-4.5 h-4.5 rounded-full border-2 border-white bg-gray-300 relative z-10" src="" alt="" />
@@ -34,8 +51,8 @@ const SuggestionSidebar = () => {
                   <span className="text-[13px] text-gray-500">4 bạn chung</span>
                 </div>
                 <div className="flex items-center gap-x-2 mt-3 w-full">
-                  <button className="flex-1 bg-[#1877F2] text-white font-semibold py-1.5 rounded-md hover:bg-[#166FE5] transition-all text-[15px] cursor-pointer">Thêm bạn bè</button>
-                  <button className="flex-1 bg-[#E4E6E9] text-black font-semibold py-1.5 rounded-md hover:bg-[#D8DADF] transition-all text-[15px] cursor-pointer">Gỡ</button>
+                  <Button icon={<UserPlus className="w-4 h-4" />} loading={loadingFollowUser && loadingFollowUserId === item._id} onClick={() => handleFollowUser(item._id as string)} type="primary">Theo dõi</Button>
+                  <Button onClick={() => message.info("Đang phát triển tính năng...")} type="default">Gỡ</Button>
                 </div>
               </div>
             </div>

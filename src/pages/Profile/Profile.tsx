@@ -31,8 +31,8 @@ const Profile = () => {
   const userIdCurrent = profileUser._id;
   const location = useLocation();
   const isFriendsList = location.pathname.startsWith("/friends/list");
-  const basePath = isFriendsList ? "/friends/list" : "/profile";
-  const locationCurrentAr = location.pathname.split("/");
+  const isSuggestions = location.pathname.startsWith("/friends/suggestions")
+  const basePath = isFriendsList ? "/friends/list" : isSuggestions ? "/friends/suggestions" : "/profile";
 
   useEffect(() => {
     getProfile(usernameCurrent as string);
@@ -83,7 +83,7 @@ const Profile = () => {
         </div>
 
         <div
-          className={`relative z-10 ${locationCurrentAr[1] === "profile" ? "w-313" : "w-full"}`}
+          className={`relative z-10 ${location.pathname.startsWith('/profile') ? "w-300" : "w-full"}`}
         >
           {/* Background */}
           <div className="w-full h-116.25 flex">
@@ -223,7 +223,7 @@ const Profile = () => {
         </div>
       </div>
       {/* Body Profile */}
-      <div className={`${locationCurrentAr[1] === "profile" ? "w-313" : "w-full"} flex justify-between gap-x-5 mx-auto my-4`}>
+      <div className={`${location.pathname.startsWith('/profile') ? "w-300" : "w-full"} flex justify-between gap-x-5 mx-auto py-4`}>
         <Outlet />
       </div>
     </div>

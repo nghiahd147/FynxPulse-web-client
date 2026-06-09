@@ -76,7 +76,14 @@ export const router = createBrowserRouter([
           },
           {
             path: "suggestions",
-            element: <Suggestions />
+            element: <Suggestions />,
+            children: [
+              {
+                path: ":user_name",
+                element: <Profile />,
+                children: profileChildren
+              }
+            ]
           }
         ],
       },

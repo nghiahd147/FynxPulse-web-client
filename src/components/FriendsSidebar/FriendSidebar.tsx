@@ -81,7 +81,7 @@ const FriendSidebar = () => {
               <img className="w-14 h-14 rounded-full object-cover bg-gray-300" src="" alt="" />
               <div className="flex flex-col">
                 <span className="font-semibold text-[15px] text-black">{friend.first_name + " " + friend.last_name}</span>
-                <span className="text-[13px] text-gray-500">{friend.user_name}</span>
+                <span className="text-[13px] text-gray-500">1 Bạn chung</span>
               </div>
             </div>
             <Popover content={popoverContent} trigger="click" placement="bottomRight" arrow={false} overlayInnerStyle={{ padding: '8px', borderRadius: '8px', boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}>

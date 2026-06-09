@@ -1,6 +1,6 @@
 import useUserStore from "../../store/useUserStore";
-import { useEffect } from "react";
-import { Cake, ChevronRight, Settings, UserCheck, UserRoundPlus, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Cake, ChevronRight, Settings, UserCheck, UserRoundPlus, Users, Bell } from "lucide-react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import FriendSidebar from "../../components/FriendsSidebar/FriendSidebar";
 import SuggestionSidebar from "../../components/SuggestionSidebar/SuggestionSidebar";
@@ -11,6 +11,8 @@ const Friends = () => {
     me,
   } = useUserStore();
   const location = useLocation();
+  const [showSettings, setShowSettings] = useState(false);
+  const [showDot, setShowDot] = useState(true);
 
   useEffect(() => {
     getFollowSuggestions(me._id as string);
@@ -19,17 +21,47 @@ const Friends = () => {
   return (
     <div className="h-full flex">
       {/* Left */}
-      <div className="w-[30%] px-2 py-1 shadow-[4px_0_8px_rgba(0,0,0,0.1)]">
+      <div className="w-[30%] px-2 py-1 shadow-[4px_0_8px_rgba(0,0,0,0.1)] relative">
         {location.pathname.startsWith("/friends/list") ? (
           <FriendSidebar />
-        ) : location.pathname == "/friends/suggestions" ? (
+        ) : location.pathname.startsWith("/friends/suggestions") ? (
           <SuggestionSidebar />
         ) : (
           <>
-            <div className="flex items-center justify-between mb-2 px-2">
+            <div className="flex items-center justify-between mb-4 px-2 relative">
               <h2 className="text-2xl font-bold">Người theo dõi</h2>
-              <div className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-200 cursor-pointer hover:bg-gray-300 transition-all">
-                <Settings className="w-5 h-5" />
+              <div>
+                <div
+                  onClick={() => setShowSettings(!showSettings)}
+                  className={`w-9 h-9 flex items-center justify-center rounded-full cursor-pointer transition-colors ${showSettings ? 'bg-[#e7f3ff] text-[#1877f2]' : 'bg-gray-200 hover:bg-gray-300 text-black'}`}
+                >
+                  <Settings className="w-5 h-5" />
+                </div>
+
+                {/* Popup */}
+                <div
+                  className={`absolute top-12 left-0 w-86 bg-white rounded-xl shadow-[0_12px_28px_0_rgba(0,0,0,0.2),0_2px_4px_0_rgba(0,0,0,0.1),inset_0_0_0_1px_rgba(255,255,255,0.5)] p-4 z-999 transition-all duration-300 origin-[85%_0px] ${showSettings ? 'opacity-100 scale-100 visible translate-y-0' : 'opacity-0 scale-50 invisible -translate-y-2'
+                    }`}
+                >
+                  <h3 className="text-xl font-bold mb-1">Cài đặt thông báo</h3>
+                  <p className="text-[15px] text-gray-500 mb-4 leading-5">
+                    Bạn có thể quản lý cách nhận thông báo về thông tin mới của Bạn bè.
+                  </p>
+                  <div className="h-px bg-gray-300 w-full mb-3"></div>
+                  <div className="flex items-center justify-between group cursor-pointer hover:bg-gray-50 p-2 -mx-2 rounded-lg transition-colors" onClick={() => setShowDot(!showDot)}>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                        <Bell className="w-6 h-6 text-black stroke-[1.5]" />
+                      </div>
+                      <span className="font-semibold text-[15px]">Hiển thị dấu chấm thông báo</span>
+                    </div>
+                    <div
+                      className={`w-11 h-6 flex items-center rounded-full p-0.5 transition-colors duration-300 ${showDot ? 'bg-[#1877f2]' : 'bg-gray-300'}`}
+                    >
+                      <div className={`bg-white w-5 h-5 rounded-full shadow-sm transform transition-transform duration-300 ${showDot ? 'translate-x-5' : 'translate-x-0'}`} />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             <Link

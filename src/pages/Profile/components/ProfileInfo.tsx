@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import dayjs from "dayjs";
 import { REGEX_URL_WEBSITE, REGEX_USERNAME } from "../../../utils/regex";
 import useUserStore from "../../../store/useUserStore";
+import PostComposer from "../../../components/PostComposer/PostComposer";
 
 const ProfileInfo = () => {
   const { openModalProfile, setOpenModalProfile } = useUserStore();
@@ -85,7 +86,9 @@ const ProfileInfo = () => {
           )}
         </div>
       </div>
-      <div className="flex-1 bg-white p-3 rounded-md shadow-md">2</div>
+      <div className="flex-1 bg-white p-4 rounded-xl shadow-md flex flex-col justify-between">
+        <PostComposer />
+      </div>
       <Modal
         title="Thông tin cá nhân"
         open={openModalProfile}

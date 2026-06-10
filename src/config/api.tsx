@@ -86,11 +86,11 @@ export const API_URLS = {
       method: "GET",
       headers: HEADERS.jsonHeader(),
     }),
-    getUserFollowing: (user_id: string, user_name: string) => ({
+    getUserFollowing: (user_id: string, last_name: string) => ({
       endPoint: `/api/user/${user_id}/following`,
       method: "GET",
       headers: HEADERS.jsonHeader(),
-      params: user_name && { user_name },
+      params: last_name && { last_name },
     }),
   },
 };

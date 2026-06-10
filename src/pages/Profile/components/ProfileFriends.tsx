@@ -10,11 +10,11 @@ import { useEffect, useState } from "react";
 import { notificationError, notificationSuccess } from "../../../config/notify";
 const Friends = () => {
   const { getProfile, getUserFollowing, unfollowUser, myFriends, profileUser, me } = useUserStore();
-  const [username, setUsername] = useState("");
+  const [lastName, setLastName] = useState("");
 
   useEffect(() => {
-    getUserFollowing(profileUser._id as string, username);
-  }, [profileUser.user_name, username]);
+    getUserFollowing(profileUser._id as string, lastName);
+  }, [profileUser.user_name, lastName]);
 
   const handleUnfollowUser = async (id: string) => {
     const result = await unfollowUser(id)
@@ -38,7 +38,7 @@ const Friends = () => {
             size="large"
             className="rounded-2xl! bg-gray-100!"
             onChange={(e) => {
-              setUsername(e.target.value);
+              setLastName(e.target.value);
             }}
           />
           <Link

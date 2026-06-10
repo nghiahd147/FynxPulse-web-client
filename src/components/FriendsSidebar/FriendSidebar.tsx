@@ -8,11 +8,11 @@ import { notificationError, notificationSuccess } from "../../config/notify";
 
 const FriendSidebar = () => {
   const { getUserFollowing, unfollowUser, myFriends, me, loading: { unfollowUser: loadingUnfollowUser } } = useUserStore()
-  const [name, setName] = useState("")
+  const [lastName, setLastName] = useState("")
 
   useEffect(() => {
-    getUserFollowing(me._id as string, name)
-  }, [name])
+    getUserFollowing(me._id as string, lastName)
+  }, [lastName])
 
   const handleUnFollowUser = async (id: string) => {
     const result = await unfollowUser(id as string);
@@ -41,10 +41,10 @@ const FriendSidebar = () => {
           <SearchOutlined className="text-[#65676B] text-[16px] mr-2" />
           <input
             type="text"
-            placeholder="Tìm kiếm username"
+            placeholder="Tìm kiếm tên người dùng"
             className="bg-transparent border-none outline-none w-full text-[15px] text-black placeholder:text-[#65676B]"
             onChange={(e) => {
-              setName(e.target.value)
+              setLastName(e.target.value)
             }}
           />
         </div>

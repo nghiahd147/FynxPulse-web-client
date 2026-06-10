@@ -230,11 +230,11 @@ const useUserStore = create<AuthStore>()(
         }
       },
 
-      getUserFollowing: async (user_id: string, user_name?: string) => {
+      getUserFollowing: async (user_id: string, last_name?: string) => {
         get().setLoading("getUserFollowing", true);
         try {
           const result = await apiCall(
-            API_URLS.USERS.getUserFollowing(user_id, user_name || ""),
+            API_URLS.USERS.getUserFollowing(user_id, last_name || ""),
           );
           get().setLoading("getUserFollowing", false);
           set({ myFriends: result?.friends || [] });

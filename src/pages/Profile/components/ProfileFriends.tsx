@@ -9,7 +9,7 @@ import useUserStore from "../../../store/useUserStore";
 import { useEffect, useState } from "react";
 import { notificationError, notificationSuccess } from "../../../config/notify";
 const Friends = () => {
-  const { getProfile, getUserFollowing, unfollowUser, myFriends, profileUser, me } = useUserStore();
+  const { getProfile, getUserFollowing, unfollowUser, yourFriends, profileUser, me } = useUserStore();
   const [lastName, setLastName] = useState("");
 
   useEffect(() => {
@@ -51,8 +51,8 @@ const Friends = () => {
       </div>
       <div className="w-full my-4 grid grid-cols-2 gap-4 px-3 py-1">
         {/* Item Friend */}
-        {myFriends.length !== 0 ? (
-          myFriends.map((item, index) => {
+        {yourFriends.length !== 0 ? (
+          yourFriends.map((item, index) => {
             return (
               <div key={index} className="w-full bg-white px-2 py-4 rounded-md border border-gray-200 flex items-center justify-between">
                 <div className="flex items-center gap-x-3">
@@ -69,7 +69,7 @@ const Friends = () => {
                       className="font-medium text-lg hover:underline transition-all ease-in"
                     >{`${item.first_name + " " + item.last_name}`}</Link>
                     <span className="text-sm text-gray-500 font-medium">
-                      1 Bạn chung
+                      {item.mutual_friends_count} Bạn chung
                     </span>
                   </div>
                 </div>

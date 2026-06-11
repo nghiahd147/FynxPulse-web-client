@@ -7,11 +7,11 @@ import useUserStore from "../../store/useUserStore";
 import { notificationError, notificationSuccess } from "../../config/notify";
 
 const FriendSidebar = () => {
-  const { getUserFollowing, unfollowUser, myFriends, me, loading: { unfollowUser: loadingUnfollowUser } } = useUserStore()
+  const { getUserFollowing, unfollowUser, getMyFriends, myFriends, me, loading: { unfollowUser: loadingUnfollowUser } } = useUserStore()
   const [lastName, setLastName] = useState("")
 
   useEffect(() => {
-    getUserFollowing(me._id as string, lastName)
+    getMyFriends(me._id as string, lastName)
   }, [lastName])
 
   const handleUnFollowUser = async (id: string) => {

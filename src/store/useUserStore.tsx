@@ -19,6 +19,7 @@ interface AuthStore {
   userFollowed: boolean | null;
   profileUser: ProfileUser;
   listFriends: Users[];
+  yourFriends: Users[];
   myFriends: Users[];
   me: Users;
   openModalProfile: boolean;
@@ -36,7 +37,8 @@ interface AuthStore {
   followUser: (payload: FollowUserPayload) => Promise<ActionResult>;
   changePassword: (payload: ChangePasswordPayload) => Promise<ActionResult>;
   getFollowSuggestions: (user_id: string) => void;
-  getUserFollowing: (user_id: string, user_name?: string) => void;
+  getUserFollowing: (user_id: string, last_name?: string) => void;
+  getMyFriends: (user_id: string, last_name?: string) => void;
 }
 
 const useUserStore = create<AuthStore>()(
@@ -55,11 +57,13 @@ const useUserStore = create<AuthStore>()(
         logoutUser: false,
         registerUser: false,
         unfollowUser: false,
+        getMyFriend: false,
       },
       userNameSidebar: "",
       message: "",
       data: [],
       listFriends: [],
+      yourFriends: [],
       myFriends: [],
       userFollowed: null,
       profileUser: {},
@@ -237,11 +241,25 @@ const useUserStore = create<AuthStore>()(
             API_URLS.USERS.getUserFollowing(user_id, last_name || ""),
           );
           get().setLoading("getUserFollowing", false);
-          set({ myFriends: result?.friends || [] });
+          set({ yourFriends: result?.friends || [] });
         } catch (erorr) {
           get().setLoading("getUserFollowing", false);
         }
       },
+
+      getMyFriends: async (me_id: string, last_name?: string) => {
+        get().setLoading("getMyFriend", true);
+        try {
+          const result = await apiCall(
+            API_URLS.USERS.getUserFollowing(me_id, last_name || ""),
+          );
+          get().setLoading("getMyFriend", false);
+          set({ myFriends: result?.friends || [] });
+        } catch (erorr) {
+          get().setLoading("getMyFriend", false);
+        }
+      },
+
     }),
     {
       name: "user-store",

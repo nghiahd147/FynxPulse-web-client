@@ -48,7 +48,7 @@ const SuggestionSidebar = () => {
                     <img className="w-4.5 h-4.5 rounded-full border-2 border-white bg-gray-300 relative z-10" src="" alt="" />
                     <img className="w-4.5 h-4.5 rounded-full border-2 border-white bg-gray-400 relative z-0" src="" alt="" />
                   </div>
-                  <span className="text-[13px] text-gray-500">4 bạn chung</span>
+                  <span className="text-[13px] text-gray-500">{item.mutual_friends_count} bạn chung</span>
                 </div>
                 <div className="flex items-center gap-x-2 mt-3 w-full">
                   <Button icon={<UserPlus className="w-4 h-4" />} loading={loadingFollowUser && loadingFollowUserId === item._id} onClick={() => handleFollowUser(item._id as string)} type="primary">Theo dõi</Button>

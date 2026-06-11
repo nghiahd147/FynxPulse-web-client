@@ -49,7 +49,7 @@ const SuggestionCarousel = () => {
                 <span className="font-bold hover:text-underline cursor-pointer text-nowrap overflow-hidden">
                   {item.first_name + " " + item.last_name}
                 </span>
-                <span className="my-1">1 Bạn chung</span>
+                <span className="my-1">{item.mutual_friends_count} Bạn chung</span>
                 <Button
                   className="my-1"
                   type="primary"

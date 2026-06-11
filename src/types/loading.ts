@@ -11,4 +11,5 @@ export interface UserLoadingState {
   changePassword: boolean;
   getFollowSuggestions: boolean;
   getUserFollowing: boolean;
+  getMyFriend: boolean;
 }

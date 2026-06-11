@@ -16,7 +16,7 @@ const Friends = () => {
 
   useEffect(() => {
     getFollowSuggestions(me._id as string);
-  }, []);
+  }, [location.pathname == "/friends"]);
 
   return (
     <div className="h-full flex">

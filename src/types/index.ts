@@ -18,6 +18,7 @@ export interface Users {
   password?: string;
   confirm_password?: string;
   date_of_birth?: string;
+  mutual_friends_count?: string;
 }
 
 export interface ProfileUser {

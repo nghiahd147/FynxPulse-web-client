@@ -1,8 +1,11 @@
 import { Film, Images, Video } from "lucide-react"
+import { useState } from "react"
 import useUserStore from "../../store/useUserStore"
+import CreatePostModal from "./CreatePostModal"
 
 const PostComposer = () => {
     const { me } = useUserStore()
+    const [isModalOpen, setIsModalOpen] = useState(false)
     return (
         <>
             <div className="flex items-center gap-3">
@@ -11,7 +14,10 @@ const PostComposer = () => {
                     alt="avatar"
                     className="w-10 h-10 rounded-full object-cover border border-gray-200"
                 />
-                <div className="flex-1 bg-gray-100 hover:bg-gray-200 cursor-pointer transition-colors duration-200 px-4 py-2.5 rounded-full text-gray-500 text-[15px]">
+                <div
+                    onClick={() => setIsModalOpen(true)}
+                    className="flex-1 bg-gray-100 hover:bg-gray-200 cursor-pointer transition-colors duration-200 px-4 py-2.5 rounded-full text-gray-500 text-[15px]"
+                >
                     Bạn đang nghĩ gì?
                 </div>
             </div>
@@ -30,6 +36,7 @@ const PostComposer = () => {
                     <span>Thước phim</span>
                 </div>
             </div>
+            <CreatePostModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </>
     )
 }

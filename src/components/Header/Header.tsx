@@ -1,34 +1,36 @@
-import {
-  Dropdown,
-  Input,
-  Modal,
-  Space,
-  Form,
-  type DropdownProps,
-  type MenuProps,
-} from "antd";
+import { Input, Modal, Form, Tooltip } from "antd";
 import useUserStore from "../../store/useUserStore";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  DownOutlined,
-  LockOutlined,
-  LogoutOutlined,
-  SettingOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { LockOutlined, LogoutOutlined, HomeFilled, HomeOutlined, PlaySquareFilled, PlaySquareOutlined, TeamOutlined } from "@ant-design/icons";
 import { ListIndentIncrease } from "lucide-react";
-import { nameUser } from "../../utils/storages";
 import { notificationError, notificationSuccess } from "../../config/notify";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { ChangePasswordPayload } from "../../types/payloads";
 import { REGEX_PASSWORD } from "../../utils/regex";
 
-const Header = (props: any) => {
+const Header = (props: {
+  setTabOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const { setTabOpen } = props;
-  const { logoutUser, changePassword } = useUserStore();
   const navigate = useNavigate();
-  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const [form] = Form.useForm();
+  const location = useLocation();
+  const { logoutUser, changePassword, me, loading: { changePassword: loadingChangePassword } } = useUserStore();
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+  const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setAvatarMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleLogoutUser = async () => {
     const result = await logoutUser({
@@ -42,44 +44,6 @@ const Header = (props: any) => {
     }
   };
 
-  const items: MenuProps["items"] = [
-    {
-      key: "1",
-      icon: <UserOutlined />,
-      label: <Link to={"/profile"}>Profile</Link>,
-    },
-    {
-      key: "2",
-      icon: <LockOutlined />,
-      label: (
-        <span onClick={() => setChangePasswordOpen(true)}>Change Password</span>
-      ),
-    },
-    {
-      key: "3",
-      label: "Settings",
-      icon: <SettingOutlined />,
-    },
-    {
-      type: "divider",
-    },
-    {
-      key: "Logout",
-      label: (
-        <div className="flex items-center" onClick={handleLogoutUser}>
-          <LogoutOutlined className="mt-px" />
-          <span className="ml-2">Đăng xuất</span>
-        </div>
-      ),
-      danger: true,
-    },
-  ];
-
-  const sharedProps: DropdownProps = {
-    menu: { items },
-    placement: "bottomLeft",
-  };
-
   const handleCancel = () => {
     setChangePasswordOpen(false);
   };
@@ -89,8 +53,6 @@ const Header = (props: any) => {
     if (result.success) {
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
-      localStorage.removeItem("name");
-      localStorage.removeItem("user_name");
       notificationSuccess(result.message as string);
       navigate("/login", { replace: true });
     } else {
@@ -99,43 +61,127 @@ const Header = (props: any) => {
   };
 
   return (
-    <div className="relative h-20 border-b border-gray-200 sm:mx-8 flex items-center justify-between">
+    <div className="relative h-16 border-b border-gray-200 sm:mx-8 flex items-center justify-between">
       {/* mobile */}
       <div className="flex items-center">
         <div
           className="block mx-2 mt-1 sm:hidden"
           onClick={() => {
             setTabOpen(true);
-            console.log("click");
           }}
         >
           <ListIndentIncrease color="red" size={20} />
         </div>
-        <Link to={"/"} className="flex items-center">
+        <Link to={"/"} className="flex items-center whitespace-nowrap">
           <img
-            src="./icons8-yelp.svg"
+            src="/icons8-yelp.png"
             alt="logo_home"
-            className="hidden sm:block"
+            className="hidden w-10 h-10 sm:block"
           />
           <span className="text-[#dd2c00] text-3xl sm:text-2xl font-bold">
             Fyn<span className="text-black">x</span>
           </span>
         </Link>
       </div>
+      <div className="relative h-full flex items-center justify-center">
+        <div
+          className={`absolute bottom-0 h-0.75 bg-blue-600 rounded-t-md transition-all duration-300 ease-in-out w-28 sm:w-32
+            ${location.pathname === "/" ? "left-0" :
+              location.pathname.startsWith("/reels") ? "left-28 sm:left-32" :
+                location.pathname.startsWith("/friends") ? "left-56 sm:left-64" : "opacity-0 scale-0"}`}
+        />
+        <Tooltip title="Trang chủ">
+          <Link
+            to={"/"}
+            className="group cursor-pointer w-28 sm:w-32 h-full flex items-center justify-center z-10"
+          >
+            <div className={`w-11/12 h-4/5 rounded-lg flex items-center justify-center transition-all duration-300 ease-out active:scale-95 ${location.pathname === "/" ? "text-blue-600" : "text-gray-500 hover:bg-gray-100"}`}>
+              {location.pathname === "/" ? <HomeFilled className="text-3xl" /> : <HomeOutlined className="text-3xl" />}
+            </div>
+          </Link>
+        </Tooltip>
+        <Tooltip title="Thước phim">
+          <Link
+            to={"/reels"}
+            className="group cursor-pointer w-28 sm:w-32 h-full flex items-center justify-center z-10"
+          >
+            <div className={`w-11/12 h-4/5 rounded-lg flex items-center justify-center transition-all duration-300 ease-out active:scale-95 ${location.pathname.startsWith("/reels") ? "text-blue-600" : "text-gray-500 hover:bg-gray-100"}`}>
+              {location.pathname.startsWith("/reels") ? <PlaySquareFilled className="text-3xl" /> : <PlaySquareOutlined className="text-3xl" />}
+            </div>
+          </Link>
+        </Tooltip>
+        <Tooltip title="Bạn bè">
+          <Link
+            to={"/friends"}
+            className="group cursor-pointer w-28 sm:w-32 h-full flex items-center justify-center z-10"
+          >
+            <div className={`w-11/12 h-4/5 rounded-lg flex items-center justify-center transition-all duration-300 ease-out active:scale-95 ${location.pathname.startsWith("/friends") ? "text-blue-600" : "text-gray-500 hover:bg-gray-100"}`}>
+              <TeamOutlined className="text-3xl" />
+            </div>
+          </Link>
+        </Tooltip>
+      </div>
       {/* desktop, tablet */}
       <div className="hidden sm:block">
-        <Dropdown {...sharedProps}>
-          <Space className="cursor-default flex items-center px-2 py-1 rounded-md bg-red-100">
-            <span className="ml-1">{nameUser}</span>
-            <DownOutlined className="text-[12px]" />
-          </Space>
-        </Dropdown>
+        <div className="relative w-9 h-9 rounded-full border" ref={menuRef}>
+          <img
+            src={me.avatar || "/avatar-mac-dinh.jpg"}
+            className="w-full h-full rounded-full cursor-pointer"
+            alt="avatar-icon"
+            onClick={() => setAvatarMenuOpen(!avatarMenuOpen)}
+          />
+
+          <div
+            className={`absolute w-90 top-[calc(100%+8px)] right-0 bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.2)] z-50 p-4 transition-all duration-200 origin-top-right ${avatarMenuOpen ? 'scale-100 opacity-100 visible' : 'scale-95 opacity-0 invisible'}`}
+          >
+            {/* Top Profile Card */}
+            <div className="w-full shadow-[0_1px_4px_rgba(0,0,0,0.15)] rounded-xl p-4 mb-3 flex flex-col border border-gray-100">
+              <Link to={`/profile/${me.user_name}`} className="flex items-center gap-x-3 mb-3 cursor-pointer" onClick={() => setAvatarMenuOpen(false)}>
+                <img
+                  src={me.avatar || "/avatar-mac-dinh.jpg"}
+                  className="w-10 h-10 rounded-full object-cover border border-gray-200 shrink-0"
+                  alt="avatar-icon"
+                />
+                <span className="font-bold text-[17px] text-black">
+                  {me.first_name + " " + me.last_name}
+                </span>
+              </Link>
+              <div className="h-px bg-[#E3E5E7] w-full mb-3"></div>
+              <Link to={`/profile/${me.user_name}`} onClick={() => setAvatarMenuOpen(false)} className="w-full">
+                <div className="w-full font-semibold text-[15px] text-[#050505] flex items-center justify-center py-1.5 bg-[#E4E6E9] rounded-md hover:bg-[#D8DADF] transition-all">
+                  Xem tất cả trang cá nhân
+                </div>
+              </Link>
+            </div>
+
+            {/* Menu Items */}
+            <div
+              className="w-full flex items-center cursor-pointer p-2 rounded-lg hover:bg-gray-100 transition-all"
+              onClick={() => { setChangePasswordOpen(true); setAvatarMenuOpen(false); }}
+            >
+              <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#E4E6E9] shrink-0">
+                <LockOutlined className="text-black text-[18px]" />
+              </div>
+              <span className="ml-3 font-semibold text-[15px] text-black">Thay đổi mật khẩu</span>
+            </div>
+
+            <div
+              className="w-full flex items-center cursor-pointer p-2 rounded-lg hover:bg-gray-100 transition-all mt-1"
+              onClick={() => { handleLogoutUser(); setAvatarMenuOpen(false); }}
+            >
+              <div className="w-9 h-9 flex items-center justify-center rounded-full bg-[#E4E6E9] shrink-0">
+                <LogoutOutlined className="text-black text-[18px]" />
+              </div>
+              <span className="ml-3 font-semibold text-[15px] text-black">Đăng xuất</span>
+            </div>
+          </div>
+        </div>
       </div>
       <Modal
         title="Đổi mật khẩu"
         open={changePasswordOpen}
         onOk={() => form.submit()}
-        // confirmLoading={confirmLoading}
+        confirmLoading={loadingChangePassword}
         onCancel={handleCancel}
       >
         <Form form={form} layout="vertical" onFinish={onFinish}>

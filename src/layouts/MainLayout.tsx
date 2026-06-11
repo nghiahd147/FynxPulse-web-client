@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Header from "../components/Header/Header";
-import Footer from "../components/Footer/Footer";
+// import Footer from "../components/Footer/Footer";
+import useUserStore from "../store/useUserStore";
 
 const MainLayout = () => {
   const navigate = useNavigate();
   const isAuth = localStorage.getItem("access_token");
   const [isTabOpen, setTabOpen] = useState(false);
-  const location = useLocation();
+  // const location = useLocation();
+  const { getMe } = useUserStore();
+
+  useEffect(() => {
+    getMe();
+  }, []);
 
   useEffect(() => {
     if (!isAuth) {
@@ -33,10 +39,8 @@ const MainLayout = () => {
         <header>
           <Header setTabOpen={setTabOpen} />
         </header>
-        <main>
-          <Outlet />
-        </main>
-        {location.pathname.split("/")[1] !== "profile" && <Footer />}
+        <Outlet />
+        {/* {location.pathname.split("/")[1] !== "profile" && <Footer />} */}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
-import { Bounce, toast } from "react-toastify";
+import { Bounce, toast, type ToastContent } from "react-toastify";
 
-export const notificationSuccess = (message: string) => {
+export const notificationSuccess = (message: ToastContent) => {
   toast.success(message, {
     position: "top-right",
     autoClose: 2000,
@@ -9,7 +9,7 @@ export const notificationSuccess = (message: string) => {
   });
 };
 
-export const notificationWarn = (message: string) => {
+export const notificationWarn = (message: ToastContent) => {
   toast.warn(message, {
     position: "top-right",
     autoClose: 2000,
@@ -18,7 +18,7 @@ export const notificationWarn = (message: string) => {
   });
 };
 
-export const notificationError = (message: string) => {
+export const notificationError = (message: ToastContent) => {
   toast.error(message, {
     position: "top-right",
     autoClose: 5000,

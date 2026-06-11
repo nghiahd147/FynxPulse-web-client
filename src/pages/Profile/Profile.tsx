@@ -7,44 +7,40 @@ import {
   UserCheck,
   UserRoundPlus,
 } from "lucide-react";
-import SuggestionCarousel from "../../components/SuggestionCarousel/SuggestionCarousel";
 import { useEffect, useState } from "react";
-import useUserStore from "../../store/useUserStore";
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
-import { usernameMe } from "../../utils/storages";
 import { notificationError, notificationSuccess } from "../../config/notify";
-import ProfileInfo from "./components/ProfileInfo";
+import SuggestionCarousel from "../../components/SuggestionCarousel/SuggestionCarousel";
+import useUserStore from "../../store/useUserStore";
 
 const Profile = () => {
   const [suggestionCarousel, setSuggestionCarousel] = useState(true);
   const {
-    getMe,
     getProfile,
     profileUser,
     followUser,
-    getUserFollow,
-    getListFriends,
+    checkUserFollowStatus,
+    getFollowSuggestions,
     userFollowed,
     unfollowUser,
+    me,
+    setOpenModalProfile,
   } = useUserStore();
   const params = useParams();
   const usernameCurrent = params.user_name;
   const userIdCurrent = profileUser._id;
-  const [open, setOpen] = useState(false);
   const location = useLocation();
-  const locationCurrentAr = location.pathname.split("/");
+  const isFriendsList = location.pathname.startsWith("/friends/list");
+  const isSuggestions = location.pathname.startsWith("/friends/suggestions")
+  const basePath = isFriendsList ? "/friends/list" : isSuggestions ? "/friends/suggestions" : "/profile";
 
   useEffect(() => {
-    if (usernameCurrent) {
-      getProfile(usernameCurrent as string);
-    } else {
-      getMe();
-    }
+    getProfile(usernameCurrent as string);
   }, [usernameCurrent]);
 
   useEffect(() => {
-    if (userIdCurrent) {
-      getUserFollow(userIdCurrent as string);
+    if (userIdCurrent && userIdCurrent !== me._id) {
+      checkUserFollowStatus(userIdCurrent as string);
     }
   }, [userIdCurrent]);
 
@@ -53,8 +49,8 @@ const Profile = () => {
       follower_user_id: userIdCurrent as string,
     });
     if (result.success) {
-      getUserFollow(userIdCurrent as string);
-      getListFriends();
+      checkUserFollowStatus(userIdCurrent as string);
+      getFollowSuggestions(me._id as string);
       notificationSuccess(result.message as string);
     } else {
       notificationError(result.message as string);
@@ -64,8 +60,8 @@ const Profile = () => {
   const handleUnFollowUser = async () => {
     const result = await unfollowUser(userIdCurrent as string);
     if (result.success) {
-      getUserFollow(userIdCurrent as string);
-      getListFriends();
+      checkUserFollowStatus(userIdCurrent as string);
+      getFollowSuggestions(me._id as string);
       notificationSuccess(result.message as string);
     } else {
       notificationError(result.message as string);
@@ -75,17 +71,29 @@ const Profile = () => {
   return (
     <div className="w-full bg-bgPrimary">
       {/* Header Profile */}
-      <div className="w-full flex flex-col items-center bg-white border-b border-bgPrimary z-10">
-        <div className="w-313">
+      <div className="w-full flex flex-col items-center bg-white border-b border-bgPrimary z-10 relative">
+
+        {/* Layer custom bgr */}
+        <div className="absolute top-0 left-0 w-full h-116.25 overflow-hidden z-0 pointer-events-none">
+          <div
+            className="absolute -inset-25 bg-cover bg-center blur-[60px] opacity-60 transition-all duration-700 ease-in-out"
+            style={{ backgroundImage: `url(${profileUser.profile_picture_url || "/anh_nen_mac_dinh_2.jpg"})` }}
+          />
+          <div className="absolute inset-0 bg-linear-to-b from-transparent via-white/20 to-white" />
+        </div>
+
+        <div
+          className={`relative z-10 ${location.pathname.startsWith('/profile') ? "w-300" : "w-full"}`}
+        >
           {/* Background */}
           <div className="w-full h-116.25 flex">
-            <div className="flex-1 mx-auto relative overflow-y-hidden rounded-b-2xl">
+            <div className="flex-1 mx-auto relative overflow-hidden rounded-b-2xl">
               <img
                 src={
-                  profileUser.profile_picture_url || "/nen-trang-mac-dinh.jpg"
+                  profileUser.profile_picture_url || "/anh_nen_mac_dinh_2.jpg"
                 }
                 alt="bg-user"
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-cover"
               />
             </div>
           </div>
@@ -106,18 +114,21 @@ const Profile = () => {
                   <span className="font-bold text-4xl">{`${profileUser.first_name} ${profileUser.last_name}`}</span>
                   <span>{profileUser.bio}</span>
                   <div className="flex items-center gap-x-2 font-bold">
-                    <span>120 người theo dõi</span>
+                    <span>{profileUser.following_count} đang theo dõi</span>
                     <span>•</span>
-                    <span>85 người đang theo dõi</span>
+                    <span>{profileUser.followers_count} người theo dõi</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-x-2">
-                  {usernameMe == profileUser.user_name ? (
+                  {me.user_name == profileUser.user_name ? (
                     <Button
                       className="font-bold! bg-[#e2e5e9]! text-black! hover:bg-[#d6d6d6]! w-28.25"
                       type="primary"
                       icon={<Pencil className="w-4 h-4" />}
-                      onClick={() => setOpen(true)}
+                      onClick={() => {
+                        console.log("Open Modal Edit Profile");
+                        setOpenModalProfile(true);
+                      }}
                     >
                       Chỉnh sửa
                     </Button>
@@ -170,51 +181,50 @@ const Profile = () => {
           )}
 
           {/* Nav profile */}
-          <div className="h-full flex items-center justify-between border-t-2 border-[#e2e5e9]">
-            <div className="h-full flex items-center gap-x-2 text-[#b1b2b4] font-bold mt-1">
+          <div className="h-15 flex items-center justify-between border-t border-[#ced0d4]">
+            <div className="h-full flex items-center gap-x-1">
               <Link
-                to={`/profile/${profileUser?.user_name}`}
-                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${locationCurrentAr[1] === "profile" && locationCurrentAr.length == 3 && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                to={`${basePath}/${profileUser?.user_name}`}
+                className={`relative flex items-center justify-center h-12 px-4 font-semibold rounded-md cursor-pointer transition-colors ${location.pathname === `${basePath}/${profileUser?.user_name}` ? "text-[#1877F2]" : "text-[#65676B] hover:bg-[#F2F2F2]"
+                  } after:absolute after:-bottom-1.5 after:left-0 after:w-full after:h-0.75 after:bg-[#1877F2] after:transition-transform after:duration-300 after:ease-out ${location.pathname === `${basePath}/${profileUser?.user_name}` ? "after:scale-x-100" : "after:scale-x-0"
+                  }`}
               >
                 Tất cả
               </Link>
               <Link
-                to={"/profile/image"}
-                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === "/profile/image" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                to={`${basePath}/${profileUser?.user_name}/images`}
+                className={`relative flex items-center justify-center h-12 px-4 font-semibold rounded-md cursor-pointer transition-colors ${location.pathname === `${basePath}/${profileUser?.user_name}/images` ? "text-[#1877F2]" : "text-[#65676B] hover:bg-[#F2F2F2]"
+                  } after:absolute after:-bottom-1.5 after:left-0 after:w-full after:h-0.75 after:bg-[#1877F2] after:transition-transform after:duration-300 after:ease-out ${location.pathname === `${basePath}/${profileUser?.user_name}/images` ? "after:scale-x-100" : "after:scale-x-0"
+                  }`}
               >
                 Ảnh
               </Link>
               <Link
-                to={`/profile/${profileUser.user_name}/friends`}
-                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname.split("/")[3] === "friends" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                to={`${basePath}/${profileUser?.user_name}/friends`}
+                className={`relative flex items-center justify-center h-12 px-4 font-semibold rounded-md cursor-pointer transition-colors ${location.pathname === `${basePath}/${profileUser?.user_name}/friends` ? "text-[#1877F2]" : "text-[#65676B] hover:bg-[#F2F2F2]"
+                  } after:absolute after:-bottom-1.5 after:left-0 after:w-full after:h-0.75 after:bg-[#1877F2] after:transition-transform after:duration-300 after:ease-out ${location.pathname === `${basePath}/${profileUser?.user_name}/friends` ? "after:scale-x-100" : "after:scale-x-0"
+                  }`}
               >
                 Bạn bè
               </Link>
               <Link
-                to={"/profile/post"}
-                className={`cursor-pointer px-2 block hover:border-b hover:border-blue-400 hover:text-blue-400 ${location.pathname === "/profile/post" && "border-b border-blue-400 text-blue-400"} transition-all ease-in`}
+                to={`${basePath}/${profileUser?.user_name}/posts`}
+                className={`relative flex items-center justify-center h-12 px-4 font-semibold rounded-md cursor-pointer transition-colors ${location.pathname === `${basePath}/${profileUser?.user_name}/posts` ? "text-[#1877F2]" : "text-[#65676B] hover:bg-[#F2F2F2]"
+                  } after:absolute after:-bottom-1.5 after:left-0 after:w-full after:h-0.75 after:bg-[#1877F2] after:transition-transform after:duration-300 after:ease-out ${location.pathname === `${basePath}/${profileUser?.user_name}/posts` ? "after:scale-x-100" : "after:scale-x-0"
+                  }`}
               >
                 Bài viết quan tâm
               </Link>
             </div>
-            <div className="bg-[#e2e5e9] rounded-md cursor-pointer w-12.5 h-9.5 hover:bg-[#f5f6f7] flex transition-all ease-in my-3">
-              <Ellipsis className="m-auto" />
+            <div className="bg-[#e4e6e9] rounded-md cursor-pointer w-12 h-9 hover:bg-[#d8dadf] flex transition-all ease-in my-3">
+              <Ellipsis className="m-auto w-5 h-5 text-black" />
             </div>
           </div>
         </div>
       </div>
       {/* Body Profile */}
-      <div className="w-313 flex justify-between gap-x-5 mx-auto my-4">
-        {locationCurrentAr[1] === "profile" && locationCurrentAr.length == 3 ? (
-          <>
-            {/* Info */}
-            <ProfileInfo profile={profileUser} open={open} setOpen={setOpen} />
-            {/* Posts */}
-            <div className="w-[60%] bg-white p-3 rounded-md shadow-md">2</div>
-          </>
-        ) : (
-          <Outlet />
-        )}
+      <div className={`${location.pathname.startsWith('/profile') ? "w-300" : "w-full"} flex justify-between gap-x-5 mx-auto py-4`}>
+        <Outlet />
       </div>
     </div>
   );

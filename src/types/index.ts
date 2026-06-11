@@ -9,15 +9,16 @@ export interface ParamsUser {
 }
 
 export interface Users {
-  _id: string;
-  first_name: string;
-  last_name: string;
-  user_name: string;
-  email: string;
-  avatar: string;
-  password: string;
-  confirm_password: string;
-  date_of_birth: string;
+  _id?: string;
+  first_name?: string;
+  last_name?: string;
+  user_name?: string;
+  email?: string;
+  avatar?: string;
+  password?: string;
+  confirm_password?: string;
+  date_of_birth?: string;
+  mutual_friends_count?: string;
 }
 
 export interface ProfileUser {
@@ -31,4 +32,6 @@ export interface ProfileUser {
   website?: string;
   avatar?: string;
   profile_picture_url?: string;
+  following_count?: number;
+  followers_count?: number;
 }

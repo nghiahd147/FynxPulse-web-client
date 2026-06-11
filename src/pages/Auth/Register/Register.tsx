@@ -10,13 +10,16 @@ import { REGEX_PASSWORD } from "../../../utils/regex";
 
 const Register = () => {
   const [form] = Form.useForm();
-  const { registerUser, isLoading } = useUserStore();
+  const { registerUser } = useUserStore();
+  const isLoading = useUserStore((state) => state.loading.registerUser);
   const navigate = useNavigate();
 
   const onFinish = async (values: Users) => {
     const payload = {
       ...values,
-      date_of_birth: convertYearMonthDay(values.date_of_birth),
+      date_of_birth: convertYearMonthDay(
+        values.date_of_birth || new Date().toISOString(),
+      ),
     };
 
     const result = await registerUser(payload);

@@ -3,6 +3,8 @@ export interface ActionResult {
   message?: string | unknown;
 }
 
+// User
+
 export interface ParamsUser {
   page: number;
   page_size: number;

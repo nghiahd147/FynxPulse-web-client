@@ -38,7 +38,7 @@ const Friends = () => {
                   <Settings className="w-5 h-5" />
                 </div>
 
-                {/* Popup */}
+                {/* Popup Noti */}
                 <div
                   className={`absolute top-12 left-0 w-86 bg-white rounded-xl shadow-[0_12px_28px_0_rgba(0,0,0,0.2),0_2px_4px_0_rgba(0,0,0,0.1),inset_0_0_0_1px_rgba(255,255,255,0.5)] p-4 z-999 transition-all duration-300 origin-[85%_0px] ${showSettings ? 'opacity-100 scale-100 visible translate-y-0' : 'opacity-0 scale-50 invisible -translate-y-2'
                     }`}

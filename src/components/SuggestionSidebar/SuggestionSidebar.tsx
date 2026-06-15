@@ -35,7 +35,7 @@ const SuggestionSidebar = () => {
       </div>
 
       <div className="px-1 mt-4">
-        <h3 className="font-bold text-[17px] mb-2">Những người bạn có thể biết</h3>
+        {listFriends.length > 0 && <h3 className="font-bold text-[17px] mb-2">Những người bạn có thể biết</h3>}
 
         <div className="flex flex-col gap-y-1">
           {listFriends && listFriends.map((item, index) => (

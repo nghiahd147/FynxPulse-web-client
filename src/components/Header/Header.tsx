@@ -61,7 +61,7 @@ const Header = (props: {
   };
 
   return (
-    <div className="relative h-16 border-b border-gray-200 sm:mx-8 flex items-center justify-between">
+    <div className="relative h-16 sm:mx-8 flex items-center justify-between">
       {/* mobile */}
       <div className="flex items-center">
         <div

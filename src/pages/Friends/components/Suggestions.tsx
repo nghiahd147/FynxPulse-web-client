@@ -1,17 +1,18 @@
 import { Outlet, useParams } from "react-router-dom"
+import EmptyFollowSuggestions from "../../../components/EmptyFollowSuggestions/EmptyFollowSuggestions";
+import useUserStore from "../../../store/useUserStore";
+import ProfilePreviewEmptyState from "../../../components/ProfilePreviewEmptyState/ProfilePreviewEmptyState";
 
 const Suggestions = () => {
     const { user_name } = useParams();
+    const { listFriends } = useUserStore()
 
     return (
         <>
-            {!user_name ? (
-                <div className="flex h-full flex-col items-center justify-center">
-                    <img src="/friends-bro.svg" className="w-50 h-50" />
-                    <span className="text-[#65676B] text-[20px] font-bold mt-4">
-                        Chọn tên của người mà bạn muốn xem trước trang cá nhân.
-                    </span>
-                </div>
+            {listFriends.length <= 0 ? (
+                <EmptyFollowSuggestions />
+            ) : !user_name ? (
+                <ProfilePreviewEmptyState />
             ) : (
                 <Outlet />
             )}

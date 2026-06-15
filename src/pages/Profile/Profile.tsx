@@ -83,7 +83,7 @@ const Profile = () => {
         </div>
 
         <div
-          className={`relative z-10 ${location.pathname.startsWith('/profile') ? "w-300" : "w-full"}`}
+          className={`relative z-10 ${location.pathname.startsWith('/profile') ? "w-300" : "w-[90%]"}`}
         >
           {/* Background */}
           <div className="w-full h-116.25 flex">
@@ -223,7 +223,7 @@ const Profile = () => {
         </div>
       </div>
       {/* Body Profile */}
-      <div className={`${location.pathname.startsWith('/profile') ? "w-300" : "w-full"} flex justify-between gap-x-5 mx-auto py-4`}>
+      <div className={`${location.pathname.startsWith('/profile') ? "w-300" : "w-[90%]"} flex justify-between gap-x-5 mx-auto py-4`}>
         <Outlet />
       </div>
     </div>

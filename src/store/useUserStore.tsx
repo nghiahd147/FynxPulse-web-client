@@ -38,7 +38,7 @@ interface AuthStore {
   changePassword: (payload: ChangePasswordPayload) => Promise<ActionResult>;
   getFollowSuggestions: (user_id: string) => void;
   getUserFollowing: (user_id: string, last_name?: string) => void;
-  getMyFriends: (user_id: string, last_name?: string) => void;
+  getMyFriends: (last_name?: string) => void;
 }
 
 const useUserStore = create<AuthStore>()(
@@ -247,11 +247,11 @@ const useUserStore = create<AuthStore>()(
         }
       },
 
-      getMyFriends: async (me_id: string, last_name?: string) => {
+      getMyFriends: async (last_name?: string) => {
         get().setLoading("getMyFriend", true);
         try {
           const result = await apiCall(
-            API_URLS.USERS.getUserFollowing(me_id, last_name || ""),
+            API_URLS.USERS.getMyFollowing(last_name || ""),
           );
           get().setLoading("getMyFriend", false);
           set({ myFriends: result?.friends || [] });

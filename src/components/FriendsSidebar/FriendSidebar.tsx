@@ -7,17 +7,17 @@ import useUserStore from "../../store/useUserStore";
 import { notificationError, notificationSuccess } from "../../config/notify";
 
 const FriendSidebar = () => {
-  const { getUserFollowing, unfollowUser, getMyFriends, myFriends, me, loading: { unfollowUser: loadingUnfollowUser } } = useUserStore()
+  const { unfollowUser, getMyFriends, myFriends, loading: { unfollowUser: loadingUnfollowUser } } = useUserStore()
   const [lastName, setLastName] = useState("")
 
   useEffect(() => {
-    getMyFriends(me._id as string, lastName)
+    getMyFriends(lastName)
   }, [lastName])
 
   const handleUnFollowUser = async (id: string) => {
     const result = await unfollowUser(id as string);
     if (result.success) {
-      getUserFollowing(me._id as string)
+      getMyFriends()
       notificationSuccess(result.message as string);
     } else {
       notificationError(result.message as string);
@@ -50,7 +50,7 @@ const FriendSidebar = () => {
         </div>
       </div>
 
-      <Divider className="my-4" />
+      <Divider className="my-4 border border-gray-300" />
 
       <h3 className="font-bold text-[17px] mb-2 px-1">{myFriends.length} người theo dõi</h3>
 
@@ -76,20 +76,20 @@ const FriendSidebar = () => {
         );
 
         return (
-          <Link to={`/friends/list/${friend.user_name}`} key={index} className="flex items-center justify-between p-2 hover:bg-gray-100 rounded-lg cursor-pointer transition-all">
+          <div key={index} className="flex items-center justify-between p-2 hover:bg-gray-100 rounded-lg transition-all">
             <div className="flex items-center gap-x-3">
               <img className="w-14 h-14 rounded-full object-cover bg-gray-300" src="" alt="" />
               <div className="flex flex-col">
-                <span className="font-semibold text-[15px] text-black">{friend.first_name + " " + friend.last_name}</span>
-                <span className="text-[13px] text-gray-500">1 Bạn chung</span>
+                <Link to={`/friends/list/${friend.user_name}`} className="font-semibold text-[15px] text-black hover:text-blue-400 hover:underline transition-all ease-in">{friend.first_name + " " + friend.last_name}</Link>
+                <span className="text-[13px] text-gray-500">{friend.mutual_friends_count} Bạn chung</span>
               </div>
             </div>
             <Popover content={popoverContent} trigger="click" placement="bottomRight" arrow={false} overlayInnerStyle={{ padding: '8px', borderRadius: '8px', boxShadow: '0 2px 12px rgba(0,0,0,0.2)' }}>
-              <div className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-200 transition-all cursor-pointer" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
                 <MoreHorizontal className="w-5 h-5 text-gray-500" />
               </div>
             </Popover>
-          </Link>
+          </div>
         )
       })}
 

@@ -1,9 +1,10 @@
-import type { ParamsUser, Users } from "../types";
+import type { createPostPayload } from "../types/post.types";
+import type { ParamsUser, Users } from "../types/user.types";
 import type {
   ChangePasswordPayload,
   FollowUserPayload,
   LoginPayload,
-} from "../types/payloads";
+} from "../types/user.types";
 
 export const HEADERS = {
   DEFAULT_HEADER: {
@@ -99,4 +100,12 @@ export const API_URLS = {
       params: last_name && { last_name },
     }),
   },
+  POSTS: {
+    createPost: (payload: createPostPayload) => ({
+      endPoint: "/api/post",
+      method: "POST",
+      headers: HEADERS.jsonHeader(),
+      payload,
+    }),
+  }
 };

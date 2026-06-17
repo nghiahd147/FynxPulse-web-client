@@ -8,13 +8,15 @@ import {
 } from "lucide-react";
 import { formatDate } from "../../../utils/date";
 import { Button, DatePicker, Form, Input, Modal, Upload } from "antd";
-import type { ProfileUser } from "../../../types";
+import type { ProfileUser } from "../../../types/user.types";
 import { EditOutlined } from "@ant-design/icons";
 import { useEffect } from "react";
 import dayjs from "dayjs";
 import { REGEX_URL_WEBSITE, REGEX_USERNAME } from "../../../utils/regex";
 import useUserStore from "../../../store/useUserStore";
 import PostComposer from "../../../components/PostComposer/PostComposer";
+import PostToolbar from "../../../components/PostToolbar/PostToolbar";
+import PostCard from "../../../components/PostCard/PostCard";
 
 const ProfileInfo = () => {
   const { openModalProfile, setOpenModalProfile } = useUserStore();
@@ -46,8 +48,8 @@ const ProfileInfo = () => {
   };
 
   return (
-    <>
-      <div className="w-[40%] flex flex-col py-2 px-3 rounded-md bg-white shadow-md">
+    <div className="w-full flex gap-x-4">
+      <div className="w-[40%] h-[160px] flex flex-col py-2 px-3 rounded-md bg-white shadow-md">
         <div className="flex justify-between items-center">
           <h3 className="text-2xl font-bold">Thông tin cá nhân</h3>
           {me.user_name === profileUser.user_name && (
@@ -86,9 +88,15 @@ const ProfileInfo = () => {
           )}
         </div>
       </div>
-      <div className="flex-1 bg-white p-4 rounded-xl shadow-md flex flex-col justify-between">
-        <PostComposer />
+      <div className="flex flex-col flex-1 gap-y-4">
+        <div className=" bg-white p-4 rounded-xl shadow-md flex flex-col justify-between">
+          <PostComposer />
+        </div>
+        <PostToolbar />
+        <PostCard />
       </div>
+
+      {/* Modal */}
       <Modal
         title="Thông tin cá nhân"
         open={openModalProfile}
@@ -227,7 +235,7 @@ const ProfileInfo = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 };
 

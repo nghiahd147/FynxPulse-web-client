@@ -1,13 +1,13 @@
 import { create } from "zustand";
 import { apiCall } from "../utils/axios";
 import { API_URLS } from "../config/api";
-import type { ActionResult, ProfileUser, ParamsUser, Users } from "../types";
+import type { ActionResult, ProfileUser, ParamsUser, Users } from "../types/user.types";
 import type {
   ChangePasswordPayload,
   FollowUserPayload,
   LoginPayload,
   LogoutPayload,
-} from "../types/payloads";
+} from "../types/user.types";
 import type { ApiError } from "../types/errors";
 import { persist } from "zustand/middleware";
 import type { UserLoadingState } from "../types/loading";

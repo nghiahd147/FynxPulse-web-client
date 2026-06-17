@@ -6,7 +6,7 @@ import Button from "../../../components/Button/Button";
 import { REGEX_PASSWORD } from "../../../utils/regex";
 import { notificationError, notificationSuccess } from "../../../config/notify";
 import urlOauthGoogle from "../../../utils/oauth";
-import type { LoginPayload } from "../../../types/payloads";
+import type { LoginPayload } from "../../../types/user.types";
 import { useEffect } from "react";
 
 const Login = () => {

@@ -1,9 +1,9 @@
 import { ArrowLeft, MoreHorizontal } from "lucide-react";
-import type { Audience, AudienceRecord } from "../../../types";
+import type { Audience, AudienceRecord } from "../../types";
 
-const audienceOptions: Audience[] = ["public", "friends", "close_friends", "only_me"];
+const audienceOptions: Audience[] = ["every_one", "friends", "close_friends", "only_me"];
 
-const PostAudienceModal = ({
+const PostAudience = ({
     handleAudienceBack,
     audienceConfig,
     tempAudience,
@@ -108,4 +108,4 @@ const PostAudienceModal = ({
     )
 }
 
-export default PostAudienceModal
+export default PostAudience

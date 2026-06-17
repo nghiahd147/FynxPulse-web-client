@@ -12,10 +12,15 @@ import useUserStore from "../../../../store/useUserStore";
 import type { Audience, AudienceRecord, CreatePostModalProps, ModalView } from "../../types";
 import { addPostIcons } from "../../consts/styles";
 import EmojiPicker, { EmojiStyle } from "emoji-picker-react";
-import PostAudienceModal from "./PostAudienceModal/PostAudienceModal"
+import { Form } from "antd";
+import { TypePost } from "../../../../constants/enum";
+import type { createPostPayload } from "../../../../types/post.types";
+import usePostStore from "../../../../store/usePostStore";
+import { notificationError, notificationSuccess } from "../../../../config/notify";
+import AudiencePost from "./PostAudienceModal";
 
 const audienceConfig: AudienceRecord = {
-    public: {
+    every_one: {
         label: "Công khai",
         icon: Globe,
         description: "Bất kỳ ai ở trên hoặc ngoài Facebook",
@@ -35,7 +40,7 @@ const audienceConfig: AudienceRecord = {
     },
 };
 
-const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
+const PostCompose = ({ isOpen, onClose }: CreatePostModalProps) => {
     const { me } = useUserStore();
     const [content, setContent] = useState("");
     const [view, setView] = useState<ModalView>("compose");
@@ -43,6 +48,16 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
     const [tempAudience, setTempAudience] = useState<Audience>("only_me");
     const [direction, setDirection] = useState<"forward" | "back">("forward");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [form] = Form.useForm()
+    const { createPost } = usePostStore()
+
+    useEffect(() => {
+        form.setFieldsValue({
+            type: TypePost.Post,
+            content: content,
+            audience: audience
+        })
+    }, [content])
 
     useEffect(() => {
         if (!isOpen) {
@@ -80,6 +95,20 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
         goToCompose();
     };
 
+    const handleCreatePost = async (value: createPostPayload) => {
+        const payload = {
+            type: TypePost.Post,
+            content: value.content,
+            audience: audience
+        }
+        const result = await createPost(payload)
+        if (result.success) {
+            notificationSuccess(result.message)
+        } else {
+            notificationError(result.message)
+        }
+    }
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div
@@ -90,7 +119,7 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
             <div className="relative w-full max-w-125 bg-white rounded-xl shadow-[0_12px_28px_rgba(0,0,0,0.2)] animate-modal-in overflow-hidden">
                 {view === "compose" ? (
                     // Compose
-                    <div className={direction === "back" ? "animate-slide-in-left" : ""}>
+                    <Form form={form} onFinish={handleCreatePost} autoComplete="false" className={direction === "back" ? "animate-slide-in-left" : ""}>
                         {/* Header */}
                         <div className="flex items-center justify-center p-4 border-b border-gray-200 relative">
                             <h2 className="text-xl font-bold">Tạo bài viết</h2>
@@ -125,38 +154,41 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                                 </div>
                             </div>
 
-                            <textarea
-                                value={content}
-                                onChange={(e) => setContent(e.target.value)}
-                                placeholder="Bạn đang nghĩ gì?"
-                                className="w-full text-2xl outline-none resize-none min-h-37.5 placeholder-gray-500"
-                                autoFocus
-                            />
+                            <Form.Item name="content">
+                                <textarea
+                                    value={content}
+                                    onChange={(e) => setContent(e.target.value)}
+                                    placeholder="Bạn đang nghĩ gì?"
+                                    className="w-full text-2xl outline-none resize-none min-h-37.5 placeholder-gray-500"
+                                    autoFocus
+                                />
 
-                            <div className="flex items-center justify-between mt-1">
-                                <button className="cursor-pointer w-9 h-9 flex items-center justify-center rounded-lg bg-linear-to-tr from-pink-500 via-purple-500 to-yellow-500 text-white font-bold text-sm shadow hover:opacity-90 transition-opacity duration-200">
-                                    Aa
-                                </button>
-                                <div className="relative">
-                                    {showEmojiPicker && (
-                                        <div className="absolute bottom-full right-0 mb-2 z-50">
-                                            <EmojiPicker
-                                                emojiStyle={EmojiStyle.NATIVE}
-                                                onEmojiClick={(emoji) =>
-                                                    setContent((prev) => prev + emoji.emoji)
-                                                }
-                                            />
-                                        </div>
-                                    )}
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowEmojiPicker((prev) => !prev)}
-                                        className="cursor-pointer p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
-                                    >
-                                        <Smile className="w-6 h-6" />
+
+                                <div className="flex items-center justify-between mt-1">
+                                    <button className="cursor-pointer w-9 h-9 flex items-center justify-center rounded-lg bg-linear-to-tr from-pink-500 via-purple-500 to-yellow-500 text-white font-bold text-sm shadow hover:opacity-90 transition-opacity duration-200">
+                                        Aa
                                     </button>
+                                    <div className="relative">
+                                        {showEmojiPicker && (
+                                            <div className="absolute bottom-full right-0 mb-2 z-50">
+                                                <EmojiPicker
+                                                    emojiStyle={EmojiStyle.NATIVE}
+                                                    onEmojiClick={(emoji) =>
+                                                        setContent((prev) => prev + emoji.emoji)
+                                                    }
+                                                />
+                                            </div>
+                                        )}
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowEmojiPicker((prev) => !prev)}
+                                            className="cursor-pointer p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
+                                        >
+                                            <Smile className="w-6 h-6" />
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+                            </Form.Item>
 
                             <div className="flex items-center justify-between mt-3 px-3 py-2.5 border border-gray-300 rounded-lg">
                                 <span className="font-semibold text-[15px]">
@@ -181,17 +213,17 @@ const CreatePostModal = ({ isOpen, onClose }: CreatePostModalProps) => {
                                     : "bg-[#E4E6EB] text-gray-500 cursor-not-allowed"
                                     }`}
                             >
-                                Tiếp
+                                Đăng bài viết
                             </button>
                         </div>
-                    </div>
+                    </Form>
                 ) : (
                     // PostAudienceModal
-                    <PostAudienceModal audienceConfig={audienceConfig} handleAudienceBack={handleAudienceBack} handleAudienceDone={handleAudienceDone} setTempAudience={setTempAudience} tempAudience={tempAudience} />
+                    <AudiencePost audienceConfig={audienceConfig} handleAudienceBack={handleAudienceBack} handleAudienceDone={handleAudienceDone} setTempAudience={setTempAudience} tempAudience={tempAudience} />
                 )}
             </div>
         </div >
     );
 };
 
-export default CreatePostModal;
+export default PostCompose;

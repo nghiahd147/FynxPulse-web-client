@@ -5,7 +5,7 @@ import { LockOutlined, LogoutOutlined, HomeFilled, HomeOutlined, PlaySquareFille
 import { ListIndentIncrease } from "lucide-react";
 import { notificationError, notificationSuccess } from "../../config/notify";
 import { useState, useEffect, useRef } from "react";
-import type { ChangePasswordPayload } from "../../types/payloads";
+import type { ChangePasswordPayload } from "../../types/user.types";
 import { REGEX_PASSWORD } from "../../utils/regex";
 
 const Header = (props: {

@@ -1,7 +1,7 @@
 import { Film, Images, Video } from "lucide-react"
 import { useState } from "react"
 import useUserStore from "../../store/useUserStore"
-import CreatePostModal from "./components/CreatePostModal/CreatePostModal"
+import CreatePostModal from "./components/CreatePostModal/PostComposeModal"
 import { message } from "antd"
 
 const PostComposer = () => {

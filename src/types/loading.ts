@@ -13,3 +13,7 @@ export interface UserLoadingState {
   getUserFollowing: boolean;
   getMyFriend: boolean;
 }
+
+export interface PostLoadingState {
+  createPost: boolean;
+}

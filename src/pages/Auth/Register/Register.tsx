@@ -1,4 +1,4 @@
-import type { Users } from "../../../types";
+import type { Users } from "../../../types/user.types";
 import useUserStore from "../../../store/useUserStore";
 import { DatePicker, Input, Form } from "antd";
 import { Link, useNavigate } from "react-router-dom";

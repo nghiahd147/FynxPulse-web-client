@@ -1,25 +1,15 @@
 import { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Header from "../components/Header/Header";
-// import Footer from "../components/Footer/Footer";
 import useUserStore from "../store/useUserStore";
 
 const MainLayout = () => {
-  const navigate = useNavigate();
-  const isAuth = localStorage.getItem("access_token");
   const [isTabOpen, setTabOpen] = useState(false);
-  // const location = useLocation();
   const { getMe } = useUserStore();
 
   useEffect(() => {
     getMe();
   }, []);
-
-  useEffect(() => {
-    if (!isAuth) {
-      navigate("/login");
-    }
-  }, [isAuth]);
 
   return (
     <div className="flex sm:block">

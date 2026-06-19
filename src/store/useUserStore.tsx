@@ -33,6 +33,7 @@ interface AuthStore {
   unfollowUser: (follower_user_id: string) => Promise<ActionResult>;
   registerUser: (payload: Users) => Promise<ActionResult>;
   loginUser: (payload: LoginPayload) => Promise<ActionResult>;
+  refreshToken: () => Promise<ActionResult>;
   logoutUser: (payload: LogoutPayload) => Promise<ActionResult>;
   followUser: (payload: FollowUserPayload) => Promise<ActionResult>;
   changePassword: (payload: ChangePasswordPayload) => Promise<ActionResult>;
@@ -113,6 +114,22 @@ const useUserStore = create<AuthStore>()(
             success: false,
             message: apiError.message,
           };
+        }
+      },
+
+      refreshToken: async () => {
+        const refresh_token = localStorage.getItem("refresh_token");
+        if (!refresh_token) {
+          return { success: false, message: "Không có refresh token" };
+        }
+        try {
+          const response = await apiCall(API_URLS.USERS.refreshToken(refresh_token));
+          localStorage.setItem("access_token", response?.result.access_token);
+          localStorage.setItem("refresh_token", response?.result.refresh_token);
+          return { success: true, message: response?.message };
+        } catch (error) {
+          const apiError = error as ApiError;
+          return { success: false, message: apiError.message };
         }
       },
 

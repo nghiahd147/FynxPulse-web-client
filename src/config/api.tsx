@@ -99,6 +99,12 @@ export const API_URLS = {
       headers: HEADERS.jsonHeader(),
       params: last_name && { last_name },
     }),
+    refreshToken: (refresh_token: string) => ({
+      endPoint: "/api/user/refresh-token",
+      method: "POST",
+      headers: HEADERS.DEFAULT_HEADER,
+      payload: { refresh_token },
+    })
   },
   POSTS: {
     createPost: (payload: createPostPayload) => ({

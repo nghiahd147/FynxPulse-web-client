@@ -6,10 +6,9 @@ import {
     Smile,
     Globe,
     Users,
-    Star,
 } from "lucide-react";
 import useUserStore from "../../../../store/useUserStore";
-import type { Audience, AudienceRecord, CreatePostModalProps, ModalView } from "../../types";
+import { type Audience, type AudienceRecord, type CreatePostModalProps, type ModalView } from "../../types";
 import { addPostIcons } from "../../consts/styles";
 import EmojiPicker, { EmojiStyle } from "emoji-picker-react";
 import { Form } from "antd";
@@ -29,10 +28,6 @@ const audienceConfig: AudienceRecord = {
         label: "Bạn bè",
         icon: Users,
         description: "Bạn bè của bạn trên Facebook",
-    },
-    close_friends: {
-        label: "Bạn thân",
-        icon: Star,
     },
     only_me: {
         label: "Chỉ mình tôi",
@@ -99,7 +94,7 @@ const PostCompose = ({ isOpen, onClose }: CreatePostModalProps) => {
         const payload = {
             type: TypePost.Post,
             content: value.content,
-            audience: audience
+            audience: audience === "every_one" ? 0 : audience === "friends" ? 1 : 2
         }
         const result = await createPost(payload)
         if (result.success) {

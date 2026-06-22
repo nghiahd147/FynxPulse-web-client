@@ -24,6 +24,8 @@ const FriendSidebar = () => {
     }
   };
 
+  console.log('MyFriends', myFriends)
+
   return (
     <>
       <div className="flex items-center gap-x-2.5 mt-2 px-1">
@@ -92,7 +94,6 @@ const FriendSidebar = () => {
           </div>
         )
       })}
-
     </>
   );
 };

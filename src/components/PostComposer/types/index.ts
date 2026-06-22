@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 
-export type Audience = "every_one" | "friends" | "close_friends" | "only_me";
+export type Audience = "every_one" | "friends" | "only_me";
 
 export type ModalView = "compose" | "audience";
 

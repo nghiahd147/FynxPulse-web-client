@@ -1,7 +1,7 @@
 import { ArrowLeft, MoreHorizontal } from "lucide-react";
 import type { Audience, AudienceRecord } from "../../types";
 
-const audienceOptions: Audience[] = ["every_one", "friends", "close_friends", "only_me"];
+const audienceOptions: Audience[] = ["every_one", "friends", "only_me"];
 
 const PostAudience = ({
     handleAudienceBack,
@@ -64,11 +64,6 @@ const PostAudience = ({
                                         <p className="text-[13px] text-gray-500 mt-0.5">
                                             {description}
                                         </p>
-                                    )}
-                                    {option === "close_friends" && (
-                                        <span className="text-[13px] text-blue-500 font-semibold mt-0.5 inline-block">
-                                            Tạo danh sách
-                                        </span>
                                     )}
                                 </div>
                                 <div

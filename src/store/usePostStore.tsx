@@ -8,17 +8,21 @@ interface AuthStore {
   loading: PostLoadingState;
   message: string;
   data: Posts[];
+  postByAuthor: Posts[];
 
   setLoading: (key: string, value: boolean) => void;
+  getPostsByAuthorId: (author_id: string) => void;
   createPost: (payload: createPostPayload) => Promise<{ success: boolean; message: any; }>
 }
 
 const usePostStore = create<AuthStore>(
   (set, get) => ({
     loading: {
+      getPostsByAuthorId: false,
       createPost: false,
     },
     message: "",
+    postByAuthor: [],
     data: [],
 
     setLoading: (key: string, value: boolean) => {
@@ -30,11 +34,22 @@ const usePostStore = create<AuthStore>(
       }));
     },
 
+    getPostsByAuthorId: async (author_id: string) => {
+      get().setLoading("getPostsByAuthorId", true);
+      try {
+        const response = await apiCall(API_URLS.POSTS.getPostsByAuthorId(author_id));
+        get().setLoading("getPostsByAuthorId", false);
+        set({ postByAuthor: response.result })
+      } catch (error) {
+        console.error(error)
+        get().setLoading("getPostsByAuthorId", false);
+      }
+    },
+
     createPost: async (payload: createPostPayload) => {
       get().setLoading("createPostLoading", true);
       try {
         const response = await apiCall(API_URLS.POSTS.createPost(payload));
-
         get().setLoading("createPostLoading", false);
         return { success: true, message: response?.message };
       } catch (error) {

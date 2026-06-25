@@ -13,3 +13,12 @@ export const formatDate = (dateString: Date) => {
 
   return `${day}-${month}-${year}`;
 };
+
+export const formatDateVN = (date: Date | string | undefined): string => {
+  if (!date) return "";
+  return new Intl.DateTimeFormat("vi-VN", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(date));
+};

@@ -11,9 +11,11 @@ export interface UserLoadingState {
   changePassword: boolean;
   getFollowSuggestions: boolean;
   getUserFollowing: boolean;
+  getUserFollowers: boolean;
   getMyFriend: boolean;
 }
 
 export interface PostLoadingState {
+  getPostsByAuthorId: boolean;
   createPost: boolean;
 }

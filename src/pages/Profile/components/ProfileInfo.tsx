@@ -17,13 +17,19 @@ import useUserStore from "../../../store/useUserStore";
 import PostComposer from "../../../components/PostComposer/PostComposer";
 import PostToolbar from "../../../components/PostToolbar/PostToolbar";
 import PostCard from "../../../components/PostCard/PostCard";
+import usePostStore from "../../../store/usePostStore";
 
 const ProfileInfo = () => {
   const { openModalProfile, setOpenModalProfile } = useUserStore();
+  const { getPostsByAuthorId, postByAuthor } = usePostStore()
   const [form] = Form.useForm();
   const avatar = Form.useWatch("avatar", form);
   const profile_picture_url = Form.useWatch("profile_picture_url", form);
   const { me, profileUser } = useUserStore();
+
+  useEffect(() => {
+    getPostsByAuthorId(profileUser._id as string)
+  }, [profileUser._id])
 
   useEffect(() => {
     form.setFieldsValue({
@@ -46,6 +52,8 @@ const ProfileInfo = () => {
   const onFinish = (values: ProfileUser) => {
     console.log("values", values);
   };
+
+  console.log("postByAuthor", postByAuthor)
 
   return (
     <div className="w-full flex gap-x-4">
@@ -93,7 +101,7 @@ const ProfileInfo = () => {
           <PostComposer />
         </div>
         <PostToolbar />
-        <PostCard />
+        <PostCard postByAuthor={postByAuthor} />
       </div>
 
       {/* Modal */}

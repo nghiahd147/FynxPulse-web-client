@@ -36,7 +36,7 @@ const audienceConfig: AudienceRecord = {
 };
 
 const PostCompose = ({ isOpen, onClose }: CreatePostModalProps) => {
-    const { me } = useUserStore();
+    const { me, profileUser } = useUserStore();
     const [content, setContent] = useState("");
     const [view, setView] = useState<ModalView>("compose");
     const [audience, setAudience] = useState<Audience>("only_me");
@@ -44,7 +44,7 @@ const PostCompose = ({ isOpen, onClose }: CreatePostModalProps) => {
     const [direction, setDirection] = useState<"forward" | "back">("forward");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [form] = Form.useForm()
-    const { createPost } = usePostStore()
+    const { createPost, getPostsByAuthorId } = usePostStore()
 
     useEffect(() => {
         form.setFieldsValue({
@@ -98,6 +98,8 @@ const PostCompose = ({ isOpen, onClose }: CreatePostModalProps) => {
         }
         const result = await createPost(payload)
         if (result.success) {
+            getPostsByAuthorId(profileUser._id as string)
+            onClose()
             notificationSuccess(result.message)
         } else {
             notificationError(result.message)

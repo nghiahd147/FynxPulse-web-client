@@ -20,6 +20,7 @@ interface AuthStore {
   profileUser: ProfileUser;
   listFriends: Users[];
   yourFriends: Users[];
+  followers: Users[];
   myFriends: Users[];
   me: Users;
   openModalProfile: boolean;
@@ -39,6 +40,7 @@ interface AuthStore {
   changePassword: (payload: ChangePasswordPayload) => Promise<ActionResult>;
   getFollowSuggestions: (user_id: string) => void;
   getUserFollowing: (user_id: string, last_name?: string) => void;
+  getUserFollowers: (user_id: string, last_name?: string) => void;
   getMyFriends: (last_name?: string) => void;
 }
 
@@ -54,6 +56,7 @@ const useUserStore = create<AuthStore>()(
         getProfile: false,
         getFollowSuggestions: false,
         getUserFollowing: false,
+        getUserFollowers: false,
         loginUser: false,
         logoutUser: false,
         registerUser: false,
@@ -65,6 +68,7 @@ const useUserStore = create<AuthStore>()(
       data: [],
       listFriends: [],
       yourFriends: [],
+      followers: [],
       myFriends: [],
       userFollowed: null,
       profileUser: {},
@@ -261,6 +265,19 @@ const useUserStore = create<AuthStore>()(
           set({ yourFriends: result?.friends || [] });
         } catch (erorr) {
           get().setLoading("getUserFollowing", false);
+        }
+      },
+
+      getUserFollowers: async (user_id: string, last_name?: string) => {
+        get().setLoading("getUserFollowers", true);
+        try {
+          const result = await apiCall(
+            API_URLS.USERS.getMyFollowers(user_id, last_name || ""),
+          );
+          get().setLoading("getUserFollowers", false);
+          set({ followers: result?.followers || [] });
+        } catch (erorr) {
+          get().setLoading("getUserFollowers", false);
         }
       },
 

@@ -99,6 +99,12 @@ export const API_URLS = {
       headers: HEADERS.jsonHeader(),
       params: last_name && { last_name },
     }),
+    getMyFollowers: (user_id: string, last_name: string) => ({
+      endPoint: `/api/user/${user_id}/followers`,
+      method: "GET",
+      headers: HEADERS.jsonHeader(),
+      params: last_name && { last_name },
+    }),
     refreshToken: (refresh_token: string) => ({
       endPoint: "/api/user/refresh-token",
       method: "POST",
@@ -107,6 +113,11 @@ export const API_URLS = {
     })
   },
   POSTS: {
+    getPostsByAuthorId: (author_id: string) => ({
+      endPoint: `api/post/${author_id}`,
+      method: "GET",
+      headers: HEADERS.jsonHeader(),
+    }),
     createPost: (payload: createPostPayload) => ({
       endPoint: "/api/post",
       method: "POST",

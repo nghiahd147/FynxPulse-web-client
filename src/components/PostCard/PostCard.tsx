@@ -1,6 +1,7 @@
-import { Camera, Ellipsis, Globe, Heart, Lock, MessageCircle, Share2, Smile, Sticker, Users } from "lucide-react";
+import { Camera, Globe, Heart, Lock, MessageCircle, Share2, Smile, Sticker, Users } from "lucide-react";
 import type { Posts } from "../../types/post.types";
 import { formatDateVN } from "../../utils/date";
+import PostOptionsMenu from "./PostOptionsMenu";
 
 const PostCard = ({ postByAuthor }: { postByAuthor: Posts[] }) => {
     return (
@@ -24,12 +25,7 @@ const PostCard = ({ postByAuthor }: { postByAuthor: Posts[] }) => {
                                     </div>
                                 </div>
                             </div>
-                            <button
-                                type="button"
-                                className="p-1.5 rounded-full text-gray-500 hover:bg-gray-100 transition-colors duration-200"
-                            >
-                                <Ellipsis className="w-4 h-4" />
-                            </button>
+                            <PostOptionsMenu />
                         </div>
 
                         <p className="mt-3 text-[22px] leading-tight font-normal">{item.content}</p>

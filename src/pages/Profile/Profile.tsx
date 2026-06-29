@@ -8,7 +8,7 @@ import {
   UserRoundPlus,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, Outlet, useLocation, useParams } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { notificationError, notificationSuccess } from "../../config/notify";
 import SuggestionCarousel from "../../components/SuggestionCarousel/SuggestionCarousel";
 import useUserStore from "../../store/useUserStore";
@@ -23,19 +23,25 @@ const Profile = () => {
     getFollowSuggestions,
     userFollowed,
     unfollowUser,
+    getMe,
     me,
     setOpenModalProfile,
   } = useUserStore();
   const params = useParams();
   const usernameCurrent = params.user_name;
   const userIdCurrent = profileUser._id;
+  const navigate = useNavigate()
   const location = useLocation();
   const isFriendsList = location.pathname.startsWith("/friends/list");
   const isSuggestions = location.pathname.startsWith("/friends/suggestions")
   const basePath = isFriendsList ? "/friends/list" : isSuggestions ? "/friends/suggestions" : "/profile";
 
   useEffect(() => {
-    getProfile(usernameCurrent as string);
+    if (usernameCurrent) {
+      getProfile(usernameCurrent as string);
+    } else {
+      getMe()
+    }
   }, [usernameCurrent]);
 
   useEffect(() => {
@@ -66,6 +72,14 @@ const Profile = () => {
     } else {
       notificationError(result.message as string);
     }
+  };
+
+  const redirectToPageFollowing = () => {
+    navigate(`/profile/${profileUser.user_name || me._id}/friends`, { state: { tab: "following" } });
+  };
+
+  const redirectToPageFollowers = () => {
+    navigate(`/profile/${profileUser.user_name || me._id}/friends`, { state: { tab: "followers" } });
   };
 
   return (
@@ -114,9 +128,9 @@ const Profile = () => {
                   <span className="font-bold text-4xl">{`${profileUser.first_name} ${profileUser.last_name}`}</span>
                   <span>{profileUser.bio}</span>
                   <div className="flex items-center gap-x-2 font-bold">
-                    <span>{profileUser.following_count} đang theo dõi</span>
+                    <span onClick={redirectToPageFollowing} className="cursor-pointer hover:text-blue-400 hover:underline transition-all ease-in">{profileUser.following_count} đang theo dõi</span>
                     <span>•</span>
-                    <span>{profileUser.followers_count} người theo dõi</span>
+                    <span onClick={redirectToPageFollowers} className="cursor-pointer hover:text-blue-400 hover:underline transition-all ease-in">{profileUser.followers_count} người theo dõi</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-x-2">
@@ -222,10 +236,12 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
       {/* Body Profile */}
       <div className={`${location.pathname.startsWith('/profile') ? "w-300" : "w-[90%]"} flex justify-between gap-x-5 mx-auto py-4`}>
         <Outlet />
       </div>
+
     </div>
   );
 };

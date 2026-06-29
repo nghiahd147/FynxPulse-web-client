@@ -19,7 +19,7 @@ const MainLayout = () => {
         ></div>
       )}
 
-      <div className="h-screen overflow-y-auto relative">
+      <div className="hide-scrollbar h-screen overflow-x-hidden overflow-y-auto relative">
         {isTabOpen && (
           <div
             className="absolute left-0 right-0 top-0 bottom-0 bg-gray-950/60 z-10"

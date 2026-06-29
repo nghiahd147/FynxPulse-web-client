@@ -1,14 +1,31 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Input } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import useUserStore from "../../../store/useUserStore";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import UserCard from "../../../components/UserCard/UserCard";
 
 const Friends = () => {
   const { getUserFollowing, followers, getUserFollowers, yourFriends, profileUser } = useUserStore();
   const [lastName, setLastName] = useState("");
   const [activeTab, setActiveTab] = useState<"following" | "followers">("following");
+  const friendRef = useRef<HTMLDivElement>(null);
+  const location = useLocation()
+
+  useEffect(() => {
+    friendRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    })
+  }, [location.pathname, location.state?.tab])
+
+  useEffect(() => {
+    if (location.state?.tab == "following") {
+      setActiveTab("following")
+    } else if (location.state?.tab == "followers") {
+      setActiveTab("followers")
+    }
+  }, [location.state?.tab])
 
   useEffect(() => {
     getUserFollowing(profileUser._id as string, lastName);
@@ -63,7 +80,7 @@ const Friends = () => {
         </button>
       </div>
 
-      <div className="w-full my-4 grid grid-cols-2 gap-4 px-3 py-1">
+      <div ref={friendRef} className="w-full my-4 grid grid-cols-2 gap-4 px-3 py-1">
         {yourFriends.length !== 0 && activeTab == "following" ? (
           <UserCard userInfo={yourFriends} activeTab={activeTab} />
         ) : followers.length !== 0 && activeTab == "followers" ? (

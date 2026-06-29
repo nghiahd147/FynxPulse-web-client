@@ -53,8 +53,6 @@ const ProfileInfo = () => {
     console.log("values", values);
   };
 
-  console.log("postByAuthor", postByAuthor)
-
   return (
     <div className="w-full flex gap-x-4">
       <div className="w-[40%] h-[160px] flex flex-col py-2 px-3 rounded-md bg-white shadow-md">
@@ -243,6 +241,7 @@ const ProfileInfo = () => {
           </Form.Item>
         </Form>
       </Modal>
+
     </div>
   );
 };

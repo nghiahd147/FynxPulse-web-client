@@ -2,6 +2,7 @@ import { Camera, Globe, Heart, Lock, MessageCircle, Share2, Smile, Sticker, User
 import type { Posts } from "../../types/post.types";
 import { formatDateVN } from "../../utils/date";
 import PostOptionsMenu from "./PostOptionsMenu";
+import PostReactionButton from "./PostReactionButton";
 
 const PostCard = ({ postByAuthor }: { postByAuthor: Posts[] }) => {
     return (
@@ -32,10 +33,7 @@ const PostCard = ({ postByAuthor }: { postByAuthor: Posts[] }) => {
 
                         <div className="mt-3 flex items-center justify-between text-gray-600">
                             <div className="flex items-center gap-3">
-                                <button type="button" className="hover:text-red-500 transition-colors duration-200">
-                                    <Heart className="w-5 h-5 fill-red-500 text-red-500" />
-                                </button>
-                                <span className="text-sm font-medium">1</span>
+                                <PostReactionButton />
                                 <button type="button" className="hover:text-gray-900 transition-colors duration-200">
                                     <MessageCircle className="w-5 h-5" />
                                 </button>

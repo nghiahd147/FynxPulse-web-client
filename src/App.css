@@ -114,3 +114,7 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+.post-options-popover .ant-popover-content {
+  animation: modal-in 0.2s ease-out both;
+}

@@ -25,7 +25,7 @@ const PostCard = ({ postByAuthor }: { postByAuthor: Posts[] }) => {
                                     </div>
                                 </div>
                             </div>
-                            <PostOptionsMenu />
+                            <PostOptionsMenu idPost={item._id || ""} />
                         </div>
 
                         <p className="mt-3 text-[22px] leading-tight font-normal">{item.content}</p>

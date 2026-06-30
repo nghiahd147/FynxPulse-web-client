@@ -12,7 +12,8 @@ interface AuthStore {
 
   setLoading: (key: string, value: boolean) => void;
   getPostsByAuthorId: (author_id: string) => void;
-  createPost: (payload: createPostPayload) => Promise<{ success: boolean; message: any; }>
+  createPost: (payload: createPostPayload) => Promise<{ success: boolean; message: string | unknown; }>
+  deletePost: (id: string) => Promise<{ success: boolean; message: string | unknown; }>
 }
 
 const usePostStore = create<AuthStore>(
@@ -20,6 +21,7 @@ const usePostStore = create<AuthStore>(
     loading: {
       getPostsByAuthorId: false,
       createPost: false,
+      deletePostLoading: false
     },
     message: "",
     postByAuthor: [],
@@ -54,6 +56,18 @@ const usePostStore = create<AuthStore>(
         return { success: true, message: response?.message };
       } catch (error) {
         get().setLoading("createPostLoading", false);
+        return { success: false, message: error };
+      }
+    },
+
+    deletePost: async (id: string) => {
+      get().setLoading("deletePostLoading", true);
+      try {
+        const response = await apiCall(API_URLS.POSTS.deletePost(id));
+        get().setLoading("deletePostLoading", false);
+        return { success: true, message: response?.message };
+      } catch (error) {
+        get().setLoading("deletePostLoading", false);
         return { success: false, message: error };
       }
     },

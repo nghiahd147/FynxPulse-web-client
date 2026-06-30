@@ -124,5 +124,10 @@ export const API_URLS = {
       headers: HEADERS.jsonHeader(),
       payload,
     }),
+    deletePost: (id: string) => ({
+      endPoint: `/api/post/${id}`,
+      method: "DELETE",
+      headers: HEADERS.jsonHeader(),
+    })
   }
 };

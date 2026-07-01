@@ -1,5 +1,5 @@
-import { message } from "antd";
+import { message } from 'antd'
 
 export const onFinishFailed = () => {
-  message.error("Chưa nhập đủ trường vui lòng điền đầy đủ");
-};
+  message.error('Chưa nhập đủ trường vui lòng điền đầy đủ')
+}

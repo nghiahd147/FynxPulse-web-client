@@ -1,5 +1,5 @@
-import { createRoot } from "react-dom/client";
-import "./utils/axios";
-import App from "./App.tsx";
+import { createRoot } from 'react-dom/client'
+import './utils/axios'
+import App from './App.tsx'
 
-createRoot(document.getElementById("root")!).render(<App />);
+createRoot(document.getElementById('root')!).render(<App />)

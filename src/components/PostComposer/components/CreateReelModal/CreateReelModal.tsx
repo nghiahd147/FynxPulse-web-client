@@ -1,7 +1,5 @@
 const CreateReelModal = () => {
-    return (
-        <div>CreateReelModal</div>
-    )
+  return <div>CreateReelModal</div>
 }
 
 export default CreateReelModal

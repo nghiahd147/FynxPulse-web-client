@@ -1,5 +1,5 @@
 const ProfilePost = () => {
-  return <div>ProfilePost</div>;
-};
+  return <div>ProfilePost</div>
+}
 
-export default ProfilePost;
+export default ProfilePost

@@ -1,5 +1,5 @@
 const ProfileImage = () => {
-  return <div>ProfileImage</div>;
-};
+  return <div>ProfileImage</div>
+}
 
-export default ProfileImage;
+export default ProfileImage

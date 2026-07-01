@@ -1,133 +1,129 @@
-import type { createPostPayload } from "../types/post.types";
-import type { ParamsUser, Users } from "../types/user.types";
-import type {
-  ChangePasswordPayload,
-  FollowUserPayload,
-  LoginPayload,
-} from "../types/user.types";
+import type { createPostPayload } from '../types/post.types'
+import type { ParamsUser, Users } from '../types/user.types'
+import type { ChangePasswordPayload, FollowUserPayload, LoginPayload } from '../types/user.types'
 
 export const HEADERS = {
   DEFAULT_HEADER: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json'
   },
   header: () => ({
-    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-    Authorization: localStorage.getItem("access_token"),
+    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    Authorization: localStorage.getItem('access_token')
   }),
   jsonHeader: () => ({
-    "Content-Type": "application/json; charset=UTF-8",
-    Authorization: "Bearer " + localStorage.getItem("access_token"),
+    'Content-Type': 'application/json; charset=UTF-8',
+    Authorization: 'Bearer ' + localStorage.getItem('access_token')
   }),
   file_header: () => ({
-    "Content-Type": "multipart/form-data",
-    Authorization: localStorage.getItem("access_token"),
-  }),
-};
+    'Content-Type': 'multipart/form-data',
+    Authorization: localStorage.getItem('access_token')
+  })
+}
 
 export const API_URLS = {
   USERS: {
     register: (payload: Users) => ({
-      endPoint: "/api/user/register",
-      method: "POST",
+      endPoint: '/api/user/register',
+      method: 'POST',
       headers: HEADERS.DEFAULT_HEADER,
-      payload,
+      payload
     }),
     login: (payload: LoginPayload) => ({
-      endPoint: "/api/user/login",
-      method: "POST",
+      endPoint: '/api/user/login',
+      method: 'POST',
       headers: HEADERS.DEFAULT_HEADER,
-      payload,
+      payload
     }),
     logout: (payload: { refresh_token: string }) => ({
-      endPoint: "/api/user/logout",
-      method: "POST",
+      endPoint: '/api/user/logout',
+      method: 'POST',
       headers: HEADERS.jsonHeader(),
-      payload,
+      payload
     }),
     changePassword: (payload: ChangePasswordPayload) => ({
-      endPoint: "/api/user/change-password",
-      method: "PUT",
+      endPoint: '/api/user/change-password',
+      method: 'PUT',
       headers: HEADERS.jsonHeader(),
-      payload,
+      payload
     }),
     getListUser: (params: ParamsUser) => ({
-      endPoint: "/api/user/",
-      method: "GET",
+      endPoint: '/api/user/',
+      method: 'GET',
       headers: HEADERS.jsonHeader(),
-      params,
+      params
     }),
     getMe: () => ({
-      endPoint: "/api/user/me",
-      method: "GET",
-      headers: HEADERS.jsonHeader(),
+      endPoint: '/api/user/me',
+      method: 'GET',
+      headers: HEADERS.jsonHeader()
     }),
     getProfile: (username: string) => ({
       endPoint: `/api/user/${username}`,
-      method: "GET",
-      headers: HEADERS.jsonHeader(),
+      method: 'GET',
+      headers: HEADERS.jsonHeader()
     }),
     followUser: (payload: FollowUserPayload) => ({
-      endPoint: "/api/user/follow",
-      method: "POST",
+      endPoint: '/api/user/follow',
+      method: 'POST',
       headers: HEADERS.jsonHeader(),
-      payload,
+      payload
     }),
     unfollowUser: (follower_user_id: string) => ({
       endPoint: `/api/user/unfollow/${follower_user_id}`,
-      method: "DELETE",
-      headers: HEADERS.jsonHeader(),
+      method: 'DELETE',
+      headers: HEADERS.jsonHeader()
     }),
     getFollowSuggestions: (user_id: string) => ({
       endPoint: `/api/user/${user_id}/follow-suggestions`,
-      method: "GET",
-      headers: HEADERS.jsonHeader(),
+      method: 'GET',
+      headers: HEADERS.jsonHeader()
     }),
     checkUserFollowStatus: (follower_user_id: string) => ({
       endPoint: `/api/user/follow-status/${follower_user_id}`,
-      method: "GET",
-      headers: HEADERS.jsonHeader(),
+      method: 'GET',
+      headers: HEADERS.jsonHeader()
     }),
     getUserFollowing: (user_id: string, last_name: string) => ({
       endPoint: `/api/user/${user_id}/following`,
-      method: "GET",
+      method: 'GET',
       headers: HEADERS.jsonHeader(),
-      params: last_name && { last_name },
+      params: last_name && { last_name }
     }),
     getMyFollowing: (last_name: string) => ({
       endPoint: `/api/user/my-following`,
-      method: "GET",
+      method: 'GET',
       headers: HEADERS.jsonHeader(),
-      params: last_name && { last_name },
+      params: last_name && { last_name }
     }),
     getMyFollowers: (user_id: string, last_name: string) => ({
       endPoint: `/api/user/${user_id}/followers`,
-      method: "GET",
+      method: 'GET',
       headers: HEADERS.jsonHeader(),
-      params: last_name && { last_name },
+      params: last_name && { last_name }
     }),
     refreshToken: (refresh_token: string) => ({
-      endPoint: "/api/user/refresh-token",
-      method: "POST",
+      endPoint: '/api/user/refresh-token',
+      method: 'POST',
       headers: HEADERS.DEFAULT_HEADER,
-      payload: { refresh_token },
+      payload: { refresh_token }
     })
   },
   POSTS: {
     getPostsByAuthorId: (author_id: string) => ({
       endPoint: `api/post/${author_id}`,
-      method: "GET",
-      headers: HEADERS.jsonHeader(),
+      method: 'GET',
+      headers: HEADERS.jsonHeader()
     }),
     createPost: (payload: createPostPayload) => ({
-      endPoint: "/api/post",
-      method: "POST",
+      endPoint: '/api/post',
+      method: 'POST',
       headers: HEADERS.jsonHeader(),
-      payload,
+      payload
     }),
     deletePost: (id: string) => ({
       endPoint: `/api/post/${id}`,
-      method: "DELETE",
-      headers: HEADERS.jsonHeader(),
+      method: 'DELETE',
+      headers: HEADERS.jsonHeader()
     })
   }
-};
+}

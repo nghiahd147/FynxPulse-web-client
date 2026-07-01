@@ -1,6 +1,6 @@
 export const TypePost = {
-  Post: "Post",
-  Repost: "Repost",
-  Comment: "Comment",
-  QuotePost: "QuotePost",
-};
+  Post: 'Post',
+  Repost: 'Repost',
+  Comment: 'Comment',
+  QuotePost: 'QuotePost'
+}

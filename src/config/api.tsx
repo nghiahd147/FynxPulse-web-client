@@ -1,4 +1,5 @@
 import type { createPostPayload } from '../types/post.types'
+import type { ReactionPostPayload, UnReactionPostPayload } from '../types/reaction.types'
 import type { ParamsUser, Users } from '../types/user.types'
 import type { ChangePasswordPayload, FollowUserPayload, LoginPayload } from '../types/user.types'
 
@@ -124,6 +125,20 @@ export const API_URLS = {
       endPoint: `/api/post/${id}`,
       method: 'DELETE',
       headers: HEADERS.jsonHeader()
+    })
+  },
+  REACTIONS: {
+    reactionPost: (payload: ReactionPostPayload) => ({
+      endPoint: '/api/reaction/',
+      method: 'POST',
+      headers: HEADERS.jsonHeader(),
+      payload
+    }),
+    unReactionPost: (payload: UnReactionPostPayload) => ({
+      endPoint: `/api/reaction/`,
+      method: 'DELETE',
+      headers: HEADERS.jsonHeader(),
+      payload,
     })
   }
 }

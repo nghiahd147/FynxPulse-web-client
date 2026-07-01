@@ -19,3 +19,8 @@ export interface PostLoadingState {
   getPostsByAuthorId: boolean
   createPost: boolean
 }
+
+export interface ReactionLoadingState {
+  reactionPost: boolean
+  unReactionPost: boolean
+}

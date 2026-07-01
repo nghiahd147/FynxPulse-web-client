@@ -41,7 +41,7 @@ const PostCard = ({ postByAuthor }: { postByAuthor: Posts[] }) => {
 
             <div className='mt-3 flex items-center justify-between text-gray-600'>
               <div className='flex items-center gap-3'>
-                <PostReactionButton />
+                <PostReactionButton idPost={item._id || ""} like_count={item.like_count || 0} />
                 <button type='button' className='hover:text-gray-900 transition-colors duration-200'>
                   <MessageCircle className='w-5 h-5' />
                 </button>

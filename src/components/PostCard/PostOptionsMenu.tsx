@@ -3,8 +3,9 @@ import { BellOff, Bookmark, Ellipsis, MessageCircleWarning, Trash2, XSquare } fr
 import usePostStore from '../../store/usePostStore'
 import { notificationError, notificationSuccess } from '../../config/notify'
 import useUserStore from '../../store/useUserStore'
+import type { Dispatch, SetStateAction } from 'react'
 
-const PostOptionsMenu = ({ idPost }: { idPost: string }) => {
+const PostOptionsMenu = ({ idPost, isModalPost, setIsOpenModal }: { idPost: string, isModalPost?: boolean, setIsOpenModal?: Dispatch<SetStateAction<boolean>> }) => {
   const { profileUser } = useUserStore()
   const { getPostsByAuthorId, deletePost } = usePostStore()
   const item = 'flex gap-3 rounded-lg p-2 cursor-pointer hover:bg-[#F2F2F2] transition-colors'
@@ -59,6 +60,9 @@ const PostOptionsMenu = ({ idPost }: { idPost: string }) => {
     if (result.success) {
       getPostsByAuthorId(profileUser._id as string)
       notificationSuccess(result.message as string)
+      if (isModalPost) {
+        setIsOpenModal?.(false)
+      }
     } else {
       notificationError(result.message as string)
     }

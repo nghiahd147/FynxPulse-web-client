@@ -1,6 +1,9 @@
+import type { Users } from './user.types'
+
 export interface Posts {
   _id?: string
   author_id: string
+  user_info: Users
   type: number
   content: string
   media?: number

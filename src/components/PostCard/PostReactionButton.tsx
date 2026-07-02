@@ -14,7 +14,7 @@ const REACTIONS: { id: number; label: string; color: string; emoji: string }[] =
   { id: EmotionTypes.Sad, label: 'Buồn', color: 'text-[#F7B125]', emoji: '😢' }
 ]
 
-const PostReactionButton = ({ idPost, like_count }: { idPost: string, like_count: number }) => {
+const PostReactionButton = ({ post_id, like_count }: { post_id: string, like_count: number }) => {
   const { profileUser } = useUserStore()
   const { getPostsByAuthorId } = usePostStore()
   const { reactionPost, unReactionPost } = useReactionStore()
@@ -29,7 +29,7 @@ const PostReactionButton = ({ idPost, like_count }: { idPost: string, like_count
     setHover(false)
     if (active !== id) {
       const payload = {
-        post_id: idPost,
+        post_id: post_id,
         type: id
       }
       const result = await reactionPost(payload)
@@ -40,7 +40,7 @@ const PostReactionButton = ({ idPost, like_count }: { idPost: string, like_count
       }
     } else {
       const payload = {
-        post_id: idPost
+        post_id: post_id
       }
       const result = await unReactionPost(payload)
       if (result.success) {

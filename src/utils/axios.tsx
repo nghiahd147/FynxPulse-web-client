@@ -29,7 +29,7 @@ const handleRefreshToken = async () => {
 }
 
 axios.interceptors.request.use(async (config) => {
-  if (!config.headers?.Authorization || config.url?.includes('refresh-token')) return config
+  if (config.url?.includes('refresh-token')) return config
 
   const token = localStorage.getItem('access_token')
   if (!isTokenExpired(token)) {

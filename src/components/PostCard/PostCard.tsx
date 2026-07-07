@@ -21,7 +21,7 @@ const PostCard = ({ postByAuthor }: { postByAuthor: Posts[] }) => {
 
             <div className='mt-3 flex items-center justify-between text-gray-600'>
               <div className='flex items-center gap-3'>
-                <PostReactionButton post_id={item._id || ""} like_count={item.like_count || 0} />
+                <PostReactionButton post_id={item._id || ""} like_count={item.like_count || 0} has_reaction={item.has_reaction} />
                 <PostCommentButton post={item} count={item.comment_count || 0} />
                 <PostShareButton />
               </div>

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { apiCall } from '../utils/axios'
 import { API_URLS } from '../config/api'
-import type { ActionResult, ProfileUser, ParamsUser, Users } from '../types/user.types'
+import type { ActionResult, ProfileUser, ParamsUser, Users, UpdateMePayload } from '../types/user.types'
 import type { ChangePasswordPayload, FollowUserPayload, LoginPayload, LogoutPayload } from '../types/user.types'
 import type { ApiError } from '../types/errors'
 import { persist } from 'zustand/middleware'
@@ -37,6 +37,7 @@ interface AuthStore {
   getUserFollowing: (user_id: string, last_name?: string) => void
   getUserFollowers: (user_id: string, last_name?: string) => void
   getMyFriends: (last_name?: string) => void
+  updateMe: (payload: UpdateMePayload) => Promise<ActionResult>
 }
 
 const useUserStore = create<AuthStore>()(
@@ -49,6 +50,7 @@ const useUserStore = create<AuthStore>()(
         getListUser: false,
         getMe: false,
         getProfile: false,
+        updateMe: false,
         getFollowSuggestions: false,
         getUserFollowing: false,
         getUserFollowers: false,
@@ -156,6 +158,18 @@ const useUserStore = create<AuthStore>()(
         } catch (error) {
           console.log('Error Change Password', error)
           get().setLoading('changePassword', false)
+          return { success: false, message: error }
+        }
+      },
+
+      updateMe: async (payload: UpdateMePayload) => {
+        get().setLoading('updateMe', true)
+        try {
+          const response = await apiCall(API_URLS.USERS.updateMe(payload))
+          get().setLoading('updateMe', false)
+          return { success: true, message: response?.message }
+        } catch (error) {
+          get().setLoading('updateMe', false)
           return { success: false, message: error }
         }
       },

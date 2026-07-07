@@ -13,6 +13,7 @@ export interface UserLoadingState {
   getUserFollowing: boolean
   getUserFollowers: boolean
   getMyFriend: boolean
+  updateMe: boolean
 }
 
 export interface PostLoadingState {
@@ -23,4 +24,8 @@ export interface PostLoadingState {
 export interface ReactionLoadingState {
   reactionPost: boolean
   unReactionPost: boolean
+}
+
+export interface MediaLoadingState {
+  createImage: boolean
 }

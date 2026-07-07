@@ -6,11 +6,13 @@ export const EmotionTypes = {
   Wow: 4
 }
 
-export interface Reactions {
+export type EmotionType = (typeof EmotionTypes)[keyof typeof EmotionTypes]
+
+export interface ReactionType {
   _id?: string
   post_id: string
   user_id: string
-  type: typeof EmotionTypes
+  type: EmotionType
   created_at: Date
 }
 

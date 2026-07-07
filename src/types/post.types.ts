@@ -1,3 +1,4 @@
+import type { ReactionType } from './reaction.types'
 import type { Users } from './user.types'
 
 export interface Posts {
@@ -15,6 +16,7 @@ export interface Posts {
   user_view?: number
   like_count?: number
   comment_count?: number
+  has_reaction?: ReactionType
   created_at?: Date
   updated_at?: Date
 }

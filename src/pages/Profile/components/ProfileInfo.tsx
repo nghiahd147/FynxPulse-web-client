@@ -1,7 +1,7 @@
 import { Cake, Camera, MapPinHouse, PanelsTopLeft, Pencil, User } from 'lucide-react'
 import { formatDate } from '../../../utils/date'
 import { Button, DatePicker, Form, Input, Modal, Upload } from 'antd'
-import type { ProfileUser } from '../../../types/user.types'
+import type { UpdateMePayload } from '../../../types/user.types'
 import { EditOutlined } from '@ant-design/icons'
 import { useEffect } from 'react'
 import dayjs from 'dayjs'
@@ -11,14 +11,17 @@ import PostComposer from '../../../components/PostComposer/PostComposer'
 import PostToolbar from '../../../components/PostToolbar/PostToolbar'
 import PostCard from '../../../components/PostCard/PostCard'
 import usePostStore from '../../../store/usePostStore'
+import { notificationError, notificationSuccess } from '../../../config/notify'
+import useMediaStore from '../../../store/useMediaStore'
 
 const ProfileInfo = () => {
-  const { openModalProfile, setOpenModalProfile } = useUserStore()
+  const { openModalProfile, setOpenModalProfile, getMe } = useUserStore()
   const { getPostsByAuthorId, postByAuthor } = usePostStore()
   const [form] = Form.useForm()
   const avatar = Form.useWatch('avatar', form)
   const profile_picture_url = Form.useWatch('profile_picture_url', form)
-  const { me, profileUser } = useUserStore()
+  const { me, profileUser, updateMe } = useUserStore()
+  const { createImage } = useMediaStore()
 
   useEffect(() => {
     getPostsByAuthorId(profileUser._id as string)
@@ -42,8 +45,29 @@ const ProfileInfo = () => {
     setOpenModalProfile(false)
   }
 
-  const onFinish = (values: ProfileUser) => {
-    console.log('values', values)
+  const uploadProfileImage = async (file: File, field: 'avatar' | 'profile_picture_url') => {
+    try {
+      const result = await createImage({ file })
+      if (result.success) {
+        form.setFieldValue(field, result.data?.[0]?.url as string)
+      }
+    } catch (error) {
+      notificationError('Upload ảnh thất bại')
+    }
+  }
+
+  const onFinish = async (values: UpdateMePayload) => {
+    const result = await updateMe({
+      ...values,
+      date_of_birth: dayjs(values.date_of_birth)
+    })
+    if (result.success) {
+      notificationSuccess(result.message as string)
+      handleCancel()
+      getMe()
+    } else {
+      notificationError(result.message as string)
+    }
   }
 
   return (
@@ -123,8 +147,7 @@ const ProfileInfo = () => {
               <Upload
                 showUploadList={false}
                 beforeUpload={(file) => {
-                  const imageUrl = URL.createObjectURL(file)
-                  form.setFieldValue('profile_picture_url', imageUrl)
+                  uploadProfileImage(file, 'profile_picture_url')
                   return false
                 }}
               >
@@ -139,9 +162,8 @@ const ProfileInfo = () => {
                 <img src={avatar || '/avatar-mac-dinh.jpg'} alt='avatar-user' className='w-25 h-25 rounded-[100%]' />
                 <Upload
                   showUploadList={false}
-                  beforeUpload={(value) => {
-                    const imageUrl = URL.createObjectURL(value)
-                    form.setFieldValue('avatar', imageUrl)
+                  beforeUpload={(file) => {
+                    uploadProfileImage(file, 'avatar')
                     return false
                   }}
                 >
@@ -152,7 +174,7 @@ const ProfileInfo = () => {
               </div>
             </div>
           </div>
-          <Form.Item>
+          <Form.Item rules={[{ required: true, message: 'Vui lòng chọn ảnh avatar!' }]}>
             <div className='flex justify-end items-center mr-0'>
               <div className='flex flex-col items-center mr-4 mt-2'>
                 <span className='font-bold'>Chỉnh sửa ảnh của bạn với Imagine</span>
@@ -161,8 +183,7 @@ const ProfileInfo = () => {
               <Upload
                 showUploadList={false}
                 beforeUpload={(file) => {
-                  const imageUrl = URL.createObjectURL(file)
-                  form.setFieldValue('avatar', imageUrl)
+                  uploadProfileImage(file, 'avatar')
                   return false
                 }}
               >
@@ -201,10 +222,10 @@ const ProfileInfo = () => {
           >
             <Input placeholder='Nhập username' />
           </Form.Item>
-          <Form.Item layout='vertical' label='Địa chỉ' name='location'>
+          <Form.Item layout='vertical' label='Địa chỉ' name='location' rules={[{ required: true, message: 'Vui lòng điền địa chỉ!' }]}>
             <Input placeholder='Nhập địa chỉ' />
           </Form.Item>
-          <Form.Item layout='vertical' label='Ngày sinh' name='date_of_birth'>
+          <Form.Item layout='vertical' label='Ngày sinh' name='date_of_birth' rules={[{ required: true, message: 'Vui lòng chọn ngày sinh!' }]}>
             <DatePicker format='DD-MM-YYYY' />
           </Form.Item>
           <Form.Item
@@ -213,6 +234,10 @@ const ProfileInfo = () => {
             name='website'
             rules={[
               {
+                required: true,
+                message: 'Vui lòng điền địa chỉ website!'
+              },
+              {
                 pattern: REGEX_URL_WEBSITE,
                 message: 'URL không hợp lệ! Vui lòng nhập URL hợp lệ.'
               }
@@ -220,7 +245,7 @@ const ProfileInfo = () => {
           >
             <Input placeholder='Nhập địa chỉ website' />
           </Form.Item>
-          <Form.Item layout='vertical' label='Bio' name='bio'>
+          <Form.Item layout='vertical' label='Bio' name='bio' rules={[{ required: true, message: 'Vui lòng điền bio!' }]}>
             <Input placeholder='Nhập bio' />
           </Form.Item>
         </Form>

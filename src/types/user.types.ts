@@ -1,3 +1,5 @@
+import type { Dayjs } from 'dayjs'
+
 export interface LoginPayload {
   email: string
   password: string
@@ -55,4 +57,16 @@ export interface ProfileUser {
   profile_picture_url?: string
   following_count?: number
   followers_count?: number
+}
+
+export interface UpdateMePayload {
+  first_name: string
+  last_name: string
+  user_name: string
+  date_of_birth: Dayjs
+  bio: string
+  location: string
+  website: string
+  avatar: string
+  profile_picture_url: string
 }

@@ -1,53 +1,44 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ThumbsUp } from 'lucide-react'
-import useReactionStore from '../../store/useReactionStore';
-import { notificationError } from '../../config/notify';
-import usePostStore from '../../store/usePostStore';
-import useUserStore from '../../store/useUserStore';
-import { EmotionTypes } from '../../types/reaction.types';
+import useReactionStore from '../../store/useReactionStore'
+import { notificationError } from '../../config/notify'
+import usePostStore from '../../store/usePostStore'
+import useUserStore from '../../store/useUserStore'
+import { EmotionTypes, type ReactionType } from '../../types/reaction.types'
+import { Reactions } from '../../constants/enum'
 
-const REACTIONS: { id: number; label: string; color: string; emoji: string }[] = [
-  { id: EmotionTypes.Like, label: 'Thích', color: 'text-[#1877F2]', emoji: '👍' },
-  { id: EmotionTypes.Heart, label: 'Yêu thích', color: 'text-[#F33E58]', emoji: '❤️' },
-  { id: EmotionTypes.Haha, label: 'Haha', color: 'text-[#F7B125]', emoji: '😂' },
-  { id: EmotionTypes.Wow, label: 'Wow', color: 'text-[#F7B125]', emoji: '😮' },
-  { id: EmotionTypes.Sad, label: 'Buồn', color: 'text-[#F7B125]', emoji: '😢' }
-]
-
-const PostReactionButton = ({ post_id, like_count }: { post_id: string, like_count: number }) => {
+const PostReactionButton = ({
+  post_id,
+  like_count,
+  has_reaction
+}: {
+  post_id: string
+  like_count: number
+  has_reaction?: ReactionType
+}) => {
   const { profileUser } = useUserStore()
   const { getPostsByAuthorId } = usePostStore()
   const { reactionPost, unReactionPost } = useReactionStore()
 
-  const [active, setActive] = useState<number | null>(null)
+  const [active, setActive] = useState<number | null>(has_reaction?.type ?? null)
   const [hover, setHover] = useState(false)
 
-  const current = REACTIONS.find((reaction) => reaction.id === active)
+  useEffect(() => {
+    setActive(has_reaction?.type ?? null)
+  }, [has_reaction?.type])
+
+  const current = Reactions.find((reaction) => reaction.id === active)
 
   const pick = async (id: number) => {
-    setActive((prev) => (prev === id ? null : id))
+    const isRemoving = active === id
+    setActive(isRemoving ? null : id)
     setHover(false)
-    if (active !== id) {
-      const payload = {
-        post_id: post_id,
-        type: id
-      }
-      const result = await reactionPost(payload)
-      if (result.success) {
-        getPostsByAuthorId(profileUser._id as string)
-      } else {
-        notificationError('Failed to add reaction')
-      }
+    const result = isRemoving ? await unReactionPost({ post_id }) : await reactionPost({ post_id, type: id })
+    if (result.success) {
+      getPostsByAuthorId(profileUser._id as string)
     } else {
-      const payload = {
-        post_id: post_id
-      }
-      const result = await unReactionPost(payload)
-      if (result.success) {
-        getPostsByAuthorId(profileUser._id as string)
-      } else {
-        notificationError('Failed to add reaction')
-      }
+      notificationError('Failed to add reaction')
+      setActive(has_reaction?.type ?? null)
     }
   }
 
@@ -64,7 +55,7 @@ const PostReactionButton = ({ post_id, like_count }: { post_id: string, like_cou
           }`}
       >
         <div className='flex items-center gap-3 rounded-full border border-[#E4E6EB] bg-white px-3 py-2 shadow-[0_4px_16px_rgba(0,0,0,0.15)]'>
-          {REACTIONS.map((reaction) => (
+          {Reactions.map((reaction) => (
             <button
               key={reaction.id}
               type='button'

@@ -72,7 +72,7 @@ const ProfileInfo = () => {
 
   return (
     <div className='w-full flex gap-x-4'>
-      <div className='w-[40%] h-[160px] flex flex-col py-2 px-3 rounded-md bg-white shadow-md'>
+      <div className='w-[40%] h-[220px] flex flex-col py-2 px-3 rounded-md bg-white shadow-md'>
         <div className='flex justify-between items-center'>
           <h3 className='text-2xl font-bold'>Thông tin cá nhân</h3>
           {me.user_name === profileUser.user_name && (

@@ -1,6 +1,7 @@
 import type { createPostPayload } from '../types/post.types'
 import type { ReactionPostPayload, UnReactionPostPayload } from '../types/reaction.types'
 import type { ChangePasswordPayload, FollowUserPayload, LoginPayload, ParamsUser, UpdateMePayload, Users } from '../types/user.types'
+import type { CreateCommentPayload } from '../types/comment.types'
 
 export const HEADERS = {
   DEFAULT_HEADER: {
@@ -143,6 +144,11 @@ export const API_URLS = {
       method: 'DELETE',
       headers: HEADERS.JSON_HEADER(),
       payload,
+    }),
+    getReactionsByPostId: (post_id: string) => ({
+      endPoint: `/api/reaction/post/${post_id}`,
+      method: 'GET',
+      headers: HEADERS.JSON_HEADER(),
     })
   },
   COMMENTS: {
@@ -150,6 +156,17 @@ export const API_URLS = {
       endPoint: `/api/comment/post/${post_id}`,
       method: 'GET',
       headers: HEADERS.JSON_HEADER(),
+    }),
+    createCommentByPost: (payload: CreateCommentPayload) => ({
+      endPoint: '/api/comment/',
+      method: 'POST',
+      headers: HEADERS.JSON_HEADER(),
+      payload
+    }),
+    deleteComment: (id: string) => ({
+      endPoint: `/api/comment/${id}`,
+      method: 'DELETE',
+      headers: HEADERS.JSON_HEADER()
     })
   },
   UPLOADS: {

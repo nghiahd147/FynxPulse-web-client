@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { apiCall } from '../utils/axios'
 import { API_URLS } from '../config/api'
 import type { ReactionLoadingState } from '../types/loading'
-import type { ReactionPostPayload, ReactionType, UnReactionPostPayload } from '../types/reaction.types'
+import type { ReactionEmoji, ReactionPostPayload, ReactionType, UnReactionPostPayload } from '../types/reaction.types'
 
 interface AuthStore {
   loading: ReactionLoadingState
@@ -12,12 +12,14 @@ interface AuthStore {
   setLoading: (key: string, value: boolean) => void
   reactionPost: (payload: ReactionPostPayload) => Promise<{ success: boolean; message: string | unknown }>
   unReactionPost: (payload: UnReactionPostPayload) => Promise<{ success: boolean; message: string | unknown }>
+  getReactionByPost: (post_id: string) => Promise<{ success: boolean; message: string | unknown; data?: ReactionEmoji }>
 }
 
 const useReactionStore = create<AuthStore>((set, get) => ({
   loading: {
     reactionPost: false,
-    unReactionPost: false
+    unReactionPost: false,
+    getReactionByPost: false
   },
   message: '',
   data: [],
@@ -54,6 +56,18 @@ const useReactionStore = create<AuthStore>((set, get) => ({
       return { success: false, message: error }
     }
   },
+
+  getReactionByPost: async (post_id: string) => {
+    get().setLoading('getReactionByPost', true)
+    try {
+      const response = await apiCall(API_URLS.REACTIONS.getReactionsByPostId(post_id))
+      get().setLoading('getReactionByPost', false)
+      return { success: true, message: response?.message, data: response?.result as ReactionEmoji }
+    } catch (error) {
+      get().setLoading('getReactionByPost', false)
+      return { success: false, message: error }
+    }
+  }
 
 }))
 

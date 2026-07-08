@@ -1,8 +1,8 @@
 import { Popover } from 'antd'
 import { BellOff, Bookmark, Ellipsis, MessageCircleWarning, Trash2, XSquare } from 'lucide-react'
-import usePostStore from '../../store/usePostStore'
-import { notificationError, notificationSuccess } from '../../config/notify'
-import useUserStore from '../../store/useUserStore'
+import usePostStore from '../../../store/usePostStore'
+import { notificationError, notificationSuccess } from '../../../config/notify'
+import useUserStore from '../../../store/useUserStore'
 import type { Dispatch, SetStateAction } from 'react'
 
 const PostOptionsMenu = ({ idPost, isModalPost, setIsOpenModal }: { idPost: string, isModalPost?: boolean, setIsOpenModal?: Dispatch<SetStateAction<boolean>> }) => {

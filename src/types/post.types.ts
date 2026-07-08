@@ -22,5 +22,8 @@ export interface Posts {
 }
 
 export interface createPostPayload {
+  type: number
   content: string
+  parent_id: string | null
+  audience: number
 }

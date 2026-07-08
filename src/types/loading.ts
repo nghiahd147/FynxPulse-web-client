@@ -29,3 +29,9 @@ export interface ReactionLoadingState {
 export interface MediaLoadingState {
   createImage: boolean
 }
+
+export interface CommentLoadingState {
+  getComments: boolean
+  createComment: boolean
+  deleteComment: boolean
+}

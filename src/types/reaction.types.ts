@@ -1,3 +1,5 @@
+import type { Users } from './user.types'
+
 export const EmotionTypes = {
   Like: 0,
   Heart: 1,
@@ -23,4 +25,31 @@ export interface ReactionPostPayload {
 
 export interface UnReactionPostPayload {
   post_id: string
+}
+
+export interface ReactionEmoji {
+  post_id: string
+  reaction_total: number
+  emoji_info: {
+    like: {
+      total: number
+      users: Users[]
+    }
+    heart: {
+      total: number
+      users: Users[]
+    }
+    haha: {
+      total: number
+      users: Users[]
+    }
+    sad: {
+      total: number
+      users: Users[]
+    }
+    wow: {
+      total: number
+      users: Users[]
+    }
+  }
 }

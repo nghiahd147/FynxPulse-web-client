@@ -85,17 +85,18 @@ const PostCompose = ({ isOpen, onClose }: CreatePostModalProps) => {
 
   const handleCreatePost = async (value: createPostPayload) => {
     const payload = {
-      type: TypePost.Post,
+      type: 0,
       content: value.content,
+      parent_id: null,
       audience: audience === 'every_one' ? 0 : audience === 'friends' ? 1 : 2
     }
     const result = await createPost(payload)
     if (result.success) {
       getPostsByAuthorId(profileUser._id as string)
       onClose()
-      notificationSuccess(result.message)
+      notificationSuccess(result.message as string)
     } else {
-      notificationError(result.message)
+      notificationError(result.message as string)
     }
   }
 
@@ -193,11 +194,10 @@ const PostCompose = ({ isOpen, onClose }: CreatePostModalProps) => {
 
               <button
                 disabled={!hasContent}
-                className={`w-full mt-3 py-2.5 rounded-lg font-semibold text-[15px] transition-colors duration-200 ${
-                  hasContent
-                    ? 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer'
-                    : 'bg-[#E4E6EB] text-gray-500 cursor-not-allowed'
-                }`}
+                className={`w-full mt-3 py-2.5 rounded-lg font-semibold text-[15px] transition-colors duration-200 ${hasContent
+                  ? 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer'
+                  : 'bg-[#E4E6EB] text-gray-500 cursor-not-allowed'
+                  }`}
               >
                 Đăng bài viết
               </button>

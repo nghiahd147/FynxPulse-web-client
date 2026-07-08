@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { ThumbsUp } from 'lucide-react'
-import useReactionStore from '../../store/useReactionStore'
-import { notificationError } from '../../config/notify'
-import usePostStore from '../../store/usePostStore'
-import useUserStore from '../../store/useUserStore'
-import { EmotionTypes, type ReactionType } from '../../types/reaction.types'
-import { Reactions } from '../../constants/enum'
+import useReactionStore from '../../../store/useReactionStore'
+import { notificationError } from '../../../config/notify'
+import usePostStore from '../../../store/usePostStore'
+import useUserStore from '../../../store/useUserStore'
+import { EmotionTypes, type ReactionType } from '../../../types/reaction.types'
+import { Reactions } from '../../../constants/enum'
 
 const PostReactionButton = ({
   post_id,

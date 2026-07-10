@@ -72,7 +72,7 @@ const ProfileInfo = () => {
 
   return (
     <div className='w-full flex gap-x-4'>
-      <div className='w-[40%] h-[220px] flex flex-col py-2 px-3 rounded-md bg-white shadow-md'>
+      <div className='w-[40%] h-55 flex flex-col py-2 px-3 rounded-md bg-white shadow-md'>
         <div className='flex justify-between items-center'>
           <h3 className='text-2xl font-bold'>Thông tin cá nhân</h3>
           {me.user_name === profileUser.user_name && (
@@ -112,9 +112,11 @@ const ProfileInfo = () => {
         </div>
       </div>
       <div className='flex flex-col flex-1 gap-y-4'>
-        <div className=' bg-white p-4 rounded-xl shadow-md flex flex-col justify-between'>
-          <PostComposer />
-        </div>
+        {me._id === profileUser._id && (
+          <div className=' bg-white p-4 rounded-xl shadow-md flex flex-col justify-between'>
+            <PostComposer />
+          </div>
+        )}
         <PostToolbar />
         <PostCard postByAuthor={postByAuthor} />
       </div>
@@ -222,10 +224,20 @@ const ProfileInfo = () => {
           >
             <Input placeholder='Nhập username' />
           </Form.Item>
-          <Form.Item layout='vertical' label='Địa chỉ' name='location' rules={[{ required: true, message: 'Vui lòng điền địa chỉ!' }]}>
+          <Form.Item
+            layout='vertical'
+            label='Địa chỉ'
+            name='location'
+            rules={[{ required: true, message: 'Vui lòng điền địa chỉ!' }]}
+          >
             <Input placeholder='Nhập địa chỉ' />
           </Form.Item>
-          <Form.Item layout='vertical' label='Ngày sinh' name='date_of_birth' rules={[{ required: true, message: 'Vui lòng chọn ngày sinh!' }]}>
+          <Form.Item
+            layout='vertical'
+            label='Ngày sinh'
+            name='date_of_birth'
+            rules={[{ required: true, message: 'Vui lòng chọn ngày sinh!' }]}
+          >
             <DatePicker format='DD-MM-YYYY' />
           </Form.Item>
           <Form.Item
@@ -245,7 +257,12 @@ const ProfileInfo = () => {
           >
             <Input placeholder='Nhập địa chỉ website' />
           </Form.Item>
-          <Form.Item layout='vertical' label='Bio' name='bio' rules={[{ required: true, message: 'Vui lòng điền bio!' }]}>
+          <Form.Item
+            layout='vertical'
+            label='Bio'
+            name='bio'
+            rules={[{ required: true, message: 'Vui lòng điền bio!' }]}
+          >
             <Input placeholder='Nhập bio' />
           </Form.Item>
         </Form>

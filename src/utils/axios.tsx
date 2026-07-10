@@ -3,6 +3,8 @@ import axios from 'axios'
 export const apiUrl = import.meta.env.VITE_API_URL
 let refreshing: Promise<void> | null = null
 
+const PUBLIC_ENDPOINTS = ['/api/user/login', '/api/user/register', '/api/user/refresh-token']
+
 const clearAuth = () => {
   localStorage.removeItem('access_token')
   localStorage.removeItem('refresh_token')
@@ -29,7 +31,8 @@ const handleRefreshToken = async () => {
 }
 
 axios.interceptors.request.use(async (config) => {
-  if (config.url?.includes('refresh-token')) return config
+  const isPublicEndpoint = PUBLIC_ENDPOINTS.some((endpoint) => config.url?.includes(endpoint))
+  if (isPublicEndpoint) return config
 
   const token = localStorage.getItem('access_token')
   if (!isTokenExpired(token)) {

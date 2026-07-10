@@ -24,6 +24,7 @@ export interface PostLoadingState {
 export interface ReactionLoadingState {
   reactionPost: boolean
   unReactionPost: boolean
+  getReactionByPost: boolean
 }
 
 export interface MediaLoadingState {

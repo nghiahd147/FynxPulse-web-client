@@ -5,12 +5,21 @@ import { notificationError, notificationSuccess } from '../../../config/notify'
 import useUserStore from '../../../store/useUserStore'
 import type { Dispatch, SetStateAction } from 'react'
 
-const PostOptionsMenu = ({ idPost, isModalPost, setIsOpenModal }: { idPost: string, isModalPost?: boolean, setIsOpenModal?: Dispatch<SetStateAction<boolean>> }) => {
-  const { profileUser } = useUserStore()
+const PostOptionsMenu = ({
+  idPost,
+  isModalPost,
+  setIsOpenModal
+}: {
+  idPost: string
+  isModalPost?: boolean
+  setIsOpenModal?: Dispatch<SetStateAction<boolean>>
+}) => {
   const { getPostsByAuthorId, deletePost } = usePostStore()
+  const { profileUser, me } = useUserStore()
+  const isOwnProfile = me._id === profileUser._id
   const item = 'flex gap-3 rounded-lg p-2 cursor-pointer hover:bg-[#F2F2F2] transition-colors'
   const menu = (
-    <div className='w-[348px]'>
+    <div className='w-87'>
       <div className={`${item} items-start`}>
         <Bookmark className='mt-0.5 h-6 w-6 shrink-0 text-[#050505]' />
         <div>
@@ -19,29 +28,30 @@ const PostOptionsMenu = ({ idPost, isModalPost, setIsOpenModal }: { idPost: stri
         </div>
       </div>
 
+      {isOwnProfile && (
+        <>
+          <div className='my-1 border-t border-[#CED0D4]' />
+          <div className={`${item} items-center`} onClick={() => handleDeletePost(idPost)}>
+            <Trash2 className='h-6 w-6 shrink-0 text-[#050505]' />
+            <p className='text-[15px] font-semibold text-[#050505]'>Xóa bài viết</p>
+          </div>
+          <div className={`${item} items-center`}>
+            <BellOff className='h-6 w-6 shrink-0 text-[#050505]' />
+            <p className='text-[15px] font-semibold text-[#050505]'>Tắt thông báo về bài viết này</p>
+          </div>
+          <div className={`${item} items-start`}>
+            <XSquare className='mt-0.5 h-6 w-6 shrink-0 text-[#050505]' />
+            <div>
+              <p className='text-[15px] font-semibold text-[#050505]'>Ẩn khỏi trang cá nhân</p>
+              <p className='mt-1 text-[13px] leading-tight text-[#65676B]'>
+                Bài viết này có thể vẫn xuất hiện ở các nơi khác.
+              </p>
+            </div>
+          </div>
+        </>
+      )}
+
       <div className='my-1 border-t border-[#CED0D4]' />
-
-      <div className={`${item} items-center`} onClick={() => handleDeletePost(idPost)}>
-        <Trash2 className='h-6 w-6 shrink-0 text-[#050505]' />
-        <p className='text-[15px] font-semibold text-[#050505]'>Xóa bài viết</p>
-      </div>
-
-      <div className={`${item} items-center`}>
-        <BellOff className='h-6 w-6 shrink-0 text-[#050505]' />
-        <p className='text-[15px] font-semibold text-[#050505]'>Tắt thông báo về bài viết này</p>
-      </div>
-
-      <div className='my-1 border-t border-[#CED0D4]' />
-
-      <div className={`${item} items-start`}>
-        <XSquare className='mt-0.5 h-6 w-6 shrink-0 text-[#050505]' />
-        <div>
-          <p className='text-[15px] font-semibold text-[#050505]'>Ẩn khỏi trang cá nhân</p>
-          <p className='mt-1 text-[13px] leading-tight text-[#65676B]'>
-            Bài viết này có thể vẫn xuất hiện ở các nơi khác.
-          </p>
-        </div>
-      </div>
 
       <div className={`${item} items-start`}>
         <MessageCircleWarning className='mt-0.5 h-6 w-6 shrink-0 text-[#050505]' />

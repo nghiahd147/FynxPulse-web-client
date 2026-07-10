@@ -1,8 +1,10 @@
 import { Grid2x2, List, Settings, SlidersHorizontal } from 'lucide-react'
 import { useState } from 'react'
+import useUserStore from '../../store/useUserStore'
 
 const PostToolbar = () => {
   const [isListView, setIsListView] = useState(true)
+  const { me, profileUser } = useUserStore()
 
   const tabClass = (isListTab: boolean) =>
     `flex-1 flex items-center justify-center gap-2 py-3 text-[15px] font-semibold cursor-pointer transition-all duration-200 
@@ -20,33 +22,39 @@ const PostToolbar = () => {
             <SlidersHorizontal className='w-5 h-5' />
             <span>Bộ lọc</span>
           </button>
-          <button
-            type='button'
-            className='flex items-center gap-2 bg-gray-200 hover:bg-gray-300 transition-colors duration-200 rounded-xl px-4 py-2 text-base font-semibold text-gray-800'
-          >
-            <Settings className='w-5 h-5' />
-            <span>Quản lý bài viết</span>
-          </button>
+          {me._id === profileUser._id && (
+            <button
+              type='button'
+              className='flex items-center gap-2 bg-gray-200 hover:bg-gray-300 transition-colors duration-200 rounded-xl px-4 py-2 text-base font-semibold text-gray-800'
+            >
+              <Settings className='w-5 h-5' />
+              <span>Quản lý bài viết</span>
+            </button>
+          )}
         </div>
       </div>
 
-      <div className='grid grid-cols-2'>
-        <button type='button' className={tabClass(true)} onClick={() => setIsListView(true)}>
-          <List className='w-5 h-5' />
-          <span>Chế độ xem danh sách</span>
-        </button>
-        <button type='button' className={tabClass(false)} onClick={() => setIsListView(false)}>
-          <Grid2x2 className='w-5 h-5' />
-          <span>Chế độ xem lưới</span>
-        </button>
-      </div>
+      {me._id === profileUser._id && (
+        <div className='grid grid-cols-2'>
+          <button type='button' className={tabClass(true)} onClick={() => setIsListView(true)}>
+            <List className='w-5 h-5' />
+            <span>Chế độ xem danh sách</span>
+          </button>
+          <button type='button' className={tabClass(false)} onClick={() => setIsListView(false)}>
+            <Grid2x2 className='w-5 h-5' />
+            <span>Chế độ xem lưới</span>
+          </button>
+        </div>
+      )}
 
-      <div className='relative h-[3px] bg-gray-100'>
-        <span
-          className='absolute top-0 h-full w-1/2 bg-blue-600 transition-all duration-300'
-          style={{ left: isListView ? '0%' : '50%' }}
-        />
-      </div>
+      {me._id === profileUser._id && (
+        <div className='relative h-0.75 bg-gray-100'>
+          <span
+            className='absolute top-0 h-full w-1/2 bg-blue-600 transition-all duration-300'
+            style={{ left: isListView ? '0%' : '50%' }}
+          />
+        </div>
+      )}
     </div>
   )
 }

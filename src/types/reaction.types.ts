@@ -31,6 +31,10 @@ export interface ReactionEmoji {
   post_id: string
   reaction_total: number
   emoji_info: {
+    all: {
+      total: number
+      users: Users[]
+    }
     like: {
       total: number
       users: Users[]

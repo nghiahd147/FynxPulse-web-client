@@ -16,14 +16,20 @@ export interface Posts {
   user_view?: number
   like_count?: number
   comment_count?: number
-  has_reaction?: ReactionType
+  has_reaction?: ReactionType[]
   created_at?: Date
   updated_at?: Date
 }
 
 export interface createPostPayload {
-  type: number
+  type: Number
   content: string
-  parent_id: string | null
   audience: number
+  medias: {
+    url: string
+    type: number
+  }[]
+  mentions: string[]
+  hashtags: string[]
+  parent_id: string | null
 }

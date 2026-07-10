@@ -1,10 +1,10 @@
 import { EmotionTypes } from '../types/reaction.types'
 
 export const TypePost = {
-  Post: 'Post',
-  Repost: 'Repost',
-  Comment: 'Comment',
-  QuotePost: 'QuotePost'
+  Post: 0,
+  Repost: 1,
+  Comment: 2,
+  QuotePost: 3
 }
 
 export const Reactions: { id: number; label: string; color: string; emoji: string }[] = [

@@ -19,6 +19,13 @@ const PostCard = ({ postByAuthor }: { postByAuthor: Posts[] }) => {
             </div>
 
             <p className='mt-3 text-[22px] leading-tight font-normal'>{item.content}</p>
+            {item.hashtags && item.hashtags.length > 0 ? (
+              <span className='text-[22px] leading-tight font-normal text-blue-500'>
+                {item.hashtags?.map((item) => item.name)}
+              </span>
+            ) : (
+              <></>
+            )}
 
             <div className='mt-3 flex items-center justify-between text-gray-600'>
               <div className='flex items-center gap-3'>

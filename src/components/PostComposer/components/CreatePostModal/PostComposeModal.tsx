@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react'
-import { X, Lock, ChevronDown, Smile, Globe, Users } from 'lucide-react'
-import useUserStore from '../../../../store/useUserStore'
 import { type Audience, type AudienceRecord, type CreatePostModalProps, type ModalView } from '../../types'
+import type { createPostPayload } from '../../../../types/post.types'
+import { useEffect, useState } from 'react'
 import { addPostIcons } from '../../consts/styles'
 import EmojiPicker, { EmojiStyle } from 'emoji-picker-react'
 import { Form } from 'antd'
+import { X, Lock, ChevronDown, Smile, Globe, Users } from 'lucide-react'
 import { TypePost } from '../../../../constants/enum'
-import type { createPostPayload } from '../../../../types/post.types'
-import usePostStore from '../../../../store/usePostStore'
+import { REGEX_HASHTAG } from '../../../../utils/regex'
 import { notificationError, notificationSuccess } from '../../../../config/notify'
+import useUserStore from '../../../../store/useUserStore'
+import usePostStore from '../../../../store/usePostStore'
 import AudiencePost from './PostAudienceModal'
 
 const audienceConfig: AudienceRecord = {
@@ -83,15 +84,32 @@ const PostCompose = ({ isOpen, onClose }: CreatePostModalProps) => {
     goToCompose()
   }
 
+  const renderContent = (text: string) => {
+    return text.split(REGEX_HASHTAG).map((part, index) =>
+      part.startsWith('#') ? (
+        <span key={index} className='text-blue-500'>
+          {part}
+        </span>
+      ) : (
+        <span key={index}>{part}</span>
+      )
+    )
+  }
+
   const handleCreatePost = async (value: createPostPayload) => {
+    const hashtags = value.content.split(' ').filter((item) => item.includes('#') && item.startsWith('#'))
+    const content = value.content
+      .split(' ')
+      .filter((item) => !item.includes('#'))
+      .join('')
     const payload = {
       type: 0,
-      content: value.content,
+      content,
+      hashtags,
       parent_id: null,
       audience: audience === 'every_one' ? 0 : audience === 'friends' ? 1 : 2,
       medias: [],
-      mentions: [],
-      hashtags: []
+      mentions: []
     }
     const result = await createPost(payload)
     if (result.success) {
@@ -149,11 +167,15 @@ const PostCompose = ({ isOpen, onClose }: CreatePostModalProps) => {
               </div>
 
               <Form.Item name='content'>
+                {/* Hiển thị màu */}
+                <div className='absolute inset-0 whitespace-pre-wrap wrap-break-word pointer-events-none'>
+                  {renderContent(content)}
+                </div>
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder='Bạn đang nghĩ gì?'
-                  className='w-full text-2xl outline-none resize-none min-h-37.5 placeholder-gray-500'
+                  className='relative bg-transparent text-transparent caret-black w-full outline-none resize-none min-h-37.5 placeholder-gray-500'
                   autoFocus
                 />
 

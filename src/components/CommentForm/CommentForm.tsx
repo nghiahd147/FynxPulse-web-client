@@ -12,12 +12,12 @@ const CommentForm = ({ post, isModal }: { post: Posts; isModal: boolean }) => {
   const { profileUser, me } = useUserStore()
   const { getPostsByAuthorId } = usePostStore()
   const [content, setContent] = useState<string>('')
-  const { getComments, createComment, deleteComment, commentsByPost, loadingByPost } = useCommentStore()
+  const { getComments, createComment, deleteComment, data, loading } = useCommentStore()
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
 
   const postId = post._id as string
-  const comments = commentsByPost[postId] || []
-  const commentsLoading = loadingByPost[postId] || false
+  const comments = data || []
+  const commentsLoading = loading.getComments
 
   useEffect(() => {
     if (postId) getComments(postId)

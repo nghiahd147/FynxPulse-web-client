@@ -10,7 +10,7 @@ export interface Posts {
   media?: number
   audience: number
   parent_id?: string
-  hashtags?: string[]
+  hashtags?: Hashtag[]
   mentions?: string[]
   guest_view?: number
   user_view?: number
@@ -19,6 +19,12 @@ export interface Posts {
   has_reaction?: ReactionType[]
   created_at?: Date
   updated_at?: Date
+}
+
+export interface Hashtag {
+  _id: string
+  name: string
+  created_at?: Date
 }
 
 export interface createPostPayload {

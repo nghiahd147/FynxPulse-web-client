@@ -1,16 +1,15 @@
-import { Heart, MessageCircle, X } from 'lucide-react'
+import { MessageCircle, X } from 'lucide-react'
 import { useState } from 'react'
 import PostAuthorInfo from './PostAuthorInfo'
 import PostOptionsMenu from './PostOptionsMenu'
 import type { Posts } from '../../../types/post.types'
 import PostReactionButton from './PostReactionButton'
 import PostShareButton from './PostShareButton'
-import useCommentStore from '../../../store/useCommentStore'
 import CommentForm from '../../CommentForm/CommentForm'
+import PostReactionTotal from './PostReactionTotal'
 
 const PostCommentButton = ({ post, count = 0 }: { post: Posts; count?: number }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const { getComments } = useCommentStore()
   return (
     <>
       <div className='flex items-center gap-1'>
@@ -18,7 +17,6 @@ const PostCommentButton = ({ post, count = 0 }: { post: Posts; count?: number })
           type='button'
           onClick={() => {
             setIsOpen(true)
-            getComments(post._id as string)
           }}
           className='cursor-pointer flex items-center rounded-md px-1.5 py-1 text-[#65676B] transition-colors hover:bg-[#F2F2F2]'
         >
@@ -58,7 +56,7 @@ const PostCommentButton = ({ post, count = 0 }: { post: Posts; count?: number })
                   <PostShareButton />
                 </div>
                 <div className='flex items-center'>
-                  <Heart className='w-5 h-5 fill-red-500 text-red-500' />
+                  <PostReactionTotal post={post} />
                 </div>
               </div>
             </div>

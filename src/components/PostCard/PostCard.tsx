@@ -1,7 +1,7 @@
 import type { Posts } from '../../types/post.types'
 import PostOptionsMenu from './components/PostOptionsMenu'
 import PostReactionButton from './components/PostReactionButton'
-import PostCommentButton from './components/PostDetailModal'
+import PostCommentButton from './components/PostCommentButton'
 import PostShareButton from './components/PostShareButton'
 import PostAuthorInfo from './components/PostAuthorInfo'
 import PostReactionTotal from './components/PostReactionTotal'

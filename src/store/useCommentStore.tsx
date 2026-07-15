@@ -8,6 +8,8 @@ interface AuthStore {
   loading: CommentLoadingState
   message: string
   data: Comments[]
+  commentsByPost: Record<string, Comments[]>
+  loadingByPost: Record<string, boolean>
 
   setLoading: (key: string, value: boolean) => void
   getComments: (post_id: string) => Promise<{
@@ -32,6 +34,8 @@ const useCommentStore = create<AuthStore>((set, get) => ({
   },
   message: '',
   data: [],
+  loadingByPost: {},
+  commentsByPost: {},
 
   setLoading: (key: string, value: boolean) => {
     set((state) => ({
@@ -43,14 +47,33 @@ const useCommentStore = create<AuthStore>((set, get) => ({
   },
 
   getComments: async (post_id: string) => {
-    get().setLoading('getComments', true)
+    set((state) => ({
+      loadingByPost: {
+        ...state.loadingByPost,
+        [post_id]: true
+      }
+    }))
     try {
       const result = await apiCall(API_URLS.COMMENTS.getCommentByPost(post_id))
       get().setLoading('getComments', false)
-      set({ data: result?.data })
+      set((state) => ({
+        commentsByPost: {
+          ...state.commentsByPost,
+          [post_id]: result?.data ?? []
+        },
+        loadingByPost: {
+          ...state.loadingByPost,
+          [post_id]: false
+        }
+      }))
       return { success: true, message: result?.message }
     } catch (error) {
-      get().setLoading('getComments', false)
+      set((state) => ({
+        loadingByPost: {
+          ...state.loadingByPost,
+          [post_id]: false
+        }
+      }))
       return { success: false, message: error }
     }
   },

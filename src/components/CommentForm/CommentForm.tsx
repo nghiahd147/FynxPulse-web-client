@@ -9,19 +9,21 @@ import { Dropdown, Spin } from 'antd'
 import EmojiPicker, { EmojiStyle } from 'emoji-picker-react'
 
 const CommentForm = ({ post, isModal }: { post: Posts; isModal: boolean }) => {
-  const { profileUser, me } = useUserStore()
+  const { profileUser } = useUserStore()
   const { getPostsByAuthorId } = usePostStore()
   const [content, setContent] = useState<string>('')
-  const { getComments, createComment, deleteComment, data, loading } = useCommentStore()
+  const { getComments, createComment, deleteComment, commentsByPost, loadingByPost } = useCommentStore()
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
 
   const postId = post._id as string
-  const comments = data || []
-  const commentsLoading = loading.getComments
+  const comments = commentsByPost[postId] ?? []
+  const commentsLoading = loadingByPost[postId] ?? false
 
   useEffect(() => {
-    if (postId) getComments(postId)
-  }, [getComments, postId])
+    if (!commentsByPost[postId]) {
+      getComments(postId)
+    }
+  }, [postId, commentsByPost, getComments])
 
   const handleDeleteComment = async (id: string) => {
     const result = await deleteComment(id)
@@ -56,44 +58,7 @@ const CommentForm = ({ post, isModal }: { post: Posts; isModal: boolean }) => {
           comments.length > 0 ? (
             <>
               {comments.map((comment, index) => {
-                if (isModal === false && comment.post_id === post._id && comment.author_id === me._id) {
-                  return (
-                    <div key={index} className='group mb-5 flex items-center gap-3'>
-                      <img
-                        src={comment.userInfo.avatar || ''}
-                        alt='avatar'
-                        className='h-8 w-8 rounded-full object-cover'
-                      />
-                      <div className='rounded-3xl bg-[#F0F2F5] px-3 py-2'>
-                        <p className='text-[16px] font-semibold leading-tight'>
-                          {comment.userInfo.first_name + ' ' + comment.userInfo.last_name}
-                        </p>
-                        <p className='mt-1 text-[16px]'>{comment.content}</p>
-                      </div>
-
-                      <Dropdown
-                        trigger={['click']}
-                        menu={{
-                          items: [
-                            {
-                              key: 'delete',
-                              label: (
-                                <span onClick={() => handleDeleteComment(comment._id as string)}>Xóa bình luận</span>
-                              )
-                            }
-                          ]
-                        }}
-                      >
-                        <button
-                          type='button'
-                          className='flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[#65676B] opacity-0 transition hover:bg-[#F0F2F5] group-hover:opacity-100'
-                        >
-                          <MoreHorizontal className='h-5 w-5' />
-                        </button>
-                      </Dropdown>
-                    </div>
-                  )
-                } else if (isModal === true) {
+                if (comment.post_id === post._id) {
                   return (
                     <div key={index} className='group mb-5 flex items-center gap-3'>
                       <img

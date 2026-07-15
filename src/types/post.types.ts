@@ -12,8 +12,8 @@ export interface Posts {
   parent_id?: string
   hashtags?: Hashtag[]
   mentions?: string[]
-  guest_view?: number
-  user_view?: number
+  guest_views?: number
+  user_views?: number
   like_count?: number
   comment_count?: number
   has_reaction?: ReactionType[]

@@ -1,6 +1,13 @@
 import type { createPostPayload } from '../types/post.types'
 import type { ReactionPostPayload, UnReactionPostPayload } from '../types/reaction.types'
-import type { ChangePasswordPayload, FollowUserPayload, LoginPayload, ParamsUser, UpdateMePayload, Users } from '../types/user.types'
+import type {
+  ChangePasswordPayload,
+  FollowUserPayload,
+  LoginPayload,
+  ParamsUser,
+  UpdateMePayload,
+  Users
+} from '../types/user.types'
 import type { CreateCommentPayload } from '../types/comment.types'
 
 export const HEADERS = {
@@ -116,7 +123,7 @@ export const API_URLS = {
   },
   POSTS: {
     getPostsByAuthorId: (author_id: string) => ({
-      endPoint: `api/post/${author_id}`,
+      endPoint: `api/post/author/${author_id}`,
       method: 'GET',
       headers: HEADERS.JSON_HEADER()
     }),
@@ -143,19 +150,19 @@ export const API_URLS = {
       endPoint: `/api/reaction/`,
       method: 'DELETE',
       headers: HEADERS.JSON_HEADER(),
-      payload,
+      payload
     }),
     getReactionsByPostId: (post_id: string) => ({
       endPoint: `/api/reaction/post/${post_id}`,
       method: 'GET',
-      headers: HEADERS.JSON_HEADER(),
+      headers: HEADERS.JSON_HEADER()
     })
   },
   COMMENTS: {
     getCommentByPost: (post_id: string) => ({
       endPoint: `/api/comment/post/${post_id}`,
       method: 'GET',
-      headers: HEADERS.JSON_HEADER(),
+      headers: HEADERS.JSON_HEADER()
     }),
     createCommentByPost: (payload: CreateCommentPayload) => ({
       endPoint: '/api/comment/',
@@ -174,7 +181,14 @@ export const API_URLS = {
       endPoint: `/api/media/upload-image`,
       method: 'POST',
       headers: HEADERS.FILE_HEADER(),
-      payload: file,
+      payload: file
+    })
+  },
+  BOOKMARKS: {
+    getStatus: (post_id: string) => ({
+      endPoint: `/api/bookmark/status/${post_id}`,
+      method: 'GET',
+      headers: HEADERS.JSON_HEADER()
     })
   }
 }

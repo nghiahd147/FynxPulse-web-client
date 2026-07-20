@@ -36,3 +36,7 @@ export interface CommentLoadingState {
   createComment: boolean
   deleteComment: boolean
 }
+
+export interface BookmarkLoadingState {
+  getStatusBookmark: boolean
+}

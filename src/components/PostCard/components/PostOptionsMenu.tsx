@@ -3,7 +3,8 @@ import { BellOff, Bookmark, Ellipsis, MessageCircleWarning, Trash2, XSquare } fr
 import usePostStore from '../../../store/usePostStore'
 import { notificationError, notificationSuccess } from '../../../config/notify'
 import useUserStore from '../../../store/useUserStore'
-import type { Dispatch, SetStateAction } from 'react'
+import { useEffect, useState, type Dispatch, type SetStateAction } from 'react'
+import useBookmarkStore from '../../../store/useBookmarkStore'
 
 const PostOptionsMenu = ({
   idPost,
@@ -16,15 +17,30 @@ const PostOptionsMenu = ({
 }) => {
   const { getPostsByAuthorId, deletePost } = usePostStore()
   const { profileUser, me } = useUserStore()
+  const { status, getStatusBookmark } = useBookmarkStore()
   const isOwnProfile = me._id === profileUser._id
   const item = 'flex gap-3 rounded-lg p-2 cursor-pointer hover:bg-[#F2F2F2] transition-colors'
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false)
+
+  useEffect(() => {
+    if (isPopoverOpen == true) {
+      getStatusBookmark(idPost)
+    }
+  }, [idPost, isPopoverOpen])
+
   const menu = (
     <div className='w-87'>
       <div className={`${item} items-start`}>
-        <Bookmark className='mt-0.5 h-6 w-6 shrink-0 text-[#050505]' />
+        <Bookmark
+          className={`mt-0.5 h-6 w-6 shrink-0 text-[#050505] ${status === false ? 'text-[#050505]' : 'text-blue-400'}`}
+        />
         <div>
-          <p className='text-[15px] font-semibold text-[#050505]'>Lưu bài viết</p>
-          <p className='mt-1 text-[13px] leading-tight text-[#65676B]'>Thêm vào danh sách mục đã lưu.</p>
+          <p className={`text-[15px] font-semibold ${status === false ? 'text-[#050505]' : 'text-blue-400'} `}>
+            {status === false ? 'Lưu bài viết' : 'Đã lưu'}
+          </p>
+          <p className={`mt-1 text-[13px] leading-tight ${status === false ? 'text-[#65676B]' : 'text-blue-400'}`}>
+            {status === false ? 'Thêm vào danh sách mục đã lưu.' : 'Đã lưu vào danh sách mục đã lưu.'}
+          </p>
         </div>
       </div>
 
@@ -84,6 +100,9 @@ const PostOptionsMenu = ({
       trigger='click'
       placement='bottomRight'
       arrow={{ pointAtCenter: true }}
+      onOpenChange={(open) => {
+        setIsPopoverOpen(open)
+      }}
       getPopupContainer={() => document.body}
       overlayClassName='post-options-popover'
       overlayInnerStyle={{

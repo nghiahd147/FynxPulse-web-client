@@ -31,7 +31,7 @@ const PostCard = ({ postByAuthor }: { postByAuthor: Posts[] }) => {
               <div className='flex items-center gap-3'>
                 <PostReactionButton
                   post_id={item._id || ''}
-                  like_count={item.like_count || 0}
+                  like_count={item.reaction_count || 0}
                   has_reaction={item.has_reaction}
                 />
                 <PostCommentButton post={item} count={item.comment_count || 0} />

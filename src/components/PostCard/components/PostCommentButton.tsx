@@ -52,7 +52,7 @@ const PostCommentButton = ({ post, count = 0 }: { post: Posts; count?: number })
 
               <div className='mt-3 flex items-center justify-between text-gray-600'>
                 <div className='flex items-center gap-3'>
-                  <PostReactionButton post_id={post._id || ''} like_count={post.like_count || 0} />
+                  <PostReactionButton post_id={post._id || ''} like_count={post.reaction_count || 0} />
                   <PostShareButton />
                 </div>
                 <div className='flex items-center'>

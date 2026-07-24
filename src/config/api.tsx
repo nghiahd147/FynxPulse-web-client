@@ -189,6 +189,17 @@ export const API_URLS = {
       endPoint: `/api/bookmark/status/${post_id}`,
       method: 'GET',
       headers: HEADERS.JSON_HEADER()
+    }),
+    addBookMark: (post_id: string) => ({
+      endPoint: `/api/bookmark/`,
+      method: 'POST',
+      headers: HEADERS.JSON_HEADER(),
+      payload: { post_id }
+    }),
+    unBookMark: (post_id: string) => ({
+      endPoint: `/api/bookmark/post/${post_id}`,
+      method: 'DELETE',
+      headers: HEADERS.JSON_HEADER()
     })
   }
 }

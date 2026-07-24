@@ -17,7 +17,7 @@ const PostOptionsMenu = ({
 }) => {
   const { getPostsByAuthorId, deletePost } = usePostStore()
   const { profileUser, me } = useUserStore()
-  const { status, getStatusBookmark } = useBookmarkStore()
+  const { status, getStatusBookmark, addBookmark, unBookmark } = useBookmarkStore()
   const isOwnProfile = me._id === profileUser._id
   const item = 'flex gap-3 rounded-lg p-2 cursor-pointer hover:bg-[#F2F2F2] transition-colors'
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
@@ -28,9 +28,20 @@ const PostOptionsMenu = ({
     }
   }, [idPost, isPopoverOpen])
 
+  const handleUpdateStatus = async () => {
+    const updateStatus = status ? unBookmark(idPost) : addBookmark(idPost)
+    const result = await updateStatus
+    if (result.success) {
+      getStatusBookmark(idPost)
+      notificationSuccess(result.message as string)
+    } else {
+      notificationError(result.message as string)
+    }
+  }
+
   const menu = (
     <div className='w-87'>
-      <div className={`${item} items-start`}>
+      <div className={`${item} items-start`} onClick={handleUpdateStatus}>
         <Bookmark
           className={`mt-0.5 h-6 w-6 shrink-0 text-[#050505] ${status === false ? 'text-[#050505]' : 'text-blue-400'}`}
         />

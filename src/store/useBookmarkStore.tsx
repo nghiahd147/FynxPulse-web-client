@@ -13,11 +13,21 @@ interface AuthStore {
     success: boolean
     message: string | unknown
   }>
+  addBookmark: (post_id: string) => Promise<{
+    success: boolean
+    message: string | unknown
+  }>
+  unBookmark: (post_id: string) => Promise<{
+    success: boolean
+    message: string | unknown
+  }>
 }
 
 const useBookmarkStore = create<AuthStore>((set, get) => ({
   loading: {
-    getStatusBookmark: false
+    getStatusBookmark: false,
+    addBookmark: false,
+    unBookmark: false
   },
   message: '',
   status: null,
@@ -40,6 +50,30 @@ const useBookmarkStore = create<AuthStore>((set, get) => ({
       return { success: true, message: response?.message }
     } catch (error) {
       get().setLoading('getStatusBookmark', false)
+      return { success: false, message: error }
+    }
+  },
+
+  addBookmark: async (post_id: string) => {
+    get().setLoading('addBookmark', true)
+    try {
+      const response = await apiCall(API_URLS.BOOKMARKS.addBookMark(post_id))
+      get().setLoading('addBookmark', false)
+      return { success: true, message: response?.message }
+    } catch (error) {
+      get().setLoading('addBookmark', false)
+      return { success: false, message: error }
+    }
+  },
+
+  unBookmark: async (post_id: string) => {
+    get().setLoading('unBookmark', true)
+    try {
+      const response = await apiCall(API_URLS.BOOKMARKS.unBookMark(post_id))
+      get().setLoading('unBookmark', false)
+      return { success: true, message: response?.message }
+    } catch (error) {
+      get().setLoading('unBookmark', false)
       return { success: false, message: error }
     }
   }

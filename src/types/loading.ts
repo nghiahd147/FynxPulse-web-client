@@ -39,4 +39,6 @@ export interface CommentLoadingState {
 
 export interface BookmarkLoadingState {
   getStatusBookmark: boolean
+  addBookmark: boolean
+  unBookmark: boolean
 }

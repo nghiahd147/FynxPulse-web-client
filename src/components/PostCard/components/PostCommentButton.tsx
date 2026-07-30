@@ -4,7 +4,7 @@ import PostAuthorInfo from './PostAuthorInfo'
 import PostOptionsMenu from './PostOptionsMenu'
 import type { Posts } from '../../../types/post.types'
 import PostReactionButton from './PostReactionButton'
-import PostShareButton from './PostShareButton'
+import PostShareButton from './PostShareMenu'
 import CommentForm from '../../CommentForm/CommentForm'
 import PostReactionTotal from './PostReactionTotal'
 

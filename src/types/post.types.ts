@@ -14,6 +14,7 @@ export interface Posts {
   mentions?: string[]
   guest_views?: number
   user_views?: number
+  views?: number
   reaction_count?: number
   comment_count?: number
   has_reaction?: ReactionType[]

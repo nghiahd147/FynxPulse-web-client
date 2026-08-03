@@ -122,10 +122,15 @@ export const API_URLS = {
     })
   },
   POSTS: {
-    getPostsByAuthorId: (author_id: string) => ({
+    getPostsByAuthorId: ({ page, page_size, author_id }: { page: number; page_size: number; author_id: string }) => ({
       endPoint: `api/post/author/${author_id}`,
       method: 'GET',
-      headers: HEADERS.JSON_HEADER()
+      headers: HEADERS.JSON_HEADER(),
+      params: {
+        page,
+        page_size,
+        author_id
+      }
     }),
     createPost: (payload: createPostPayload) => ({
       endPoint: '/api/post',

@@ -11,7 +11,7 @@ interface AuthStore {
   postByAuthor: Posts[]
 
   setLoading: (key: string, value: boolean) => void
-  getPostsByAuthorId: (author_id: string) => void
+  getPostsByAuthorId: ({ page, page_size, author_id }: { page: number; page_size: number; author_id: string }) => void
   createPost: (payload: createPostPayload) => Promise<{ success: boolean; message: string | unknown }>
   deletePost: (id: string) => Promise<{ success: boolean; message: string | unknown }>
 }
@@ -35,12 +35,20 @@ const usePostStore = create<AuthStore>((set, get) => ({
     }))
   },
 
-  getPostsByAuthorId: async (author_id: string) => {
+  getPostsByAuthorId: async ({
+    page,
+    page_size,
+    author_id
+  }: {
+    page: number
+    page_size: number
+    author_id: string
+  }) => {
     get().setLoading('getPostsByAuthorId', true)
     try {
-      const response = await apiCall(API_URLS.POSTS.getPostsByAuthorId(author_id))
+      const response = await apiCall(API_URLS.POSTS.getPostsByAuthorId({ page, page_size, author_id }))
       get().setLoading('getPostsByAuthorId', false)
-      set({ postByAuthor: response.result })
+      set({ postByAuthor: response.result.data })
     } catch (error) {
       console.error(error)
       get().setLoading('getPostsByAuthorId', false)

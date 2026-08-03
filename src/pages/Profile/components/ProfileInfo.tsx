@@ -24,7 +24,7 @@ const ProfileInfo = () => {
   const { createImage } = useMediaStore()
 
   useEffect(() => {
-    getPostsByAuthorId(profileUser._id as string)
+    getPostsByAuthorId({ page: 1, page_size: 5, author_id: profileUser._id as string })
   }, [profileUser._id])
 
   useEffect(() => {

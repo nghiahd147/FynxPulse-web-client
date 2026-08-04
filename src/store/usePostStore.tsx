@@ -1,17 +1,25 @@
 import { create } from 'zustand'
 import { apiCall } from '../utils/axios'
 import { API_URLS } from '../config/api'
-import type { createPostPayload, Posts } from '../types/post.types'
+import type { createPostPayload, PostByAuthor, Posts } from '../types/post.types'
 import type { PostLoadingState } from '../types/loading'
 
 interface AuthStore {
   loading: PostLoadingState
   message: string
   data: Posts[]
-  postByAuthor: Posts[]
+  postByAuthor: PostByAuthor | null
 
   setLoading: (key: string, value: boolean) => void
-  getPostsByAuthorId: ({ page, page_size, author_id }: { page: number; page_size: number; author_id: string }) => void
+  getPostsByAuthorId: ({
+    page,
+    page_size,
+    author_id
+  }: {
+    page: number
+    page_size: number
+    author_id: string
+  }) => Promise<PostByAuthor | undefined>
   createPost: (payload: createPostPayload) => Promise<{ success: boolean; message: string | unknown }>
   deletePost: (id: string) => Promise<{ success: boolean; message: string | unknown }>
 }
@@ -23,7 +31,7 @@ const usePostStore = create<AuthStore>((set, get) => ({
     deletePostLoading: false
   },
   message: '',
-  postByAuthor: [],
+  postByAuthor: null,
   data: [],
 
   setLoading: (key: string, value: boolean) => {
@@ -48,7 +56,8 @@ const usePostStore = create<AuthStore>((set, get) => ({
     try {
       const response = await apiCall(API_URLS.POSTS.getPostsByAuthorId({ page, page_size, author_id }))
       get().setLoading('getPostsByAuthorId', false)
-      set({ postByAuthor: response.result.data })
+      set({ postByAuthor: response.result })
+      return response.result
     } catch (error) {
       console.error(error)
       get().setLoading('getPostsByAuthorId', false)

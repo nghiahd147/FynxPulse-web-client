@@ -1,4 +1,3 @@
-import type { Posts } from '../../types/post.types'
 import PostOptionsMenu from './components/PostOptionsMenu'
 import PostReactionButton from './components/PostReactionButton'
 import PostCommentButton from './components/PostCommentButton'
@@ -10,62 +9,76 @@ import PostViewButton from './components/PostViewButton'
 import { Repeat2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import useUserStore from '../../store/useUserStore'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import { Spin } from 'antd'
+import { useEffect, useState } from 'react'
+import usePostStore from '../../store/usePostStore'
+import type { Posts } from '../../types/post.types'
 
-const PostCard = ({ postByAuthor }: { postByAuthor: Posts[] }) => {
+const PostCard = () => {
   const { profileUser } = useUserStore()
+  const { getPostsByAuthorId, postByAuthor } = usePostStore()
+  const [hasMore, setHasMore] = useState(true)
+  const [page, setPage] = useState(0)
+  const [data, setData] = useState<Posts[]>(postByAuthor?.data ?? [])
+
+  const getPost = async (pageNumber: number) => {
+    const res = await getPostsByAuthorId({ page: pageNumber, page_size: 5, author_id: profileUser._id as string })
+    if (!res) return
+
+    setData((prev) => (pageNumber === 1 ? res.data : [...prev, ...res.data]))
+    setPage(pageNumber)
+    setHasMore(pageNumber < res.total_page)
+  }
+
+  useEffect(() => {
+    getPost(1)
+  }, [])
+
+  const fetchMore = () => {
+    getPost(page + 1)
+  }
+
   return (
     <>
-      {postByAuthor.map((item, index) => {
-        console.log('item', item)
-        const post = item.type === 0
-        const repost = item.type === 1
-        const comment = item.type === 2
-        const quote = item.type === 3
-        return (
-          <div key={index} className='bg-white rounded-2xl shadow-md border border-gray-200 p-4'>
-            {/* Repost */}
-            {repost && (
-              <div className='flex items-center mt-1 mb-2 cursor-pointer hover:underline'>
-                <Repeat2 className='h-5 w-5 text-gray-400 mr-1' strokeWidth={2} />
-                <Link to={`/profile/${item.user_info.user_name}`} className='text-gray-400'>
-                  {item.user_info._id === profileUser._id
-                    ? 'Bạn là người đăng lại'
-                    : item.user_info.first_name + ' ' + item.user_info.last_name}
-                </Link>
-              </div>
-            )}
-            {/* Post */}
-            {(post == true || repost == true || comment == true) && (
-              <>
-                <div className='flex items-start justify-between'>
-                  <PostAuthorInfo post={item} />
-                  <PostOptionsMenu idPost={item._id || ''} />
+      <InfiniteScroll
+        className='hide-scrollbar'
+        dataLength={data?.length}
+        next={fetchMore}
+        hasMore={hasMore}
+        loader={
+          <div className='flex w-full justify-center py-4'>
+            <Spin />
+          </div>
+        }
+        endMessage={<p style={{ textAlign: 'center' }}>All items loaded.</p>}
+      >
+        {data?.map((item, index) => {
+          const post = item.type === 0
+          const repost = item.type === 1
+          const comment = item.type === 2
+          const quote = item.type === 3
+          return (
+            <div key={index} className='bg-white rounded-2xl shadow-md border border-gray-200 p-4 my-2'>
+              {/* Repost */}
+              {repost && (
+                <div className='flex items-center mt-1 mb-2 cursor-pointer hover:underline'>
+                  <Repeat2 className='h-5 w-5 text-gray-400 mr-1' strokeWidth={2} />
+                  <Link to={`/profile/${item.user_info.user_name}`} className='text-gray-400'>
+                    {item.user_info._id === profileUser._id
+                      ? 'Bạn là người đăng lại'
+                      : item.user_info.first_name + ' ' + item.user_info.last_name}
+                  </Link>
                 </div>
-
-                <p className='mt-3 text-[22px] leading-tight font-normal'>{item.content}</p>
-                {item.hashtags && item.hashtags.length > 0 ? (
-                  <span className='text-[22px] leading-tight font-normal text-blue-500'>
-                    {item.hashtags?.map((item) => item.name)}
-                  </span>
-                ) : (
-                  <></>
-                )}
-              </>
-            )}
-            {/* Quote post */}
-            {/* Post */}
-            {quote && (
-              <>
-                <div className='flex items-start justify-between'>
-                  <PostAuthorInfo post={item} />
-                  <PostOptionsMenu idPost={item._id || ''} />
-                </div>
-                <p className='mt-3 text-[22px] leading-tight font-normal'>{item.content}</p>
-
-                <div className='mx-5 my-5 p-5 border border-gray-300 rounded-md'>
+              )}
+              {/* Post */}
+              {(post == true || repost == true || comment == true) && (
+                <>
                   <div className='flex items-start justify-between'>
                     <PostAuthorInfo post={item} />
+                    <PostOptionsMenu idPost={item._id || ''} />
                   </div>
+
                   <p className='mt-3 text-[22px] leading-tight font-normal'>{item.content}</p>
                   {item.hashtags && item.hashtags.length > 0 ? (
                     <span className='text-[22px] leading-tight font-normal text-blue-500'>
@@ -74,28 +87,53 @@ const PostCard = ({ postByAuthor }: { postByAuthor: Posts[] }) => {
                   ) : (
                     <></>
                   )}
+                </>
+              )}
+              {/* Quote post */}
+              {/* Post */}
+              {quote && (
+                <>
+                  <div className='flex items-start justify-between'>
+                    <PostAuthorInfo post={item} />
+                    <PostOptionsMenu idPost={item._id || ''} />
+                  </div>
+                  <p className='mt-3 text-[22px] leading-tight font-normal'>{item.content}</p>
+
+                  <div className='mx-5 my-5 p-5 border border-gray-300 rounded-md'>
+                    <div className='flex items-start justify-between'>
+                      <PostAuthorInfo post={item} />
+                    </div>
+                    <p className='mt-3 text-[22px] leading-tight font-normal'>{item.content}</p>
+                    {item.hashtags && item.hashtags.length > 0 ? (
+                      <span className='text-[22px] leading-tight font-normal text-blue-500'>
+                        {item.hashtags?.map((item) => item.name)}
+                      </span>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                </>
+              )}
+              <div className='mt-3 flex items-center justify-between text-gray-600'>
+                <div className='flex items-center gap-3'>
+                  <PostReactionButton
+                    post_id={item._id || ''}
+                    like_count={item.reaction_count || 0}
+                    has_reaction={item.has_reaction}
+                  />
+                  <PostCommentButton post={item} count={item.comment_count || 0} />
+                  <PostShareMenu isRepost={repost} isQuote={quote} />
+                  <PostViewButton count={item.views} />
                 </div>
-              </>
-            )}
-            <div className='mt-3 flex items-center justify-between text-gray-600'>
-              <div className='flex items-center gap-3'>
-                <PostReactionButton
-                  post_id={item._id || ''}
-                  like_count={item.reaction_count || 0}
-                  has_reaction={item.has_reaction}
-                />
-                <PostCommentButton post={item} count={item.comment_count || 0} />
-                <PostShareMenu isRepost={repost} isQuote={quote} />
-                <PostViewButton count={item.views} />
+                <div className='flex items-center'>
+                  <PostReactionTotal post={item} />
+                </div>
               </div>
-              <div className='flex items-center'>
-                <PostReactionTotal post={item} />
-              </div>
+              <CommentForm post={item} isModal={false} />
             </div>
-            <CommentForm post={item} isModal={false} />
-          </div>
-        )
-      })}
+          )
+        })}
+      </InfiniteScroll>
     </>
   )
 }

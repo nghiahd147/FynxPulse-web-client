@@ -1,6 +1,5 @@
 import type { ReactionType } from './reaction.types'
 import type { Users } from './user.types'
-
 export interface Posts {
   _id?: string
   author_id: string
@@ -22,6 +21,13 @@ export interface Posts {
   updated_at?: Date
 }
 
+export interface PostByAuthor {
+  page: number
+  page_size: number
+  total_page: number
+  total: number
+  data: Posts[]
+}
 export interface Hashtag {
   _id: string
   name: string

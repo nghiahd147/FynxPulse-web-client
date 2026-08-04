@@ -118,3 +118,12 @@
 .post-options-popover .ant-popover-content {
   animation: modal-in 0.2s ease-out both;
 }
+
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Edge, Safari */
+}

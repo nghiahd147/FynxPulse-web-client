@@ -101,9 +101,11 @@ const PostCard = () => {
 
                   <div className='mx-5 my-5 p-5 border border-gray-300 rounded-md'>
                     <div className='flex items-start justify-between'>
-                      <PostAuthorInfo post={item} />
+                      {item.parent_id && (
+                        <PostAuthorInfo post={item.parent_id} userInfoParent={item.user_info_parent} />
+                      )}
                     </div>
-                    <p className='mt-3 text-[22px] leading-tight font-normal'>{item.content}</p>
+                    <p className='mt-3 text-[22px] leading-tight font-normal'>{item.parent_id?.content}</p>
                     {item.hashtags && item.hashtags.length > 0 ? (
                       <span className='text-[22px] leading-tight font-normal text-blue-500'>
                         {item.hashtags?.map((item) => item.name)}

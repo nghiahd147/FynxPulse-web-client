@@ -1,7 +1,7 @@
-import useUserStore from '../../store/useUserStore'
 import { useEffect, useState } from 'react'
 import { Cake, ChevronRight, Settings, UserCheck, UserRoundPlus, Users, Bell } from 'lucide-react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
+import useUserStore from '../../store/useUserStore'
 import FriendSidebar from '../../components/FriendsSidebar/FriendSidebar'
 import SuggestionSidebar from '../../components/SuggestionSidebar/SuggestionSidebar'
 

@@ -43,15 +43,20 @@ const PeopleYouMayKnow = () => {
           <Row gutter={[12, 12]}>
             {/* Friend */}
             {loadingFollowSuggestions ? (
-              <Spin className='m-auto' />
+              <div className='flex w-full justify-center py-4'>
+                <Spin />
+              </div>
             ) : (
               listFriends.map((item, index) => {
                 return (
-                  <Col key={index} span={5}>
+                  <Col key={index} span={6}>
                     <div className='flex flex-col rounded-t-sm overflow-hidden bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1)]'>
                       <img className='w-full h-55 object-cover bg-gray-200' src='' alt='' />
                       <div className='flex flex-col p-3'>
-                        <span className='font-bold text-[16px] text-black mb-3'>
+                        <span
+                          title={item.first_name + ' ' + item.last_name}
+                          className='block w-full truncate font-bold text-[16px] text-black mb-3'
+                        >
                           {item.first_name + ' ' + item.last_name}
                         </span>
                         <Button

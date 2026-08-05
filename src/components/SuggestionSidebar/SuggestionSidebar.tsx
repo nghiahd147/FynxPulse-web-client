@@ -31,7 +31,7 @@ const SuggestionSidebar = () => {
   }
 
   return (
-    <>
+    <div className='h-full overflow-y-auto hide-scrollbar'>
       <div className='flex items-center gap-x-2.5 mt-2 px-1'>
         <Link
           to={'/friends'}
@@ -96,7 +96,7 @@ const SuggestionSidebar = () => {
             ))}
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

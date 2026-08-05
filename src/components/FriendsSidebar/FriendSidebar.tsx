@@ -32,7 +32,7 @@ const FriendSidebar = () => {
   console.log('MyFriends', myFriends)
 
   return (
-    <>
+    <div className='h-full'>
       <div className='flex items-center gap-x-2.5 mt-2 px-1'>
         <Link
           to={'/friends'}
@@ -130,7 +130,7 @@ const FriendSidebar = () => {
           </div>
         )
       })}
-    </>
+    </div>
   )
 }
 

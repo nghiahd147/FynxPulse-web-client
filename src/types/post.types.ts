@@ -8,8 +8,13 @@ export interface Posts {
   content: string
   media?: number
   audience: number
-  parent_id?: string
+  parent_id?: Posts
   hashtags?: Hashtag[]
+  user_info_parent?: {
+    first_name: string
+    last_name: string
+    avatar: string
+  }
   mentions?: string[]
   guest_views?: number
   user_views?: number

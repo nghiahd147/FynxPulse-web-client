@@ -72,7 +72,7 @@ const PostCard = () => {
                 </div>
               )}
               {/* Post */}
-              {(post == true || repost == true || comment == true) && (
+              {(post == true || comment == true) && (
                 <>
                   <div className='flex items-start justify-between'>
                     <PostAuthorInfo post={item} />
@@ -90,7 +90,6 @@ const PostCard = () => {
                 </>
               )}
               {/* Quote post */}
-              {/* Post */}
               {quote && (
                 <>
                   <div className='flex items-start justify-between'>
@@ -124,7 +123,7 @@ const PostCard = () => {
                     has_reaction={item.has_reaction}
                   />
                   <PostCommentButton post={item} count={item.comment_count || 0} />
-                  <PostShareMenu isRepost={repost} isQuote={quote} />
+                  <PostShareMenu isRepost={repost} isQuote={quote} count={item.post_children_count} />
                   <PostViewButton count={item.views} />
                 </div>
                 <div className='flex items-center'>

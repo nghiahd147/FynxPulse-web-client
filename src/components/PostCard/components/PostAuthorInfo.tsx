@@ -19,7 +19,7 @@ const PostAuthorInfo = ({
       <div className='flex flex-col'>
         <span className='text-[16px] font-semibold leading-none'>
           {userInfoParent
-            ? userInfoParent.first_name + '' + userInfoParent.last_name
+            ? userInfoParent.first_name + ' ' + userInfoParent.last_name
             : post.user_info.first_name + ' ' + post.user_info.last_name || ' '}
         </span>
         {/* <span className="text-gray-500">›</span> Quang Nghĩa */}

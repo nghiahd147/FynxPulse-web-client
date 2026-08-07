@@ -22,6 +22,7 @@ export interface Posts {
   reaction_count?: number
   comment_count?: number
   has_reaction?: ReactionType[]
+  post_children_count?: number
   created_at?: Date
   updated_at?: Date
 }

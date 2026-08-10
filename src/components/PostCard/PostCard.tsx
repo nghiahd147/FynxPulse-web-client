@@ -56,23 +56,41 @@ const PostCard = () => {
         {data?.map((item, index) => {
           const post = item.type === 0
           const repost = item.type === 1
-          const comment = item.type === 2
+          // const comment = item.type === 2
           const quote = item.type === 3
           return (
             <div key={index} className='bg-white rounded-2xl shadow-md border border-gray-200 p-4 my-2'>
               {/* Repost */}
               {repost && (
-                <div className='flex items-center mt-1 mb-2 cursor-pointer hover:underline'>
-                  <Repeat2 className='h-5 w-5 text-gray-400 mr-1' strokeWidth={2} />
-                  <Link to={`/profile/${item.user_info.user_name}`} className='text-gray-400'>
-                    {item.user_info._id === profileUser._id
-                      ? 'Bạn là người đăng lại'
-                      : item.user_info.first_name + ' ' + item.user_info.last_name}
-                  </Link>
-                </div>
+                <>
+                  <div className='flex items-center mt-1 mb-2 cursor-pointer hover:underline'>
+                    <Repeat2 className='ml-2 h-4 w-4 text-gray-400 mr-1' strokeWidth={2} />
+                    <Link to={`/profile/${item.user_info.user_name}`} className='text-gray-400 text-sm'>
+                      {item.user_info._id === profileUser._id
+                        ? 'Bạn là người đăng lại'
+                        : item.user_info.first_name + ' ' + item.user_info.last_name}
+                    </Link>
+                  </div>
+                  {/* Post parent */}
+                  <>
+                    <div className='flex items-start justify-between'>
+                      {item.parent_id && (
+                        <PostAuthorInfo post={item.parent_id} userInfoParent={item.user_info_parent} />
+                      )}
+                    </div>
+                    <p className='mt-3 text-[22px] leading-tight font-normal'>{item.parent_id?.content}</p>
+                    {item.hashtags && item.hashtags.length > 0 ? (
+                      <span className='text-[22px] leading-tight font-normal text-blue-500'>
+                        {item.hashtags?.map((item) => item.name)}
+                      </span>
+                    ) : (
+                      <></>
+                    )}
+                  </>
+                </>
               )}
               {/* Post */}
-              {(post == true || comment == true) && (
+              {post == true && (
                 <>
                   <div className='flex items-start justify-between'>
                     <PostAuthorInfo post={item} />
@@ -123,7 +141,7 @@ const PostCard = () => {
                     has_reaction={item.has_reaction}
                   />
                   <PostCommentButton post={item} count={item.comment_count || 0} />
-                  <PostShareMenu isRepost={repost} isQuote={quote} count={item.post_children_count} />
+                  <PostShareMenu isPost={post} isRepost={repost} isQuote={quote} post_children={item.post_children} />
                   <PostViewButton count={item.views} />
                 </div>
                 <div className='flex items-center'>

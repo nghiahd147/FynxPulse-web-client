@@ -22,13 +22,21 @@ interface AuthStore {
   }) => Promise<PostByAuthor | undefined>
   createPost: (payload: createPostPayload) => Promise<{ success: boolean; message: string | unknown }>
   deletePost: (id: string) => Promise<{ success: boolean; message: string | unknown }>
+  repost: (post_id: string) => Promise<{ success: boolean; message: string | unknown }>
+  qoute: (post_id: string) => Promise<{ success: boolean; message: string | unknown }>
+  undoRepost: (post_id: string) => Promise<{ success: boolean; message: string | unknown }>
+  undoQoute: (post_id: string) => Promise<{ success: boolean; message: string | unknown }>
 }
 
 const usePostStore = create<AuthStore>((set, get) => ({
   loading: {
     getPostsByAuthorId: false,
     createPost: false,
-    deletePostLoading: false
+    deletePostLoading: false,
+    repostLoading: false,
+    qouteLoading: false,
+    undoRepostLoading: false,
+    undoQouteLoading: false
   },
   message: '',
   postByAuthor: null,
@@ -84,6 +92,54 @@ const usePostStore = create<AuthStore>((set, get) => ({
       return { success: true, message: response?.message }
     } catch (error) {
       get().setLoading('deletePostLoading', false)
+      return { success: false, message: error }
+    }
+  },
+
+  repost: async (post_id) => {
+    get().setLoading('undoRepostLoading', true)
+    try {
+      const response = await apiCall(API_URLS.POSTS.repost(post_id))
+      get().setLoading('undoRepostLoading', false)
+      return { success: true, message: response?.message }
+    } catch (error) {
+      get().setLoading('undoRepostLoading', false)
+      return { success: false, message: error }
+    }
+  },
+
+  qoute: async (post_id) => {
+    get().setLoading('undoRepostLoading', true)
+    try {
+      const response = await apiCall(API_URLS.POSTS.qoute(post_id))
+      get().setLoading('undoRepostLoading', false)
+      return { success: true, message: response?.message }
+    } catch (error) {
+      get().setLoading('undoRepostLoading', false)
+      return { success: false, message: error }
+    }
+  },
+
+  undoRepost: async (post_id: string) => {
+    get().setLoading('undoRepostLoading', true)
+    try {
+      const response = await apiCall(API_URLS.POSTS.undoRepost(post_id))
+      get().setLoading('undoRepostLoading', false)
+      return { success: true, message: response?.message }
+    } catch (error) {
+      get().setLoading('undoRepostLoading', false)
+      return { success: false, message: error }
+    }
+  },
+
+  undoQoute: async (post_id: string) => {
+    get().setLoading('undoQouteLoading', true)
+    try {
+      const response = await apiCall(API_URLS.POSTS.undoQoutepost(post_id))
+      get().setLoading('undoQouteLoading', false)
+      return { success: true, message: response?.message }
+    } catch (error) {
+      get().setLoading('undoQouteLoading', false)
       return { success: false, message: error }
     }
   }

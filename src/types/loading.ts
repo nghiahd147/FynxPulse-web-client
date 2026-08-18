@@ -19,6 +19,9 @@ export interface UserLoadingState {
 export interface PostLoadingState {
   getPostsByAuthorId: boolean
   createPost: boolean
+  deletePostLoading: boolean
+  undoRepostLoading: boolean
+  undoQouteLoading: boolean
 }
 
 export interface ReactionLoadingState {

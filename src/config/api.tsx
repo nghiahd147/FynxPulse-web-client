@@ -142,6 +142,26 @@ export const API_URLS = {
       endPoint: `/api/post/${id}`,
       method: 'DELETE',
       headers: HEADERS.JSON_HEADER()
+    }),
+    repost: (post_id: string) => ({
+      endPoint: `/api/post/repost/${post_id}`,
+      method: 'POST',
+      headers: HEADERS.JSON_HEADER()
+    }),
+    qoute: (post_id: string) => ({
+      endPoint: `/api/post/qoute/${post_id}`,
+      method: 'POST',
+      headers: HEADERS.JSON_HEADER()
+    }),
+    undoRepost: (post_id: string) => ({
+      endPoint: `/api/post/undo/repost/${post_id}`,
+      method: 'DELETE',
+      headers: HEADERS.JSON_HEADER()
+    }),
+    undoQoutepost: (post_id: string) => ({
+      endPoint: `/api/post/undo/qoute/${post_id}`,
+      method: 'DELETE',
+      headers: HEADERS.JSON_HEADER()
     })
   },
   REACTIONS: {

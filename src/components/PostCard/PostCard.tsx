@@ -141,7 +141,13 @@ const PostCard = () => {
                     has_reaction={item.has_reaction}
                   />
                   <PostCommentButton post={item} count={item.comment_count || 0} />
-                  <PostShareMenu isPost={post} isRepost={repost} isQuote={quote} post_children={item.post_children} />
+                  <PostShareMenu
+                    post_children={item.post_children}
+                    post_children_repost={item.post_children_repost}
+                    post_children_qoute={item.post_children_qoute}
+                    getPost={getPost}
+                    post_id={item._id as string}
+                  />
                   <PostViewButton count={item.views} />
                 </div>
                 <div className='flex items-center'>

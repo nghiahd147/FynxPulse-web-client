@@ -1,4 +1,4 @@
-import type { createPostPayload } from '../types/post.types'
+import type { createPostPayload, QoutePayloadType } from '../types/post.types'
 import type { ReactionPostPayload, UnReactionPostPayload } from '../types/reaction.types'
 import type {
   ChangePasswordPayload,
@@ -148,10 +148,11 @@ export const API_URLS = {
       method: 'POST',
       headers: HEADERS.JSON_HEADER()
     }),
-    qoute: (post_id: string) => ({
+    qoutepost: ({ post_id, payload }: { post_id: string; payload: QoutePayloadType }) => ({
       endPoint: `/api/post/qoute/${post_id}`,
       method: 'POST',
-      headers: HEADERS.JSON_HEADER()
+      headers: HEADERS.JSON_HEADER(),
+      payload
     }),
     undoRepost: (post_id: string) => ({
       endPoint: `/api/post/undo/repost/${post_id}`,
@@ -159,7 +160,7 @@ export const API_URLS = {
       headers: HEADERS.JSON_HEADER()
     }),
     undoQoutepost: (post_id: string) => ({
-      endPoint: `/api/post/undo/qoute/${post_id}`,
+      endPoint: `/api/post/undo/qoutepost/${post_id}`,
       method: 'DELETE',
       headers: HEADERS.JSON_HEADER()
     })

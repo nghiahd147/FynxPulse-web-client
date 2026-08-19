@@ -1,16 +1,17 @@
 import { type Audience, type AudienceRecord, type CreatePostModalProps, type ModalView } from '../../types'
-import type { createPostPayload } from '../../../../types/post.types'
+import type { createPostPayload, QoutePayloadType } from '../../../../types/post.types'
 import { useEffect, useState } from 'react'
 import { addPostIcons } from '../../consts/styles'
 import EmojiPicker, { EmojiStyle } from 'emoji-picker-react'
 import { Form } from 'antd'
-import { X, Lock, ChevronDown, Smile, Globe, Users } from 'lucide-react'
+import { X, ChevronDown, Smile, Globe, Users } from 'lucide-react'
 import { TypePost } from '../../../../constants/enum'
 import { REGEX_HASHTAG } from '../../../../utils/regex'
 import { notificationError, notificationSuccess } from '../../../../config/notify'
 import useUserStore from '../../../../store/useUserStore'
 import usePostStore from '../../../../store/usePostStore'
 import AudiencePost from './PostAudienceModal'
+import PostAuthorInfo from '../../../PostCard/components/PostAuthorInfo'
 
 const audienceConfig: AudienceRecord = {
   every_one: {
@@ -18,27 +19,23 @@ const audienceConfig: AudienceRecord = {
     icon: Globe,
     description: 'Bất kỳ ai ở trên hoặc ngoài Facebook'
   },
-  friends: {
+  fynx_circle: {
     label: 'Bạn bè',
     icon: Users,
     description: 'Bạn bè của bạn trên Facebook'
-  },
-  only_me: {
-    label: 'Chỉ mình tôi',
-    icon: Lock
   }
 }
 
-const PostCompose = ({ isOpen, onClose }: CreatePostModalProps) => {
+const PostCompose = ({ isOpen, onClose, parent_post_id, parentPost }: CreatePostModalProps) => {
   const { me, profileUser } = useUserStore()
   const [content, setContent] = useState('')
   const [view, setView] = useState<ModalView>('compose')
-  const [audience, setAudience] = useState<Audience>('only_me')
-  const [tempAudience, setTempAudience] = useState<Audience>('only_me')
+  const [audience, setAudience] = useState<Audience>('fynx_circle')
+  const [tempAudience, setTempAudience] = useState<Audience>('fynx_circle')
   const [direction, setDirection] = useState<'forward' | 'back'>('forward')
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const [form] = Form.useForm()
-  const { createPost, getPostsByAuthorId } = usePostStore()
+  const { createPost, getPostsByAuthorId, qoutePost } = usePostStore()
 
   useEffect(() => {
     form.setFieldsValue({
@@ -102,20 +99,30 @@ const PostCompose = ({ isOpen, onClose }: CreatePostModalProps) => {
       .split(' ')
       .filter((item) => !item.includes('#'))
       .join('')
-    const payload = {
+    const payloadPost = {
       type: 0,
       content,
       hashtags,
       parent_id: null,
-      audience: audience === 'every_one' ? 0 : audience === 'friends' ? 1 : 2,
+      audience: audience === 'every_one' ? 0 : audience === 'fynx_circle' ? 1 : 2,
       medias: [],
       mentions: []
     }
-    const result = await createPost(payload)
+    const payloadQoutePost: QoutePayloadType = {
+      hashtags,
+      content,
+      mentions: [],
+      medias: []
+    }
+    const result = parent_post_id ? await qoutePost(parent_post_id, payloadQoutePost) : await createPost(payloadPost)
     if (result.success) {
-      getPostsByAuthorId(profileUser._id as string)
-      onClose()
       notificationSuccess(result.message as string)
+      onClose()
+      await getPostsByAuthorId({
+        page: 1,
+        page_size: 5,
+        author_id: profileUser._id as string
+      })
     } else {
       notificationError(result.message as string)
     }
@@ -202,6 +209,22 @@ const PostCompose = ({ isOpen, onClose }: CreatePostModalProps) => {
                   </div>
                 </div>
               </Form.Item>
+
+              {parentPost && (
+                <div className='mb-3 overflow-hidden rounded-xl border border-gray-300 p-4'>
+                  <PostAuthorInfo post={parentPost} />
+                  <p className='mt-3 whitespace-pre-wrap wrap-break-word text-[15px] leading-5 text-gray-900'>
+                    {parentPost.content}
+                  </p>
+                  {parentPost.hashtags && parentPost.hashtags.length > 0 && (
+                    <div className='mt-1 flex flex-wrap gap-1 text-[15px] text-blue-500'>
+                      {parentPost.hashtags.map((hashtag) => (
+                        <span key={hashtag._id}>{hashtag.name}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className='flex items-center justify-between mt-3 px-3 py-2.5 border border-gray-300 rounded-lg'>
                 <span className='font-semibold text-[15px]'>Thêm vào bài viết của bạn</span>

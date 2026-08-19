@@ -29,6 +29,24 @@ export interface Posts {
   updated_at?: Date
 }
 
+export interface TypeMedia {
+  Image: 0
+  Video: 1
+  Hls: 2
+}
+
+export interface Media {
+  url: string
+  type: TypeMedia
+}
+
+export interface QoutePayloadType {
+  content: string
+  medias?: Media[]
+  hashtags?: string[]
+  mentions: string[]
+}
+
 export interface PostByAuthor {
   page: number
   page_size: number

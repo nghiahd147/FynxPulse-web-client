@@ -4,14 +4,17 @@ import type { Posts } from '../../../types/post.types'
 import useUserStore from '../../../store/useUserStore'
 import usePostStore from '../../../store/usePostStore'
 import { notificationError, notificationSuccess } from '../../../config/notify'
+import CreatePostModal from '../../PostComposer/components/CreatePostModal/PostComposeModal'
 
 const PostShareMenu = ({
+  parentPost,
   post_children,
   post_children_repost,
   post_children_qoute,
   getPost,
   post_id
 }: {
+  parentPost?: Posts
   post_children?: Posts[]
   post_children_repost?: Posts[]
   post_children_qoute?: Posts[]
@@ -22,7 +25,8 @@ const PostShareMenu = ({
   const { me } = useUserStore()
   const myRepost = post_children_repost?.find((item) => item.author_id === me._id)
   const myQuote = post_children_qoute?.find((item) => item.author_id === me._id)
-  const { repost, qoute, undoRepost, undoQoute } = usePostStore()
+  const { repost, undoRepost, undoQoute } = usePostStore()
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleRePost = async (post_id: string) => {
     const result = myRepost ? await undoRepost(myRepost?._id as string) : await repost(post_id)
@@ -35,8 +39,8 @@ const PostShareMenu = ({
     }
   }
 
-  const handleQoute = async (post_id: string) => {
-    const result = myQuote ? await undoQoute(myQuote?._id as string) : await qoute(post_id)
+  const handleUndoQoute = async () => {
+    const result = await undoQoute(myQuote?._id as string)
     if (result.success) {
       notificationSuccess(result.message as string)
       setIsOpen(false)
@@ -77,12 +81,24 @@ const PostShareMenu = ({
           type='button'
           role='menuitem'
           className='flex w-full cursor-pointer items-center gap-3 px-5 py-3 text-left text-[16px] font-semibold transition-colors hover:bg-blue-50'
-          onClick={() => handleQoute(post_id)}
+          onClick={() => {
+            if (myQuote) {
+              void handleUndoQoute()
+            } else {
+              setIsModalOpen(true)
+            }
+          }}
         >
           <PenLine className='h-5 w-5 shrink-0' strokeWidth={2} />
           <span>{myQuote ? 'Undo Qoute' : 'Qoute'}</span>
         </button>
       </div>
+      <CreatePostModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        parent_post_id={post_id}
+        parentPost={parentPost}
+      />
     </div>
   )
 }

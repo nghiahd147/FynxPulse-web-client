@@ -23,9 +23,13 @@ const PostCard = () => {
   const [data, setData] = useState<Posts[]>(postByAuthor?.data ?? [])
 
   const getPost = async (pageNumber: number) => {
-    const res = await getPostsByAuthorId({ page: pageNumber, page_size: 5, author_id: profileUser._id as string })
-    if (!res) return
+    const res = await getPostsByAuthorId({
+      page: pageNumber,
+      page_size: 5,
+      author_id: profileUser._id as string
+    })
 
+    if (!res) return
     setData((prev) => (pageNumber === 1 ? res.data : [...prev, ...res.data]))
     setPage(pageNumber)
     setHasMore(pageNumber < res.total_page)
@@ -38,6 +42,14 @@ const PostCard = () => {
   const fetchMore = () => {
     getPost(page + 1)
   }
+
+  useEffect(() => {
+    if (postByAuthor) {
+      setData(postByAuthor.data)
+      setPage(1)
+      setHasMore(postByAuthor.total_page > 1)
+    }
+  }, [postByAuthor])
 
   return (
     <>
@@ -142,6 +154,7 @@ const PostCard = () => {
                   />
                   <PostCommentButton post={item} count={item.comment_count || 0} />
                   <PostShareMenu
+                    parentPost={item}
                     post_children={item.post_children}
                     post_children_repost={item.post_children_repost}
                     post_children_qoute={item.post_children_qoute}

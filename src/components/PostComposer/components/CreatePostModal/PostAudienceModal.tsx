@@ -1,7 +1,7 @@
 import { ArrowLeft, MoreHorizontal } from 'lucide-react'
 import type { Audience, AudienceRecord } from '../../types'
 
-const audienceOptions: Audience[] = ['every_one', 'friends', 'only_me']
+const audienceOptions: Audience[] = ['every_one', 'fynx_circle']
 
 const PostAudience = ({
   handleAudienceBack,

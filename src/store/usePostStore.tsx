@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { apiCall } from '../utils/axios'
 import { API_URLS } from '../config/api'
-import type { createPostPayload, PostByAuthor, Posts } from '../types/post.types'
+import type { createPostPayload, PostByAuthor, Posts, QoutePayloadType } from '../types/post.types'
 import type { PostLoadingState } from '../types/loading'
 
 interface AuthStore {
@@ -16,14 +16,14 @@ interface AuthStore {
     page_size,
     author_id
   }: {
-    page: number
-    page_size: number
+    page?: number
+    page_size?: number
     author_id: string
   }) => Promise<PostByAuthor | undefined>
   createPost: (payload: createPostPayload) => Promise<{ success: boolean; message: string | unknown }>
   deletePost: (id: string) => Promise<{ success: boolean; message: string | unknown }>
   repost: (post_id: string) => Promise<{ success: boolean; message: string | unknown }>
-  qoute: (post_id: string) => Promise<{ success: boolean; message: string | unknown }>
+  qoutePost: (post_id: string, payload: QoutePayloadType) => Promise<{ success: boolean; message: string | unknown }>
   undoRepost: (post_id: string) => Promise<{ success: boolean; message: string | unknown }>
   undoQoute: (post_id: string) => Promise<{ success: boolean; message: string | unknown }>
 }
@@ -52,12 +52,12 @@ const usePostStore = create<AuthStore>((set, get) => ({
   },
 
   getPostsByAuthorId: async ({
-    page,
-    page_size,
+    page = 1,
+    page_size = 5,
     author_id
   }: {
-    page: number
-    page_size: number
+    page?: number
+    page_size?: number
     author_id: string
   }) => {
     get().setLoading('getPostsByAuthorId', true)
@@ -108,10 +108,10 @@ const usePostStore = create<AuthStore>((set, get) => ({
     }
   },
 
-  qoute: async (post_id) => {
+  qoutePost: async (post_id: string, payload: QoutePayloadType) => {
     get().setLoading('undoRepostLoading', true)
     try {
-      const response = await apiCall(API_URLS.POSTS.qoute(post_id))
+      const response = await apiCall(API_URLS.POSTS.qoutepost({ post_id, payload }))
       get().setLoading('undoRepostLoading', false)
       return { success: true, message: response?.message }
     } catch (error) {

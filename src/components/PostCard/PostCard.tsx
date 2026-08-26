@@ -154,7 +154,6 @@ const PostCard = () => {
                   />
                   <PostCommentButton post={item} count={item.comment_count || 0} />
                   <PostShareMenu
-                    parentPost={item}
                     post_children={item.post_children}
                     post_children_repost={item.post_children_repost}
                     post_children_qoute={item.post_children_qoute}

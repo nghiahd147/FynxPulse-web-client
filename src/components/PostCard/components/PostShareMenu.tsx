@@ -7,14 +7,12 @@ import { notificationError, notificationSuccess } from '../../../config/notify'
 import CreatePostModal from '../../PostComposer/components/CreatePostModal/PostComposeModal'
 
 const PostShareMenu = ({
-  parentPost,
   post_children,
   post_children_repost,
   post_children_qoute,
   getPost,
   post_id
 }: {
-  parentPost?: Posts
   post_children?: Posts[]
   post_children_repost?: Posts[]
   post_children_qoute?: Posts[]
@@ -93,12 +91,7 @@ const PostShareMenu = ({
           <span>{myQuote ? 'Undo Qoute' : 'Qoute'}</span>
         </button>
       </div>
-      <CreatePostModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        parent_post_id={post_id}
-        parentPost={parentPost}
-      />
+      <CreatePostModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} parent_post_id={post_id} />
     </div>
   )
 }

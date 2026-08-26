@@ -11,7 +11,6 @@ import { notificationError, notificationSuccess } from '../../../../config/notif
 import useUserStore from '../../../../store/useUserStore'
 import usePostStore from '../../../../store/usePostStore'
 import AudiencePost from './PostAudienceModal'
-import PostAuthorInfo from '../../../PostCard/components/PostAuthorInfo'
 
 const audienceConfig: AudienceRecord = {
   every_one: {
@@ -26,7 +25,7 @@ const audienceConfig: AudienceRecord = {
   }
 }
 
-const PostCompose = ({ isOpen, onClose, parent_post_id, parentPost }: CreatePostModalProps) => {
+const PostCompose = ({ isOpen, onClose, parent_post_id }: CreatePostModalProps) => {
   const { me, profileUser } = useUserStore()
   const [content, setContent] = useState('')
   const [view, setView] = useState<ModalView>('compose')
@@ -209,22 +208,6 @@ const PostCompose = ({ isOpen, onClose, parent_post_id, parentPost }: CreatePost
                   </div>
                 </div>
               </Form.Item>
-
-              {parentPost && (
-                <div className='mb-3 overflow-hidden rounded-xl border border-gray-300 p-4'>
-                  <PostAuthorInfo post={parentPost} />
-                  <p className='mt-3 whitespace-pre-wrap wrap-break-word text-[15px] leading-5 text-gray-900'>
-                    {parentPost.content}
-                  </p>
-                  {parentPost.hashtags && parentPost.hashtags.length > 0 && (
-                    <div className='mt-1 flex flex-wrap gap-1 text-[15px] text-blue-500'>
-                      {parentPost.hashtags.map((hashtag) => (
-                        <span key={hashtag._id}>{hashtag.name}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
 
               <div className='flex items-center justify-between mt-3 px-3 py-2.5 border border-gray-300 rounded-lg'>
                 <span className='font-semibold text-[15px]'>Thêm vào bài viết của bạn</span>

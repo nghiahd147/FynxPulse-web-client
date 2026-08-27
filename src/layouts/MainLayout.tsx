@@ -21,20 +21,20 @@ const MainLayout = () => {
   return (
     <div className='flex sm:block'>
       {isTabOpen && (
-        <div className={`relative z-10 h-screen w-[90%] bg-red-100 border-r-2 sm:hidden border-gray-100`}></div>
+        <div className='relative z-10 h-screen w-[90%] border-r-2 border-gray-100 bg-white sm:hidden'></div>
       )}
 
-      <div className='hide-scrollbar relative h-screen w-full overflow-x-hidden overflow-y-auto bg-bgPrimary'>
+      <div className='hide-scrollbar relative h-screen w-full overflow-x-hidden overflow-y-auto bg-white'>
         {isTabOpen && (
           <div
             className='absolute left-0 right-0 top-0 bottom-0 bg-gray-950/60 z-10'
             onClick={() => setTabOpen(false)}
           ></div>
         )}
-        <header>
+        <header className='border-b border-gray-200 bg-white'>
           <Header setTabOpen={setTabOpen} />
         </header>
-        <main className={`min-h-[calc(100vh-4rem)] bg-bgPrimary ${isTabNoSidebar ? 'flex w-full items-start' : ''}`}>
+        <main className={`min-h-[calc(100vh-4rem)] bg-white ${isTabNoSidebar ? 'flex w-full items-start' : ''}`}>
           {isTabNoSidebar && <MainSidebar />}
           <div className='min-w-0 flex-1 bg-bgPrimary'>
             <Outlet />

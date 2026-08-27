@@ -5,7 +5,7 @@ const ActiveUsersSidebar = () => {
     'flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-gray-200'
 
   return (
-    <aside className='hide-scrollbar sticky top-0 hidden h-[calc(100vh-4rem)] w-80 shrink-0 overflow-y-auto border-l border-borderPrimary bg-bgPrimary px-4 py-4 xl:block'>
+    <aside className='hide-scrollbar sticky top-0 hidden h-[calc(100vh-4rem)] w-80 shrink-0 overflow-y-auto border-l border-borderPrimary bg-white px-4 py-4 xl:block'>
       <section aria-labelledby='birthday-title'>
         <h2 id='birthday-title' className='mb-2 text-[17px] font-semibold text-gray-500'>
           Sinh nhật

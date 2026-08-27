@@ -8,7 +8,8 @@ import {
   HomeOutlined,
   PlaySquareFilled,
   PlaySquareOutlined,
-  TeamOutlined
+  TeamOutlined,
+  SearchOutlined
 } from '@ant-design/icons'
 import { ListIndentIncrease } from 'lucide-react'
 import { notificationError, notificationSuccess } from '../../config/notify'
@@ -72,9 +73,9 @@ const Header = (props: { setTabOpen: React.Dispatch<React.SetStateAction<boolean
   }
 
   return (
-    <div className='relative h-16 sm:mx-8 flex items-center justify-between'>
+    <div className='relative h-16 sm:mx-6 flex items-center justify-between'>
       {/* mobile */}
-      <div className='flex items-center'>
+      <div className='flex items-center gap-2 sm:w-72'>
         <div
           className='block mx-2 mt-1 sm:hidden'
           onClick={() => {
@@ -83,12 +84,17 @@ const Header = (props: { setTabOpen: React.Dispatch<React.SetStateAction<boolean
         >
           <ListIndentIncrease color='red' size={20} />
         </div>
-        <Link to={'/'} className='flex items-center whitespace-nowrap'>
-          <img src='/icons8-yelp.png' alt='logo_home' className='hidden w-10 h-10 sm:block' />
-          <span className='text-[#dd2c00] text-3xl sm:text-2xl font-bold'>
-            Fyn<span className='text-black'>x</span>
-          </span>
+        <Link to={'/'} className='flex shrink-0 items-center'>
+          <img src='/icons8-yelp.png' alt='logo_home' className='w-10 h-10 rounded-full object-cover' />
         </Link>
+        <div className='flex h-10 w-44 items-center gap-2 rounded-full bg-[#f0f2f5] px-3 transition-colors hover:bg-[#e4e6e9] focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-500/20 sm:w-60'>
+          <SearchOutlined className='shrink-0 text-[17px] text-[#65676b]' />
+          <input
+            type='text'
+            placeholder='Tìm kiếm trên Fynx'
+            className='min-w-0 flex-1 border-0 bg-transparent text-[15px] text-[#050505] outline-none placeholder:text-[#65676b]'
+          />
+        </div>
       </div>
       <div className='relative h-full flex items-center justify-center'>
         <div
@@ -142,7 +148,7 @@ const Header = (props: { setTabOpen: React.Dispatch<React.SetStateAction<boolean
         </Tooltip>
       </div>
       {/* desktop, tablet */}
-      <div className='hidden sm:block'>
+      <div className='hidden sm:flex sm:w-72 sm:justify-end'>
         <div className='relative w-9 h-9 rounded-full border' ref={menuRef}>
           <img
             src={me.avatar || '/avatar-mac-dinh.jpg'}

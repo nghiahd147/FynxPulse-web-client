@@ -43,7 +43,7 @@ const CommentForm = ({ post, isModal }: { post: Posts; isModal: boolean }) => {
     const result = await createComment(payload)
     if (result.success) {
       getComments(post._id as string)
-      getPostsByAuthorId(profileUser._id as string)
+      getPostsByAuthorId({ author_id: profileUser._id })
       setContent('')
     } else {
       notificationError((result.message as string) || 'Có lỗi xảy ra')

@@ -12,6 +12,7 @@ import PostToolbar from '../../../components/PostToolbar/PostToolbar'
 import PostCard from '../../../components/PostCard/PostCard'
 import { notificationError, notificationSuccess } from '../../../config/notify'
 import useMediaStore from '../../../store/useMediaStore'
+import usePostStore from '../../../store/usePostStore'
 
 const ProfileInfo = () => {
   const { openModalProfile, setOpenModalProfile, getMe } = useUserStore()
@@ -20,6 +21,7 @@ const ProfileInfo = () => {
   const profile_picture_url = Form.useWatch('profile_picture_url', form)
   const { me, profileUser, updateMe } = useUserStore()
   const { createImage } = useMediaStore()
+  const { getPostsByAuthorId, postByAuthor } = usePostStore()
 
   useEffect(() => {
     form.setFieldsValue({
@@ -112,7 +114,7 @@ const ProfileInfo = () => {
           </div>
         )}
         <PostToolbar />
-        <PostCard />
+        <PostCard getPosts={getPostsByAuthorId} postData={postByAuthor} authorId={profileUser._id} />
       </div>
 
       {/* Modal */}

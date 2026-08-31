@@ -132,6 +132,12 @@ export const API_URLS = {
         author_id
       }
     }),
+    getNewPosts: (query: { page: number; page_size: number }) => ({
+      endPoint: '/api/post/new-posts',
+      method: 'GET',
+      headers: HEADERS.JSON_HEADER(),
+      params: query
+    }),
     createPost: (payload: createPostPayload) => ({
       endPoint: '/api/post',
       method: 'POST',

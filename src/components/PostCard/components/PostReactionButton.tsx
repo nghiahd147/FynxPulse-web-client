@@ -36,7 +36,7 @@ const PostReactionButton = ({
     setHover(false)
     const result = isRemoving ? await unReactionPost({ post_id }) : await reactionPost({ post_id, type: id })
     if (result.success) {
-      getPostsByAuthorId(profileUser._id as string)
+      getPostsByAuthorId({ author_id: profileUser._id })
       getReactionByPost(post_id as string)
     } else {
       notificationError('Failed to add reaction')

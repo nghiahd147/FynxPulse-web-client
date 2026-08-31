@@ -13,6 +13,7 @@ export interface Posts {
   user_info_parent?: {
     first_name: string
     last_name: string
+    user_name?: string
     avatar: string
   }
   mentions?: string[]
@@ -54,6 +55,7 @@ export interface PostByAuthor {
   total: number
   data: Posts[]
 }
+
 export interface Hashtag {
   _id: string
   name: string
@@ -71,4 +73,10 @@ export interface createPostPayload {
   mentions: string[]
   hashtags: string[]
   parent_id: string | null
+}
+
+export interface paginationType {
+  page: number
+  page_size: number
+  author_id?: string
 }

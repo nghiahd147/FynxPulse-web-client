@@ -12,15 +12,15 @@ const PostAuthorInfo = ({
   return (
     <div className='flex posts-center gap-3'>
       <img
-        src={`${userInfoParent ? userInfoParent.avatar : post.user_info.avatar || ''}`}
+        src={`${userInfoParent ? userInfoParent?.avatar : post.user_info?.avatar || ''}`}
         alt='avatar'
         className='w-10 h-10 rounded-full object-cover border border-gray-200'
       />
       <div className='flex flex-col'>
         <span className='text-[16px] font-semibold leading-none'>
           {userInfoParent
-            ? userInfoParent.first_name + ' ' + userInfoParent.last_name
-            : post.user_info.first_name + ' ' + post.user_info.last_name || ' '}
+            ? userInfoParent?.first_name + ' ' + userInfoParent?.last_name
+            : post.user_info?.first_name + ' ' + post.user_info?.last_name || ' '}
         </span>
         {/* <span className="text-gray-500">›</span> Quang Nghĩa */}
         <div className='flex items-center gap-1'>

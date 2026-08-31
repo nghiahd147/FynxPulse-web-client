@@ -9,17 +9,11 @@ interface AuthStore {
   message: string
   data: Posts[]
   postByAuthor: PostByAuthor | null
+  newPosts: PostByAuthor | null
 
   setLoading: (key: string, value: boolean) => void
-  getPostsByAuthorId: ({
-    page,
-    page_size,
-    author_id
-  }: {
-    page?: number
-    page_size?: number
-    author_id: string
-  }) => Promise<PostByAuthor | undefined>
+  getNewPosts: ({ page, page_size }: { page: number; page_size: number }) => Promise<PostByAuthor | undefined>
+  getPostsByAuthorId: (query: { page?: number; page_size?: number; author_id?: string }) => Promise<PostByAuthor | undefined>
   createPost: (payload: createPostPayload) => Promise<{ success: boolean; message: string | unknown }>
   deletePost: (id: string) => Promise<{ success: boolean; message: string | unknown }>
   repost: (post_id: string) => Promise<{ success: boolean; message: string | unknown }>
@@ -30,6 +24,7 @@ interface AuthStore {
 
 const usePostStore = create<AuthStore>((set, get) => ({
   loading: {
+    getNewPostsLoading: false,
     getPostsByAuthorId: false,
     createPost: false,
     deletePostLoading: false,
@@ -41,6 +36,7 @@ const usePostStore = create<AuthStore>((set, get) => ({
   message: '',
   postByAuthor: null,
   data: [],
+  newPosts: null,
 
   setLoading: (key: string, value: boolean) => {
     set((state) => ({
@@ -51,6 +47,19 @@ const usePostStore = create<AuthStore>((set, get) => ({
     }))
   },
 
+  getNewPosts: async ({ page, page_size }: { page: number; page_size: number }) => {
+    get().setLoading('getNewPostsLoading', true)
+    try {
+      const response = await apiCall(API_URLS.POSTS.getNewPosts({ page, page_size }))
+      get().setLoading('getNewPostsLoading', false)
+      set({ newPosts: response.result })
+      return response.result
+    } catch (error) {
+      console.error(error)
+      get().setLoading('getNewPostsLoading', false)
+    }
+  },
+
   getPostsByAuthorId: async ({
     page = 1,
     page_size = 5,
@@ -58,8 +67,9 @@ const usePostStore = create<AuthStore>((set, get) => ({
   }: {
     page?: number
     page_size?: number
-    author_id: string
+    author_id?: string
   }) => {
+    if (!author_id) return
     get().setLoading('getPostsByAuthorId', true)
     try {
       const response = await apiCall(API_URLS.POSTS.getPostsByAuthorId({ page, page_size, author_id }))
@@ -97,25 +107,25 @@ const usePostStore = create<AuthStore>((set, get) => ({
   },
 
   repost: async (post_id) => {
-    get().setLoading('undoRepostLoading', true)
+    get().setLoading('repostLoading', true)
     try {
       const response = await apiCall(API_URLS.POSTS.repost(post_id))
-      get().setLoading('undoRepostLoading', false)
+      get().setLoading('repostLoading', false)
       return { success: true, message: response?.message }
     } catch (error) {
-      get().setLoading('undoRepostLoading', false)
+      get().setLoading('repostLoading', false)
       return { success: false, message: error }
     }
   },
 
   qoutePost: async (post_id: string, payload: QoutePayloadType) => {
-    get().setLoading('undoRepostLoading', true)
+    get().setLoading('qoutePostLoading', true)
     try {
       const response = await apiCall(API_URLS.POSTS.qoutepost({ post_id, payload }))
-      get().setLoading('undoRepostLoading', false)
+      get().setLoading('qoutePostLoading', false)
       return { success: true, message: response?.message }
     } catch (error) {
-      get().setLoading('undoRepostLoading', false)
+      get().setLoading('qoutePostLoading', false)
       return { success: false, message: error }
     }
   },

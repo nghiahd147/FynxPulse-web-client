@@ -12,22 +12,29 @@ import useUserStore from '../../store/useUserStore'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Spin } from 'antd'
 import { useEffect, useState } from 'react'
-import usePostStore from '../../store/usePostStore'
-import type { Posts } from '../../types/post.types'
+import type { paginationType, PostByAuthor, Posts } from '../../types/post.types'
 
-const PostCard = () => {
+interface PostCardProps {
+  getPosts: (query: paginationType) => Promise<PostByAuthor | undefined>
+  postData: PostByAuthor | null
+  authorId?: string
+}
+
+const PostCard = ({ getPosts, postData, authorId }: PostCardProps) => {
   const { profileUser } = useUserStore()
-  const { getPostsByAuthorId, postByAuthor } = usePostStore()
   const [hasMore, setHasMore] = useState(true)
   const [page, setPage] = useState(0)
-  const [data, setData] = useState<Posts[]>(postByAuthor?.data ?? [])
+  const [data, setData] = useState<Posts[]>(postData?.data ?? [])
 
   const getPost = async (pageNumber: number) => {
-    const res = await getPostsByAuthorId({
+    const query: paginationType = {
       page: pageNumber,
-      page_size: 5,
-      author_id: profileUser._id as string
-    })
+      page_size: 5
+    }
+    if (authorId) {
+      query.author_id = authorId
+    }
+    const res = await getPosts(query)
 
     if (!res) return
     setData((prev) => (pageNumber === 1 ? res.data : [...prev, ...res.data]))
@@ -36,26 +43,30 @@ const PostCard = () => {
   }
 
   useEffect(() => {
-    getPost(1)
-  }, [])
+    const loadPosts = async () => {
+      await getPost(1)
+    }
 
-  const fetchMore = () => {
-    getPost(page + 1)
+    loadPosts()
+  }, [authorId, getPosts])
+
+  const fetchMore = async () => {
+    await getPost(page + 1)
   }
 
   useEffect(() => {
-    if (postByAuthor) {
-      setData(postByAuthor.data)
+    if (postData) {
+      setData(postData.data)
       setPage(1)
-      setHasMore(postByAuthor.total_page > 1)
+      setHasMore(postData.total_page > 1)
     }
-  }, [postByAuthor])
+  }, [postData])
 
   return (
     <>
       <InfiniteScroll
         className='hide-scrollbar'
-        dataLength={data?.length}
+        dataLength={data.length}
         next={fetchMore}
         hasMore={hasMore}
         loader={
@@ -63,24 +74,26 @@ const PostCard = () => {
             <Spin />
           </div>
         }
-        endMessage={<p style={{ textAlign: 'center' }}>All items loaded.</p>}
+        endMessage={
+          data.length > 0 ? <p className='py-4 text-center text-sm text-gray-500'>Đã tải hết bài viết.</p> : null
+        }
       >
-        {data?.map((item, index) => {
+        {data.map((item) => {
           const post = item.type === 0
           const repost = item.type === 1
           // const comment = item.type === 2
           const quote = item.type === 3
           return (
-            <div key={index} className='bg-white rounded-2xl shadow-md border border-gray-200 p-4 my-2'>
+            <div key={item._id} className='bg-white rounded-2xl shadow-md border border-gray-200 p-4 my-2'>
               {/* Repost */}
               {repost && (
                 <>
                   <div className='flex items-center mt-1 mb-2 cursor-pointer hover:underline'>
                     <Repeat2 className='ml-2 h-4 w-4 text-gray-400 mr-1' strokeWidth={2} />
-                    <Link to={`/profile/${item.user_info.user_name}`} className='text-gray-400 text-sm'>
-                      {item.user_info._id === profileUser._id
+                    <Link to={`/profile/${item.user_info?.user_name || ''}`} className='text-gray-400 text-sm'>
+                      {item.user_info?._id === profileUser._id
                         ? 'Bạn là người đăng lại'
-                        : item.user_info.first_name + ' ' + item.user_info.last_name}
+                        : `${item.user_info?.first_name || ''} ${item.user_info?.last_name || ''}`.trim()}
                     </Link>
                   </div>
                   {/* Post parent */}
@@ -91,9 +104,9 @@ const PostCard = () => {
                       )}
                     </div>
                     <p className='mt-3 text-[22px] leading-tight font-normal'>{item.parent_id?.content}</p>
-                    {item.hashtags && item.hashtags.length > 0 ? (
+                    {item.parent_id?.hashtags && item.parent_id.hashtags.length > 0 ? (
                       <span className='text-[22px] leading-tight font-normal text-blue-500'>
-                        {item.hashtags?.map((item) => item.name)}
+                        {item.parent_id.hashtags.map((hashtag) => `#${hashtag.name}`).join(' ')}
                       </span>
                     ) : (
                       <></>
@@ -102,7 +115,7 @@ const PostCard = () => {
                 </>
               )}
               {/* Post */}
-              {post == true && (
+              {post && (
                 <>
                   <div className='flex items-start justify-between'>
                     <PostAuthorInfo post={item} />
@@ -135,9 +148,9 @@ const PostCard = () => {
                       )}
                     </div>
                     <p className='mt-3 text-[22px] leading-tight font-normal'>{item.parent_id?.content}</p>
-                    {item.hashtags && item.hashtags.length > 0 ? (
+                    {item.parent_id?.hashtags && item.parent_id.hashtags.length > 0 ? (
                       <span className='text-[22px] leading-tight font-normal text-blue-500'>
-                        {item.hashtags?.map((item) => item.name)}
+                        {item.parent_id.hashtags.map((hashtag) => `#${hashtag.name}`).join(' ')}
                       </span>
                     ) : (
                       <></>

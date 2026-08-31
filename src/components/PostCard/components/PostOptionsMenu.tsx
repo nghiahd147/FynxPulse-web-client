@@ -95,7 +95,7 @@ const PostOptionsMenu = ({
   const handleDeletePost = async (id: string) => {
     const result = await deletePost(id)
     if (result.success) {
-      getPostsByAuthorId(profileUser._id as string)
+      getPostsByAuthorId({ author_id: profileUser._id })
       notificationSuccess(result.message as string)
       if (isModalPost) {
         setIsOpenModal?.(false)

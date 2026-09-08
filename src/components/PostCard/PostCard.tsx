@@ -13,6 +13,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { Spin } from 'antd'
 import { useEffect, useState } from 'react'
 import type { paginationType, PostByAuthor, Posts } from '../../types/post.types'
+import usePostStore from '../../store/usePostStore'
 
 interface PostCardProps {
   getPosts: (query: paginationType) => Promise<PostByAuthor | undefined>
@@ -22,6 +23,7 @@ interface PostCardProps {
 
 const PostCard = ({ getPosts, postData, authorId }: PostCardProps) => {
   const { profileUser } = useUserStore()
+  const { isPublic } = usePostStore()
   const [hasMore, setHasMore] = useState(true)
   const [page, setPage] = useState(0)
   const [data, setData] = useState<Posts[]>(postData?.data ?? [])
@@ -29,7 +31,8 @@ const PostCard = ({ getPosts, postData, authorId }: PostCardProps) => {
   const getPost = async (pageNumber: number) => {
     const query: paginationType = {
       page: pageNumber,
-      page_size: 5
+      page_size: 5,
+      is_public: isPublic
     }
     if (authorId) {
       query.author_id = authorId
@@ -48,7 +51,7 @@ const PostCard = ({ getPosts, postData, authorId }: PostCardProps) => {
     }
 
     loadPosts()
-  }, [authorId, getPosts])
+  }, [authorId, getPosts, isPublic])
 
   const fetchMore = async () => {
     await getPost(page + 1)

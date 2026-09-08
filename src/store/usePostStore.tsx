@@ -10,10 +10,23 @@ interface AuthStore {
   data: Posts[]
   postByAuthor: PostByAuthor | null
   newPosts: PostByAuthor | null
+  isPublic: string
 
   setLoading: (key: string, value: boolean) => void
-  getNewPosts: ({ page, page_size }: { page: number; page_size: number }) => Promise<PostByAuthor | undefined>
-  getPostsByAuthorId: (query: { page?: number; page_size?: number; author_id?: string }) => Promise<PostByAuthor | undefined>
+  getNewPosts: ({
+    page,
+    page_size
+  }: {
+    page: number
+    page_size: number
+    is_public: string
+  }) => Promise<PostByAuthor | undefined>
+  getPostsByAuthorId: (query: {
+    page?: number
+    page_size?: number
+    author_id?: string
+  }) => Promise<PostByAuthor | undefined>
+  setNewPost: (is_public: string) => void
   createPost: (payload: createPostPayload) => Promise<{ success: boolean; message: string | unknown }>
   deletePost: (id: string) => Promise<{ success: boolean; message: string | unknown }>
   repost: (post_id: string) => Promise<{ success: boolean; message: string | unknown }>
@@ -37,6 +50,7 @@ const usePostStore = create<AuthStore>((set, get) => ({
   postByAuthor: null,
   data: [],
   newPosts: null,
+  isPublic: 'true',
 
   setLoading: (key: string, value: boolean) => {
     set((state) => ({
@@ -47,10 +61,14 @@ const usePostStore = create<AuthStore>((set, get) => ({
     }))
   },
 
-  getNewPosts: async ({ page, page_size }: { page: number; page_size: number }) => {
+  setNewPost: async (isPublic: string) => {
+    set({ isPublic })
+  },
+
+  getNewPosts: async ({ page, page_size, is_public }: { page: number; page_size: number; is_public: string }) => {
     get().setLoading('getNewPostsLoading', true)
     try {
-      const response = await apiCall(API_URLS.POSTS.getNewPosts({ page, page_size }))
+      const response = await apiCall(API_URLS.POSTS.getNewPosts({ page, page_size, is_public }))
       get().setLoading('getNewPostsLoading', false)
       set({ newPosts: response.result })
       return response.result

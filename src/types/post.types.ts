@@ -78,5 +78,6 @@ export interface createPostPayload {
 export interface paginationType {
   page: number
   page_size: number
+  is_public: string
   author_id?: string
 }

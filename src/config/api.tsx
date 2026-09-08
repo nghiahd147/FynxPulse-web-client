@@ -132,7 +132,7 @@ export const API_URLS = {
         author_id
       }
     }),
-    getNewPosts: (query: { page: number; page_size: number }) => ({
+    getNewPosts: (query: { page: number; page_size: number; is_public: string }) => ({
       endPoint: '/api/post/new-posts',
       method: 'GET',
       headers: HEADERS.JSON_HEADER(),

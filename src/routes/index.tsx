@@ -17,6 +17,7 @@ import Suggestions from '../pages/Friends/components/Suggestions'
 import PeopleYouMayKnow from '../pages/Friends/components/PeopleYouMayKnow'
 import List from '../pages/Friends/components/List'
 import ProfileInfo from '../pages/Profile/components/ProfileInfo'
+import Chat from '../pages/Chat/Chat'
 
 const profileChildren = [
   {
@@ -50,6 +51,10 @@ export const router = createBrowserRouter([
       {
         path: '/reels',
         element: <Reels />
+      },
+      {
+        path: '/chat',
+        element: <Chat />
       },
       {
         path: '/friends',

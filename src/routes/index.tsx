@@ -18,6 +18,7 @@ import PeopleYouMayKnow from '../pages/Friends/components/PeopleYouMayKnow'
 import List from '../pages/Friends/components/List'
 import ProfileInfo from '../pages/Profile/components/ProfileInfo'
 import Chat from '../pages/Chat/Chat'
+import GlobalSearch from '../pages/GlobalSearch/GlobalSearch'
 
 const profileChildren = [
   {
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
       {
         path: '/chat',
         element: <Chat />
+      },
+      {
+        path: '/global-search',
+        element: <GlobalSearch />
       },
       {
         path: '/friends',

@@ -9,6 +9,7 @@ import type {
   Users
 } from '../types/user.types'
 import type { CreateCommentPayload } from '../types/comment.types'
+import type { GlobalSearchType } from '../types/search.types'
 
 export const HEADERS = {
   DEFAULT_HEADER: {
@@ -119,6 +120,14 @@ export const API_URLS = {
       method: 'POST',
       headers: HEADERS.DEFAULT_HEADER,
       payload: { refresh_token }
+    })
+  },
+  SEARCH: {
+    globalSearch: (params: GlobalSearchType) => ({
+      endPoint: 'api/search',
+      method: 'GET',
+      header: HEADERS.JSON_HEADER(),
+      params
     })
   },
   POSTS: {

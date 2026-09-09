@@ -12,7 +12,7 @@ const MainSidebar = () => {
       <nav aria-label='Điều hướng chính' className='space-y-1'>
         <Link to='/profile' className={menuItemClass}>
           <img
-            src={me.avatar}
+            src={me.avatar || './avatar-mac-dinh.jpg'}
             alt='Ảnh đại diện'
             className='h-10 w-10 shrink-0 rounded-full border border-gray-300 object-cover'
           />

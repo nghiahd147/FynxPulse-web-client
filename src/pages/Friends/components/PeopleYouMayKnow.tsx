@@ -51,7 +51,7 @@ const PeopleYouMayKnow = () => {
                 return (
                   <Col key={index} span={6}>
                     <div className='flex flex-col rounded-t-sm overflow-hidden bg-white shadow-[0_1px_2px_rgba(0,0,0,0.1)]'>
-                      <img className='w-full h-55 object-cover bg-gray-200' src='' alt='' />
+                      <img className='w-full h-55 object-cover bg-gray-200' src='./avatar-mac-dinh.jpg' alt='' />
                       <div className='flex flex-col p-3'>
                         <span
                           title={item.first_name + ' ' + item.last_name}

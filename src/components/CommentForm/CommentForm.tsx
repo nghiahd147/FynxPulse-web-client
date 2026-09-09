@@ -62,7 +62,7 @@ const CommentForm = ({ post, isModal }: { post: Posts; isModal: boolean }) => {
                   return (
                     <div key={index} className='group mb-5 flex items-center gap-3'>
                       <img
-                        src={comment.userInfo.avatar || ''}
+                        src={comment.userInfo.avatar || './avatar-mac-dinh.jpg'}
                         alt='avatar'
                         className='h-8 w-8 rounded-full object-cover'
                       />
@@ -108,7 +108,7 @@ const CommentForm = ({ post, isModal }: { post: Posts; isModal: boolean }) => {
       <div className='border-t border-gray-200 px-5 py-3'>
         <div className='flex items-start gap-2'>
           <img
-            src={post.user_info.avatar || ''}
+            src={post.user_info.avatar || './avatar-mac-dinh.jpg'}
             alt='my-avatar'
             className='mb-1 h-8 w-8 shrink-0 rounded-full object-cover'
           />

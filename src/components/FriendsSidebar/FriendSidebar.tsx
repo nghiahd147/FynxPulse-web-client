@@ -99,7 +99,7 @@ const FriendSidebar = () => {
             className='flex items-center justify-between p-2 hover:bg-gray-100 rounded-lg transition-all'
           >
             <div className='flex items-center gap-x-3'>
-              <img className='w-14 h-14 rounded-full object-cover bg-gray-300' src='' alt='' />
+              <img className='w-14 h-14 rounded-full object-cover bg-gray-300' src='./avatar-mac-dinh.jpg' alt='' />
               <div className='flex flex-col'>
                 <Link
                   to={`/friends/list/${friend.user_name}`}

@@ -55,7 +55,11 @@ const SuggestionSidebar = () => {
                 key={index}
                 className='flex items-start gap-x-3 p-2 hover:bg-gray-100 rounded-lg cursor-pointer transition-all'
               >
-                <img className='w-15 h-15 rounded-full object-cover bg-gray-300 shrink-0' src='' alt='' />
+                <img
+                  className='w-15 h-15 rounded-full object-cover bg-gray-300 shrink-0'
+                  src='./avatar-mac-dinh.jpg'
+                  alt=''
+                />
                 <div className='flex flex-col flex-1'>
                   <Link
                     to={`/friends/suggestions/${item.user_name}`}
@@ -67,7 +71,7 @@ const SuggestionSidebar = () => {
                     <div className='flex items-center -space-x-1'>
                       <img
                         className='w-4.5 h-4.5 rounded-full border-2 border-white bg-gray-300 relative z-10'
-                        src=''
+                        src='./avatar-mac-dinh.jpg'
                         alt=''
                       />
                       <img

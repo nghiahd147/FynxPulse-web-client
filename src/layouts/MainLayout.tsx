@@ -11,7 +11,8 @@ const MainLayout = () => {
   const isTabNoSidebar =
     !location.pathname.startsWith('/profile') &&
     !location.pathname.startsWith('/friends') &&
-    !location.pathname.startsWith('/reels')
+    !location.pathname.startsWith('/reels') &&
+    !location.pathname.startsWith('/global-search')
   const { getMe } = useUserStore()
 
   useEffect(() => {

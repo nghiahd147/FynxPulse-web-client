@@ -16,6 +16,7 @@ import { notificationError, notificationSuccess } from '../../config/notify'
 import { useState, useEffect, useRef } from 'react'
 import type { ChangePasswordPayload } from '../../types/user.types'
 import { REGEX_PASSWORD } from '../../utils/regex'
+import useSearchStore from '../../store/useSearchStore'
 
 const Header = (props: { setTabOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
   const { setTabOpen } = props
@@ -28,6 +29,7 @@ const Header = (props: { setTabOpen: React.Dispatch<React.SetStateAction<boolean
     me,
     loading: { changePassword: loadingChangePassword }
   } = useUserStore()
+  const { globalSearch } = useSearchStore()
   const [changePasswordOpen, setChangePasswordOpen] = useState(false)
   const [avatarMenuOpen, setAvatarMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -43,6 +45,14 @@ const Header = (props: { setTabOpen: React.Dispatch<React.SetStateAction<boolean
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
+
+  const handleGlobalSearch = async (value: string) => {
+    await globalSearch({
+      page: 1,
+      page_size: 10,
+      content: value
+    })
+  }
 
   const handleLogoutUser = async () => {
     const result = await logoutUser({
@@ -93,6 +103,7 @@ const Header = (props: { setTabOpen: React.Dispatch<React.SetStateAction<boolean
             type='text'
             placeholder='Tìm kiếm trên Fynx'
             className='min-w-0 flex-1 border-0 bg-transparent text-[15px] text-[#050505] outline-none placeholder:text-[#65676b]'
+            onChange={(e) => handleGlobalSearch(e.target.value)}
           />
         </div>
       </div>

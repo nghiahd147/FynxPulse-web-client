@@ -12,7 +12,7 @@ const PostAuthorInfo = ({
   return (
     <div className='flex posts-center gap-3'>
       <img
-        src={`${userInfoParent ? userInfoParent?.avatar : post.user_info?.avatar || ''}`}
+        src={`${userInfoParent ? userInfoParent?.avatar : post.user_info?.avatar || './avatar-mac-dinh.jpg'}`}
         alt='avatar'
         className='w-10 h-10 rounded-full object-cover border border-gray-200'
       />

@@ -33,7 +33,11 @@ const PostReactionTotal = ({ post }: { post: Posts }) => {
       <div className='flex flex-col gap-3'>
         {group.users.map((user) => (
           <div key={user._id} className='flex items-center gap-3'>
-            <img src={user.avatar || ''} alt='avatar' className='h-10 w-10 rounded-full object-cover' />
+            <img
+              src={user.avatar || './avatar-mac-dinh.jpg'}
+              alt='avatar'
+              className='h-10 w-10 rounded-full object-cover'
+            />
             <span className='text-[15px] font-medium'>
               {user.first_name} {user.last_name}
             </span>

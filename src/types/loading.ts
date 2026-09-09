@@ -16,6 +16,10 @@ export interface UserLoadingState {
   updateMe: boolean
 }
 
+export interface GlobalSearchLoadingState {
+  globalSearchLoading: boolean
+}
+
 export interface PostLoadingState {
   getNewPostsLoading: boolean
   getPostsByAuthorId: boolean

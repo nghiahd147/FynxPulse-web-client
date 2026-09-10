@@ -20,7 +20,6 @@ import useSearchStore from '../../store/useSearchStore'
 
 const Header = (props: { setTabOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
   const { setTabOpen } = props
-  const navigate = useNavigate()
   const [form] = Form.useForm()
   const location = useLocation()
   const {
@@ -29,10 +28,12 @@ const Header = (props: { setTabOpen: React.Dispatch<React.SetStateAction<boolean
     me,
     loading: { changePassword: loadingChangePassword }
   } = useUserStore()
-  const { globalSearch } = useSearchStore()
+  const { globalSearch, setTextSearchGlobal } = useSearchStore()
   const [changePasswordOpen, setChangePasswordOpen] = useState(false)
   const [avatarMenuOpen, setAvatarMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const [valueGlobalSearch, setValueGlobalSearch] = useState('')
+  const navigate = useNavigate()
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -46,12 +47,15 @@ const Header = (props: { setTabOpen: React.Dispatch<React.SetStateAction<boolean
     }
   }, [])
 
-  const handleGlobalSearch = async (value: string) => {
+  const handleGlobalSearch = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     await globalSearch({
       page: 1,
       page_size: 10,
-      content: value
+      content: valueGlobalSearch
     })
+    setTextSearchGlobal(valueGlobalSearch)
+    navigate('/global-search')
   }
 
   const handleLogoutUser = async () => {
@@ -97,15 +101,19 @@ const Header = (props: { setTabOpen: React.Dispatch<React.SetStateAction<boolean
         <Link to={'/'} className='flex shrink-0 items-center'>
           <img src='/icons8-yelp.png' alt='logo_home' className='w-10 h-10 rounded-full object-cover' />
         </Link>
-        <div className='flex h-10 w-44 items-center gap-2 rounded-full bg-[#f0f2f5] px-3 transition-colors hover:bg-[#e4e6e9] focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-500/20 sm:w-60'>
+        <form
+          onSubmit={handleGlobalSearch}
+          className='flex h-10 w-44 items-center gap-2 rounded-full bg-[#f0f2f5] px-3 transition-colors hover:bg-[#e4e6e9] focus-within:bg-white focus-within:ring-2 focus-within:ring-blue-500/20 sm:w-60'
+        >
           <SearchOutlined className='shrink-0 text-[17px] text-[#65676b]' />
           <input
             type='text'
             placeholder='Tìm kiếm trên Fynx'
             className='min-w-0 flex-1 border-0 bg-transparent text-[15px] text-[#050505] outline-none placeholder:text-[#65676b]'
-            onChange={(e) => handleGlobalSearch(e.target.value)}
+            value={valueGlobalSearch}
+            onChange={(e) => setValueGlobalSearch(e.target.value)}
           />
-        </div>
+        </form>
       </div>
       <div className='relative h-full flex items-center justify-center'>
         <div

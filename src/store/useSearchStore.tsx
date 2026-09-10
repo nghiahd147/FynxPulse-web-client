@@ -9,12 +9,14 @@ interface AuthStore {
   loading: GlobalSearchLoadingState
   message: string
   result: Posts[]
+  textSearchGlobal: string
 
   setLoading: (key: string, value: boolean) => void
   globalSearch: (params: GlobalSearchType) => Promise<{
     success: boolean
     data?: Posts[]
   }>
+  setTextSearchGlobal: (value: string) => void
 }
 
 const useSearchStore = create<AuthStore>((set, get) => ({
@@ -23,6 +25,11 @@ const useSearchStore = create<AuthStore>((set, get) => ({
   },
   message: '',
   result: [],
+  textSearchGlobal: '',
+
+  setTextSearchGlobal: (value: string) => {
+    set({ textSearchGlobal: value })
+  },
 
   setLoading: (key: string, value: boolean) => {
     set((state) => ({

@@ -1,10 +1,12 @@
 import { FileText, Search, SlidersHorizontal, Users } from 'lucide-react'
+import useSearchStore from '../../../store/useSearchStore'
 
 const SidebarGlobalSearch = () => {
+  const { textSearchGlobal } = useSearchStore()
   return (
     <div className='w-90 border-r border-gray-200 bg-white px-3 py-4'>
       <h1 className='text-xl font-bold'>Kết quả tìm kiếm cho</h1>
-      <p className='mt-1 text-sm text-blue-500'>thanh hoa</p>
+      <p className='mt-1 text-sm text-blue-500'>{textSearchGlobal}</p>
 
       <div className='my-4 border-t border-gray-200'></div>
 
@@ -51,7 +53,9 @@ const SidebarGlobalSearch = () => {
 
         <div className='flex cursor-pointer items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm text-blue-500 hover:bg-gray-100'>
           <span className='truncate'>Trường Đại học Sư phạm - Đại học Đà Nẵng</span>
-          <span className='flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-500 text-white'>×</span>
+          <span className='flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-500 text-white'>
+            ×
+          </span>
         </div>
 
         <div className='flex cursor-pointer items-center justify-between rounded-lg px-3 py-2 hover:bg-gray-100'>

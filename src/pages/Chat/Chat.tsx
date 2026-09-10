@@ -1,14 +1,17 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
+import useUserStore from '../../store/useUserStore'
 
 const Chat = () => {
+  const { me } = useUserStore()
+  const [value, setValue] = useState('')
+
   useEffect(() => {
     const socket = io(import.meta.env.VITE_API_URL)
     socket.on('connect', () => {
-      console.log(socket.id)
-      socket.on('start', (arg) => {
-        console.log(arg)
-      })
+      socket.auth = {
+        user_id: me._id
+      }
     })
 
     socket.on('disconnect', () => {
@@ -19,7 +22,26 @@ const Chat = () => {
       socket.disconnect()
     }
   }, [])
-  return <div>Chat</div>
+
+  const handleSubmitChat = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    console.log(value)
+    setValue('')
+  }
+
+  return (
+    <div className='h-screen'>
+      <form onSubmit={handleSubmitChat}>
+        <input
+          type='text'
+          onChange={(e) => setValue(e.target.value)}
+          value={value}
+          className='border border-amber-800'
+        />
+        <button>Gửi</button>
+      </form>
+    </div>
+  )
 }
 
 export default Chat

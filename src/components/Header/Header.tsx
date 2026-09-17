@@ -28,7 +28,7 @@ const Header = (props: { setTabOpen: React.Dispatch<React.SetStateAction<boolean
     me,
     loading: { changePassword: loadingChangePassword }
   } = useUserStore()
-  const { globalSearch, setTextSearchGlobal } = useSearchStore()
+  const { setTextSearchGlobal } = useSearchStore()
   const [changePasswordOpen, setChangePasswordOpen] = useState(false)
   const [avatarMenuOpen, setAvatarMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -49,11 +49,6 @@ const Header = (props: { setTabOpen: React.Dispatch<React.SetStateAction<boolean
 
   const handleGlobalSearch = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    await globalSearch({
-      page: 1,
-      page_size: 10,
-      content: valueGlobalSearch
-    })
     setTextSearchGlobal(valueGlobalSearch)
     navigate('/global-search')
   }

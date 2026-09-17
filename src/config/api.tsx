@@ -126,7 +126,7 @@ export const API_URLS = {
     globalSearch: (params: GlobalSearchType) => ({
       endPoint: 'api/search',
       method: 'GET',
-      header: HEADERS.JSON_HEADER(),
+      headers: HEADERS.JSON_HEADER(),
       params
     })
   },

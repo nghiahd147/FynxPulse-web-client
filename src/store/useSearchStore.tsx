@@ -3,19 +3,16 @@ import { apiCall } from '../utils/axios'
 import { API_URLS } from '../config/api'
 import type { GlobalSearchLoadingState } from '../types/loading'
 import type { GlobalSearchType } from '../types/search.types'
-import type { Posts } from '../types/post.types'
+import type { PostByAuthor } from '../types/post.types'
 
 interface AuthStore {
   loading: GlobalSearchLoadingState
   message: string
-  result: Posts[]
+  postGlobalSearch: PostByAuthor | null
   textSearchGlobal: string
 
   setLoading: (key: string, value: boolean) => void
-  globalSearch: (params: GlobalSearchType) => Promise<{
-    success: boolean
-    data?: Posts[]
-  }>
+  globalSearch: (params: GlobalSearchType) => Promise<PostByAuthor | undefined>
   setTextSearchGlobal: (value: string) => void
 }
 
@@ -24,7 +21,7 @@ const useSearchStore = create<AuthStore>((set, get) => ({
     globalSearchLoading: false
   },
   message: '',
-  result: [],
+  postGlobalSearch: null,
   textSearchGlobal: '',
 
   setTextSearchGlobal: (value: string) => {
@@ -45,7 +42,7 @@ const useSearchStore = create<AuthStore>((set, get) => ({
     try {
       const response = await apiCall(API_URLS.SEARCH.globalSearch(params))
       get().setLoading('globalSearchLoading', false)
-      set({ result: response.result })
+      set({ postGlobalSearch: response.result })
       return response.result
     } catch (error) {
       console.error(error)

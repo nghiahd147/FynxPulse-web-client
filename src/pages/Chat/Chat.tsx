@@ -5,13 +5,17 @@ import useUserStore from '../../store/useUserStore'
 const Chat = () => {
   const { me } = useUserStore()
   const [value, setValue] = useState('')
+  const [data, setData] = useState<{ content: string }[]>([])
 
+  const socket = io(import.meta.env.VITE_API_URL)
   useEffect(() => {
-    const socket = io(import.meta.env.VITE_API_URL)
-    socket.on('connect', () => {
-      socket.auth = {
-        user_id: me._id
-      }
+    socket.auth = {
+      user_id: me._id
+    }
+    socket.connect()
+
+    socket.on('receive private message', (data) => {
+      setData((prev) => [...prev, data])
     })
 
     socket.on('disconnect', () => {
@@ -26,11 +30,22 @@ const Chat = () => {
   const handleSubmitChat = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     console.log(value)
+    socket.emit('private message', {
+      content: value,
+      to: '6a0adc053888a626293d2d8b'
+    })
     setValue('')
   }
 
   return (
     <div className='h-screen'>
+      {data.map((item, index) => {
+        return (
+          <>
+            <p key={index}>{item.content}</p>
+          </>
+        )
+      })}
       <form onSubmit={handleSubmitChat}>
         <input
           type='text'

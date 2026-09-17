@@ -1,44 +1,38 @@
-import PostOptionsMenu from './components/PostOptionsMenu'
-import PostReactionButton from './components/PostReactionButton'
-import PostCommentButton from './components/PostCommentButton'
-import PostShareMenu from './components/PostShareMenu'
-import PostAuthorInfo from './components/PostAuthorInfo'
-import PostReactionTotal from './components/PostReactionTotal'
-import CommentForm from '../CommentForm/CommentForm'
-import PostViewButton from './components/PostViewButton'
+import CommentForm from '../../../components/CommentForm/CommentForm'
+
 import { Repeat2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import useUserStore from '../../store/useUserStore'
+import useUserStore from '../../../store/useUserStore'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Spin } from 'antd'
 import { useEffect, useState } from 'react'
-import type { paginationType, PostByAuthor, Posts } from '../../types/post.types'
-import usePostStore from '../../store/usePostStore'
-import PostContent from './components/PostContent'
+import type { Posts } from '../../../types/post.types'
+import PostAuthorInfo from '../../../components/PostCard/components/PostAuthorInfo'
+import PostOptionsMenu from '../../../components/PostCard/components/PostOptionsMenu'
+import PostReactionButton from '../../../components/PostCard/components/PostReactionButton'
+import PostCommentButton from '../../../components/PostCard/components/PostCommentButton'
+import PostShareMenu from '../../../components/PostCard/components/PostShareMenu'
+import PostViewButton from '../../../components/PostCard/components/PostViewButton'
+import PostReactionTotal from '../../../components/PostCard/components/PostReactionTotal'
+import type { GlobalSearchType } from '../../../types/search.types'
+import useSearchStore from '../../../store/useSearchStore'
+import PostContent from '../../../components/PostCard/components/PostContent'
 
-interface PostCardProps {
-  getPosts: (query: paginationType) => Promise<PostByAuthor | undefined>
-  postData: PostByAuthor | null
-  authorId?: string
-}
-
-const PostCard = ({ getPosts, postData, authorId }: PostCardProps) => {
+const SearchPostList = () => {
   const { profileUser } = useUserStore()
-  const { isPublic } = usePostStore()
   const [hasMore, setHasMore] = useState(true)
   const [page, setPage] = useState(0)
-  const [data, setData] = useState<Posts[]>(postData?.data ?? [])
+  const { textSearchGlobal, globalSearch, postGlobalSearch } = useSearchStore()
+  const [data, setData] = useState<Posts[]>(postGlobalSearch?.data ?? [])
 
   const getPost = async (pageNumber: number) => {
-    const query: paginationType = {
+    const query: GlobalSearchType = {
       page: pageNumber,
       page_size: 5,
-      is_public: isPublic
+      content: textSearchGlobal
     }
-    if (authorId) {
-      query.author_id = authorId
-    }
-    const res = await getPosts(query)
+
+    const res = await globalSearch(query)
 
     if (!res) return
     setData((prev) => (pageNumber === 1 ? res.data : [...prev, ...res.data]))
@@ -52,19 +46,19 @@ const PostCard = ({ getPosts, postData, authorId }: PostCardProps) => {
     }
 
     loadPosts()
-  }, [authorId, getPosts, isPublic])
+  }, [textSearchGlobal, globalSearch])
 
   const fetchMore = async () => {
     await getPost(page + 1)
   }
 
   useEffect(() => {
-    if (postData) {
-      setData(postData.data)
+    if (postGlobalSearch) {
+      setData(postGlobalSearch.data)
       setPage(1)
-      setHasMore(postData.total_page > 1)
+      setHasMore(postGlobalSearch.total_page > 1)
     }
-  }, [postData])
+  }, [postGlobalSearch])
 
   return (
     <>
@@ -192,4 +186,4 @@ const PostCard = ({ getPosts, postData, authorId }: PostCardProps) => {
   )
 }
 
-export default PostCard
+export default SearchPostList

@@ -23,15 +23,15 @@ const SidebarGlobalSearch = () => {
           <span className='font-medium'>Tất cả</span>
         </div>
 
-        <div className='flex cursor-pointer items-center gap-3 rounded-lg p-2 hover:bg-gray-100'>
-          <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gray-200'>
+        <div className='flex cursor-pointer items-center gap-3 rounded-lg p-2 bg-blue-50 hover:bg-blue-100'>
+          <div className='flex h-10 w-10 items-center justify-center rounded-full bg-blue-500  text-white'>
             <FileText size={20} />
           </div>
           <span className='font-medium'>Bài viết</span>
         </div>
 
-        <div className='flex cursor-pointer items-center gap-3 rounded-lg bg-blue-50 p-2 hover:bg-blue-100'>
-          <div className='flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white'>
+        <div className='flex cursor-pointer items-center gap-3 rounded-lg hover:bg-gray-100'>
+          <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gray-200'>
             <Users size={20} />
           </div>
           <span className='font-medium'>Mọi người</span>

@@ -80,4 +80,5 @@ export interface paginationType {
   page_size: number
   is_public: string
   author_id?: string
+  content?: string
 }

@@ -5,11 +5,14 @@ import ProfilePreviewEmptyState from '../../../components/ProfilePreviewEmptySta
 
 const Suggestions = () => {
   const { user_name } = useParams()
-  const { listFriends } = useUserStore()
+  const {
+    listFriends,
+    loading: { getFollowSuggestions: isLoadingSuggestions }
+  } = useUserStore()
 
-  return (
-    <>{listFriends.length <= 0 ? <EmptyFollowSuggestions /> : !user_name ? <ProfilePreviewEmptyState /> : <Outlet />}</>
-  )
+  if (isLoadingSuggestions) return null
+
+  return <>{listFriends.length === 0 ? <EmptyFollowSuggestions /> : !user_name ? <ProfilePreviewEmptyState /> : <Outlet />}</>
 }
 
 export default Suggestions

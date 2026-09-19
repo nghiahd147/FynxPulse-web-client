@@ -12,8 +12,10 @@ const Friends = () => {
   const [showDot, setShowDot] = useState(true)
 
   useEffect(() => {
-    getFollowSuggestions(me._id as string)
-  }, [location.pathname == '/friends'])
+    if (me._id) {
+      getFollowSuggestions(me._id as string)
+    }
+  }, [getFollowSuggestions, me._id])
 
   return (
     <div className='h-full flex'>

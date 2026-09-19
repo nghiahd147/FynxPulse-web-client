@@ -1,16 +1,57 @@
 import { Laugh, Minus, MoreHorizontal, Phone, SendHorizontal, Video, X } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Users } from '../../types/user.types'
+import type { Socket } from 'socket.io-client'
 
 interface FloatingChatWindowProps {
   friend: Users
   onClose: () => void
+  socket: Socket
 }
 
-const FloatingChatWindow = ({ friend, onClose }: FloatingChatWindowProps) => {
+const FloatingChatWindow = ({ friend, onClose, socket }: FloatingChatWindowProps) => {
   const [message, setMessage] = useState('')
   const fullName = `${friend.first_name || ''} ${friend.last_name || ''}`.trim() || 'Người dùng FynxPulse'
   const avatar = friend.avatar || '/avatar-mac-dinh.jpg'
+  const [dataMessage, setDataMessage] = useState<{ content: string; isSender?: boolean }[]>([])
+
+  useEffect(() => {
+    const handleReceivePrivateMessage = (data: { content: string; from: string }) => {
+      if (data.from !== friend._id) return
+
+      setDataMessage((prev) => [
+        ...prev,
+        {
+          content: data.content,
+          isSender: false
+        }
+      ])
+    }
+
+    socket.on('receive private message', handleReceivePrivateMessage)
+
+    return () => {
+      socket.off('receive private message', handleReceivePrivateMessage)
+    }
+  }, [friend._id, socket])
+
+  const handleSendMessage = (user_id: string) => {
+    const content = message.trim()
+    if (!content || !socket.connected) return
+
+    socket.emit('private message', {
+      content,
+      to: user_id
+    })
+    setDataMessage((prev) => [
+      ...prev,
+      {
+        content,
+        isSender: true
+      }
+    ])
+    setMessage('')
+  }
 
   return (
     <section
@@ -60,20 +101,24 @@ const FloatingChatWindow = ({ friend, onClose }: FloatingChatWindowProps) => {
           <p className='mt-0.5 text-xs text-gray-500'>Bạn bè trên FynxPulse</p>
         </div>
 
-        <div className='mb-1 flex items-end gap-2'>
-          <img src={avatar} alt='' className='h-7 w-7 shrink-0 rounded-full object-cover' />
-          <div className='max-w-56.25 rounded-2xl rounded-bl-md bg-gray-100 px-3 py-2 text-[14px] leading-4.5 text-gray-900'>
-            Chào bạn! Dạo này bạn thế nào rồi?
-          </div>
-        </div>
-        <p className='mb-3 ml-9 text-[10px] text-gray-400'>12:30</p>
+        {dataMessage.map((item, index) => {
+          return (
+            <div
+              key={`${index} - ${item.content}`}
+              className={`${item.isSender === true ? 'justify-end' : ''} mb-1 flex items-end gap-2`}
+            >
+              {item.isSender === false && (
+                <img src={avatar} alt='' className='h-7 w-7 shrink-0 rounded-full object-cover' />
+              )}
+              <div className='max-w-56.25 rounded-2xl rounded-bl-md bg-gray-100 px-3 py-2 text-[14px] leading-4.5 text-gray-900'>
+                {item.content}
+              </div>
+            </div>
+          )
+        })}
 
-        <div className='mb-1 flex justify-end'>
-          <div className='max-w-56.25 rounded-2xl rounded-br-md bg-[#1d9bf0] px-3 py-2 text-[14px] leading-4.5 text-white'>
-            Mình vẫn ổn, cảm ơn bạn nhé! 👋
-          </div>
-        </div>
-        <p className='text-right text-[10px] text-gray-400'>Đã xem</p>
+        {/* <p className='mb-3 ml-9 text-[10px] text-gray-400'>12:30</p> */}
+        {/* <p className='text-right text-[10px] text-gray-400'>Đã xem</p> */}
       </div>
 
       <footer className='flex min-h-14 shrink-0 items-end gap-1.5 px-2 pb-2 text-[#1d9bf0]'>
@@ -98,6 +143,7 @@ const FloatingChatWindow = ({ friend, onClose }: FloatingChatWindowProps) => {
           type='button'
           aria-label='Gửi tin nhắn'
           className='mb-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-blue-50 active:scale-95'
+          onClick={() => handleSendMessage(friend._id as string)}
         >
           <SendHorizontal size={20} fill='currentColor' />
         </button>

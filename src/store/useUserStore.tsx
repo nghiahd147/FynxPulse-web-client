@@ -250,11 +250,13 @@ const useUserStore = create<AuthStore>()(
       getFollowSuggestions: async (user_id: string) => {
         get().setLoading('getFollowSuggestions', true)
         try {
-          const result = await apiCall(API_URLS.USERS.getFollowSuggestions(user_id))
+          const response = await apiCall(API_URLS.USERS.getFollowSuggestions(user_id))
+          const suggestions = response?.result?.data
           get().setLoading('getFollowSuggestions', false)
-          set({ listFriends: result?.friends || [] })
+          set({ listFriends: Array.isArray(suggestions) ? suggestions : [] })
         } catch (error) {
           get().setLoading('getFollowSuggestions', false)
+          set({ listFriends: [] })
         }
       },
 

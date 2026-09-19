@@ -1,10 +1,15 @@
 import { Ellipsis, Gift, Globe2, Search, UsersRound, Video } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import usePostStore from '../../store/usePostStore'
+import useUserStore from '../../store/useUserStore'
+import type { Users } from '../../types/user.types'
+import FloatingChatWindow from './FloatingChatWindow'
 
 const ActiveUsersSidebar = () => {
   const { setNewPost, isPublic } = usePostStore()
+  const { getUserFollowing, yourFriends, me } = useUserStore()
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [selectedFriend, setSelectedFriend] = useState<Users | null>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const userItemClass =
     'flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-gray-200'
@@ -13,7 +18,12 @@ const ActiveUsersSidebar = () => {
     if (isSearchOpen) searchInputRef.current?.focus()
   }, [isSearchOpen])
 
+  useEffect(() => {
+    getUserFollowing(me._id as string)
+  }, [])
+
   return (
+    <>
     <aside className='hide-scrollbar sticky top-0 hidden h-[calc(100vh-4rem)] w-80 shrink-0 overflow-y-auto border-l border-borderPrimary bg-white px-4 py-4 xl:block'>
       <section aria-labelledby='timeline-title'>
         <h2 id='timeline-title' className='mb-3 text-[17px] font-bold text-gray-900'>
@@ -127,45 +137,29 @@ const ActiveUsersSidebar = () => {
         </div>
 
         <div className='space-y-1'>
-          <button type='button' className={userItemClass}>
-            <span className='relative shrink-0'>
-              <img src='/avatar-mac-dinh.jpg' alt='Nguyễn An' className='h-9 w-9 rounded-full object-cover' />
-              <span className='absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-bgPrimary bg-green-500' />
-            </span>
-            <span className='truncate text-[15px] font-semibold text-gray-900'>Nguyễn An</span>
-          </button>
-
-          <button type='button' className={userItemClass}>
-            <span className='relative shrink-0'>
-              <img src='/icons8-yelp.png' alt='Quang Nghĩa' className='h-9 w-9 rounded-full object-cover' />
-              <span className='absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-bgPrimary bg-green-500' />
-            </span>
-            <span className='truncate text-[15px] font-semibold text-gray-900'>Quang Nghĩa</span>
-          </button>
-
-          <button type='button' className={userItemClass}>
-            <span className='relative shrink-0'>
-              <img src='/avatar-mac-dinh.jpg' alt='Trần Minh Anh' className='h-9 w-9 rounded-full object-cover' />
-              <span className='absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-bgPrimary bg-green-500' />
-            </span>
-            <span className='truncate text-[15px] font-semibold text-gray-900'>Trần Minh Anh</span>
-          </button>
-
-          <button type='button' className={userItemClass}>
-            <span className='relative shrink-0'>
-              <img src='/icons8-yelp.png' alt='Lê Hoàng' className='h-9 w-9 rounded-full object-cover' />
-              <span className='absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-bgPrimary bg-green-500' />
-            </span>
-            <span className='truncate text-[15px] font-semibold text-gray-900'>Lê Hoàng</span>
-          </button>
-
-          <button type='button' className={userItemClass}>
-            <span className='relative shrink-0'>
-              <img src='/avatar-mac-dinh.jpg' alt='Phạm Thanh' className='h-9 w-9 rounded-full object-cover' />
-              <span className='absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-bgPrimary bg-green-500' />
-            </span>
-            <span className='truncate text-[15px] font-semibold text-gray-900'>Phạm Thanh</span>
-          </button>
+          {yourFriends.map((following, index) => {
+            return (
+              <button
+                key={following._id || index}
+                type='button'
+                onClick={() => setSelectedFriend(following)}
+                aria-pressed={selectedFriend?._id === following._id}
+                className={`${userItemClass} ${
+                  selectedFriend?._id === following._id ? 'bg-blue-50 ring-1 ring-inset ring-blue-100' : ''
+                }`}
+              >
+                <span className='relative shrink-0'>
+                  <img
+                    src={following.avatar || '/avatar-mac-dinh.jpg'}
+                    alt={`${following.first_name} + ${following.last_name}`}
+                    className='h-9 w-9 rounded-full object-cover'
+                  />
+                  <span className='absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-bgPrimary bg-green-500' />
+                </span>
+                <span className='truncate text-[15px] font-semibold text-gray-900'>{`${following.first_name} ${following.last_name}`}</span>
+              </button>
+            )
+          })}
         </div>
       </section>
 
@@ -184,6 +178,8 @@ const ActiveUsersSidebar = () => {
         </button>
       </section>
     </aside>
+    {selectedFriend && <FloatingChatWindow friend={selectedFriend} onClose={() => setSelectedFriend(null)} />}
+    </>
   )
 }
 

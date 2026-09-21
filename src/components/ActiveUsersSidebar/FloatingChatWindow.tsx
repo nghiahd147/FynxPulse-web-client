@@ -2,6 +2,8 @@ import { Laugh, Minus, MoreHorizontal, Phone, SendHorizontal, Video, X } from 'l
 import { useEffect, useState } from 'react'
 import type { Users } from '../../types/user.types'
 import type { Socket } from 'socket.io-client'
+import useUserStore from '../../store/useUserStore'
+import useConversationStore from '../../store/useConversationStore'
 
 interface FloatingChatWindowProps {
   friend: Users
@@ -13,19 +15,12 @@ const FloatingChatWindow = ({ friend, onClose, socket }: FloatingChatWindowProps
   const [message, setMessage] = useState('')
   const fullName = `${friend.first_name || ''} ${friend.last_name || ''}`.trim() || 'Người dùng FynxPulse'
   const avatar = friend.avatar || '/avatar-mac-dinh.jpg'
-  const [dataMessage, setDataMessage] = useState<{ content: string; isSender?: boolean }[]>([])
+  const { conversationMessages, getConversations } = useConversationStore()
+  const { me } = useUserStore()
 
   useEffect(() => {
     const handleReceivePrivateMessage = (data: { content: string; from: string }) => {
       if (data.from !== friend._id) return
-
-      setDataMessage((prev) => [
-        ...prev,
-        {
-          content: data.content,
-          isSender: false
-        }
-      ])
     }
 
     socket.on('receive private message', handleReceivePrivateMessage)
@@ -35,21 +30,21 @@ const FloatingChatWindow = ({ friend, onClose, socket }: FloatingChatWindowProps
     }
   }, [friend._id, socket])
 
+  useEffect(() => {
+    if (friend._id) {
+      getConversations(friend._id)
+    }
+  }, [friend._id])
+
   const handleSendMessage = (user_id: string) => {
     const content = message.trim()
     if (!content || !socket.connected) return
 
     socket.emit('private message', {
-      content,
-      to: user_id
+      content: String(content),
+      to: user_id,
+      from: me._id
     })
-    setDataMessage((prev) => [
-      ...prev,
-      {
-        content,
-        isSender: true
-      }
-    ])
     setMessage('')
   }
 
@@ -101,13 +96,13 @@ const FloatingChatWindow = ({ friend, onClose, socket }: FloatingChatWindowProps
           <p className='mt-0.5 text-xs text-gray-500'>Bạn bè trên FynxPulse</p>
         </div>
 
-        {dataMessage.map((item, index) => {
+        {conversationMessages.map((item, index) => {
           return (
             <div
               key={`${index} - ${item.content}`}
-              className={`${item.isSender === true ? 'justify-end' : ''} mb-1 flex items-end gap-2`}
+              className={`${item.sender_id === me._id ? 'justify-end' : ''} mb-1 flex items-end gap-2`}
             >
-              {item.isSender === false && (
+              {item.sender_id !== me._id && (
                 <img src={avatar} alt='' className='h-7 w-7 shrink-0 rounded-full object-cover' />
               )}
               <div className='max-w-56.25 rounded-2xl rounded-bl-md bg-gray-100 px-3 py-2 text-[14px] leading-4.5 text-gray-900'>

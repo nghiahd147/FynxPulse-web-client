@@ -242,5 +242,12 @@ export const API_URLS = {
       method: 'DELETE',
       headers: HEADERS.JSON_HEADER()
     })
+  },
+  CONVERSATIONS: {
+    getConversations: (receiver_id: string) => ({
+      endPoint: `/api/conversations/receiver/${receiver_id}`,
+      method: 'GET',
+      headers: HEADERS.JSON_HEADER()
+    })
   }
 }

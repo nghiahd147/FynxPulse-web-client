@@ -47,6 +47,10 @@ export interface CommentLoadingState {
   deleteComment: boolean
 }
 
+export interface ConversationLoadingState {
+  getConversations: boolean
+}
+
 export interface BookmarkLoadingState {
   getStatusBookmark: boolean
   addBookmark: boolean

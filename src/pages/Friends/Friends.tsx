@@ -18,9 +18,9 @@ const Friends = () => {
   }, [getFollowSuggestions, me._id])
 
   return (
-    <div className='h-full flex'>
+    <div className='flex h-[calc(100vh-4rem)] overflow-hidden bg-[#F0F2F5]'>
       {/* Left */}
-      <div className='w-[30%] px-2 py-1 shadow-[4px_0_8px_rgba(0,0,0,0.1)] relative'>
+      <div className='relative w-[30%] shrink-0 bg-white px-2 py-1 shadow-[4px_0_8px_rgba(0,0,0,0.1)]'>
         {location.pathname.startsWith('/friends/list') ? (
           <FriendSidebar />
         ) : location.pathname.startsWith('/friends/suggestions') ? (
@@ -136,7 +136,7 @@ const Friends = () => {
         )}
       </div>
       {/* Right */}
-      <div className='w-full overflow-y-auto hide-scrollbar bg-[#F0F2F5]'>
+      <div className='hide-scrollbar min-w-0 flex-1 overflow-y-auto bg-[#F0F2F5]'>
         <Outlet />
       </div>
     </div>

@@ -1,9 +1,10 @@
 import { Laugh, Minus, MoreHorizontal, Phone, SendHorizontal, Video, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Users } from '../../types/user.types'
 import type { Socket } from 'socket.io-client'
 import useUserStore from '../../store/useUserStore'
 import useConversationStore from '../../store/useConversationStore'
+import type { Conversations } from '../../types/conversation.types'
 
 interface FloatingChatWindowProps {
   friend: Users
@@ -16,17 +17,25 @@ const FloatingChatWindow = ({ friend, onClose, socket }: FloatingChatWindowProps
   const fullName = `${friend.first_name || ''} ${friend.last_name || ''}`.trim() || 'Người dùng FynxPulse'
   const avatar = friend.avatar || '/avatar-mac-dinh.jpg'
   const { conversationMessages, getConversations } = useConversationStore()
+  const [conversations, setConversations] = useState<Conversations[]>(conversationMessages)
   const { me } = useUserStore()
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const handleReceivePrivateMessage = (data: { content: string; from: string }) => {
-      if (data.from !== friend._id) return
+    const handleReceivePrivateMessage = (data: {
+      content: string
+      sender_id: string
+      receiver_id: string
+      _id: string
+    }) => {
+      if (data.sender_id !== friend._id) return
+      setConversations((prevConversation) => [...prevConversation, { ...data }])
     }
 
-    socket.on('receive private message', handleReceivePrivateMessage)
+    socket.on('receiver_message', handleReceivePrivateMessage)
 
     return () => {
-      socket.off('receive private message', handleReceivePrivateMessage)
+      socket.off('receiver_message', handleReceivePrivateMessage)
     }
   }, [friend._id, socket])
 
@@ -34,17 +43,29 @@ const FloatingChatWindow = ({ friend, onClose, socket }: FloatingChatWindowProps
     if (friend._id) {
       getConversations(friend._id)
     }
-  }, [friend._id])
+  }, [friend._id, getConversations])
+
+  useEffect(() => {
+    setConversations(conversationMessages)
+  }, [conversationMessages])
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [conversations])
 
   const handleSendMessage = (user_id: string) => {
     const content = message.trim()
-    if (!content || !socket.connected) return
-
-    socket.emit('private message', {
+    if (!content || !socket.connected || !me._id) return
+    const conversation = {
       content: String(content),
-      to: user_id,
-      from: me._id
-    })
+      receiver_id: user_id,
+      sender_id: me._id
+    }
+    socket.emit('send_message', conversation)
+    setConversations((prevConversations) => [
+      ...prevConversations,
+      { ...conversation, _id: new Date().getTime().toString() }
+    ])
     setMessage('')
   }
 
@@ -89,34 +110,46 @@ const FloatingChatWindow = ({ friend, onClose, socket }: FloatingChatWindowProps
         </div>
       </header>
 
-      <div className='hide-scrollbar flex flex-1 flex-col overflow-y-auto px-3 pb-3 pt-5'>
+      <div className='hide-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto px-3 pb-3 pt-5'>
         <div className='mb-7 flex flex-col items-center text-center'>
           <img src={avatar} alt={fullName} className='mb-2 h-16 w-16 rounded-full object-cover shadow-sm' />
           <p className='text-[15px] font-bold text-gray-900'>{fullName}</p>
           <p className='mt-0.5 text-xs text-gray-500'>Bạn bè trên FynxPulse</p>
         </div>
 
-        {conversationMessages.map((item, index) => {
+        {conversations.map((item, index) => {
+          const isMine = item.sender_id === me._id
+
           return (
             <div
-              key={`${index} - ${item.content}`}
-              className={`${item.sender_id === me._id ? 'justify-end' : ''} mb-1 flex items-end gap-2`}
+              key={item._id?.toString() || `${item.sender_id}-${index}-${item.content}`}
+              className={`mb-1 flex items-end gap-2 ${isMine ? 'justify-end' : 'justify-start'}`}
             >
-              {item.sender_id !== me._id && (
-                <img src={avatar} alt='' className='h-7 w-7 shrink-0 rounded-full object-cover' />
-              )}
-              <div className='max-w-56.25 rounded-2xl rounded-bl-md bg-gray-100 px-3 py-2 text-[14px] leading-4.5 text-gray-900'>
+              {!isMine && <img src={avatar} alt='' className='h-7 w-7 shrink-0 rounded-full object-cover' />}
+              <div
+                className={`max-w-56.25 wrap-break-word rounded-2xl px-3 py-2 text-sm ${
+                  isMine ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-900'
+                }`}
+              >
                 {item.content}
               </div>
             </div>
           )
         })}
 
+        <div ref={messagesEndRef} aria-hidden='true' className='h-px shrink-0' />
+
         {/* <p className='mb-3 ml-9 text-[10px] text-gray-400'>12:30</p> */}
         {/* <p className='text-right text-[10px] text-gray-400'>Đã xem</p> */}
       </div>
 
-      <footer className='flex min-h-14 shrink-0 items-end gap-1.5 px-2 pb-2 text-[#1d9bf0]'>
+      <form
+        className='flex min-h-14 shrink-0 items-end gap-1.5 px-2 pb-2 text-[#1d9bf0]'
+        onSubmit={(event) => {
+          event.preventDefault()
+          handleSendMessage(friend._id as string)
+        }}
+      >
         <div className='flex min-h-10 min-w-0 flex-1 items-center rounded-full bg-gray-100 px-3 focus-within:ring-2 focus-within:ring-blue-100'>
           <input
             type='text'
@@ -135,14 +168,13 @@ const FloatingChatWindow = ({ friend, onClose, socket }: FloatingChatWindowProps
           </button>
         </div>
         <button
-          type='button'
+          type='submit'
           aria-label='Gửi tin nhắn'
           className='mb-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-blue-50 active:scale-95'
-          onClick={() => handleSendMessage(friend._id as string)}
         >
           <SendHorizontal size={20} fill='currentColor' />
         </button>
-      </footer>
+      </form>
 
       <button
         type='button'

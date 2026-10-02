@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { apiCall } from '../utils/axios'
 import { API_URLS } from '../config/api'
 import type { ConversationLoadingState } from '../types/loading'
-import type { Conversations } from '../types/conversation.types'
+import type { Conversations, ConversationsResult, GetConversations } from '../types/conversation.types'
 
 interface AuthStore {
   loading: ConversationLoadingState
@@ -10,10 +10,7 @@ interface AuthStore {
   conversationMessages: Conversations[]
 
   setLoading: (key: string, value: boolean) => void
-  getConversations: (receiver_id: string) => Promise<{
-    success: boolean
-    message: string | unknown
-  }>
+  getConversations: ({ page, page_size, receiver_id }: GetConversations) => Promise<ConversationsResult>
 }
 
 const useConversationStore = create<AuthStore>((set, get) => ({
@@ -32,10 +29,10 @@ const useConversationStore = create<AuthStore>((set, get) => ({
     }))
   },
 
-  getConversations: async (receiver_id: string) => {
+  getConversations: async ({ page, page_size, receiver_id }: GetConversations) => {
     get().setLoading('getConversationLoading', true)
     try {
-      const response = await apiCall(API_URLS.CONVERSATIONS.getConversations(receiver_id))
+      const response = await apiCall(API_URLS.CONVERSATIONS.getConversations({ page, page_size, receiver_id }))
       get().setLoading('getNewPostsLoading', false)
       set({ conversationMessages: response.result.conversations })
       return response.result

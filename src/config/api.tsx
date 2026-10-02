@@ -10,6 +10,7 @@ import type {
 } from '../types/user.types'
 import type { CreateCommentPayload } from '../types/comment.types'
 import type { GlobalSearchType } from '../types/search.types'
+import type { GetConversations } from '../types/conversation.types'
 
 export const HEADERS = {
   DEFAULT_HEADER: {
@@ -244,10 +245,11 @@ export const API_URLS = {
     })
   },
   CONVERSATIONS: {
-    getConversations: (receiver_id: string) => ({
+    getConversations: ({ page, page_size, receiver_id }: GetConversations) => ({
       endPoint: `/api/conversations/receiver/${receiver_id}`,
       method: 'GET',
-      headers: HEADERS.JSON_HEADER()
+      headers: HEADERS.JSON_HEADER(),
+      params: { page, page_size }
     })
   }
 }

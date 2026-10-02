@@ -5,6 +5,9 @@ import type { Socket } from 'socket.io-client'
 import useUserStore from '../../store/useUserStore'
 import useConversationStore from '../../store/useConversationStore'
 import type { Conversations } from '../../types/conversation.types'
+import { PAGE, PAGE_SIZE } from '../../constants/enum'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import { Spin } from 'antd'
 
 interface FloatingChatWindowProps {
   friend: Users
@@ -20,6 +23,10 @@ const FloatingChatWindow = ({ friend, onClose, socket }: FloatingChatWindowProps
   const [conversations, setConversations] = useState<Conversations[]>(conversationMessages)
   const { me } = useUserStore()
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [pagination, setPagination] = useState({
+    page: PAGE,
+    total_page: 0
+  })
 
   useEffect(() => {
     const handleReceivePrivateMessage = (data: {
@@ -40,14 +47,16 @@ const FloatingChatWindow = ({ friend, onClose, socket }: FloatingChatWindowProps
   }, [friend._id, socket])
 
   useEffect(() => {
-    if (friend._id) {
-      getConversations(friend._id)
+    const loadInitialMessage = async () => {
+      if (friend._id) {
+        const result = await getConversations({ page: PAGE, page_size: PAGE_SIZE, receiver_id: friend._id })
+        console.log(result)
+        setConversations(result.conversations)
+        setPagination({ page: Number(result?.page), total_page: Number(result?.total_page) })
+      }
     }
+    loadInitialMessage()
   }, [friend._id, getConversations])
-
-  useEffect(() => {
-    setConversations(conversationMessages)
-  }, [conversationMessages])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -67,6 +76,18 @@ const FloatingChatWindow = ({ friend, onClose, socket }: FloatingChatWindowProps
       { ...conversation, _id: new Date().getTime().toString() }
     ])
     setMessage('')
+  }
+
+  const loadOlderMessages = async () => {
+    if (friend._id && pagination.page < pagination.total_page) {
+      const result = await getConversations({
+        page: pagination.page + 1,
+        page_size: PAGE_SIZE,
+        receiver_id: friend._id
+      })
+      setConversations((prevConversations) => [...prevConversations, ...result.conversations])
+      setPagination({ page: Number(result?.page), total_page: Number(result?.total_page) })
+    }
   }
 
   return (
@@ -117,7 +138,48 @@ const FloatingChatWindow = ({ friend, onClose, socket }: FloatingChatWindowProps
           <p className='mt-0.5 text-xs text-gray-500'>Bạn bè trên FynxPulse</p>
         </div>
 
-        {conversations.map((item, index) => {
+        {/* Chat */}
+
+        <div
+          id='chatBox'
+          style={{
+            height: 500,
+            overflow: 'auto',
+            display: 'flex',
+            flexDirection: 'column-reverse'
+          }}
+        >
+          <InfiniteScroll
+            dataLength={conversations.length}
+            next={loadOlderMessages}
+            hasMore={pagination.page < pagination.total_page}
+            loader={<Spin />}
+            inverse={true}
+            scrollableTarget='chatBox'
+            style={{ display: 'flex', flexDirection: 'column-reverse', overflow: 'visible' }}
+          >
+            {conversations.map((msg, index) => {
+              const isMine = msg.sender_id === me._id
+              return (
+                <div
+                  key={`${msg._id}-${index}-${msg.content}` || `${msg.sender_id}-${index}-${msg.content}`}
+                  className={`mb-1 flex items-end gap-2 ${isMine ? 'justify-end' : 'justify-start'}`}
+                >
+                  {!isMine && <img src={avatar} alt='' className='h-7 w-7 shrink-0 rounded-full object-cover' />}
+                  <div
+                    className={`max-w-56.25 wrap-break-word rounded-2xl px-3 py-2 text-sm ${
+                      isMine ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-900'
+                    }`}
+                  >
+                    {msg.content}
+                  </div>
+                </div>
+              )
+            })}
+          </InfiniteScroll>
+        </div>
+
+        {/* {conversations.map((item, index) => {
           const isMine = item.sender_id === me._id
 
           return (
@@ -135,7 +197,7 @@ const FloatingChatWindow = ({ friend, onClose, socket }: FloatingChatWindowProps
               </div>
             </div>
           )
-        })}
+        })} */}
 
         <div ref={messagesEndRef} aria-hidden='true' className='h-px shrink-0' />
 

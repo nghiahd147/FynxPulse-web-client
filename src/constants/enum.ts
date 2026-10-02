@@ -1,5 +1,8 @@
 import { EmotionTypes } from '../types/reaction.types'
 
+export const PAGE = 1
+export const PAGE_SIZE = 10
+
 export const TypePost = {
   Post: 0,
   Repost: 1,
